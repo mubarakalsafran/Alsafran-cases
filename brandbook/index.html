@@ -1,0 +1,118 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ALSAFRAN — Brand Blueprint</title>
+<meta name="robots" content="noindex,nofollow">
+<meta name="description" content="Confidential. Access code required.">
+<meta name="theme-color" content="#0B0B0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Archivo:wght@600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%230B0B0C%22/%3E%3Ctext x=%2216%22 y=%2223%22 font-family=%22Archivo,sans-serif%22 font-size=%2220%22 font-weight=%22700%22 fill=%22%23C9922E%22 text-anchor=%22middle%22%3EA%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/book.css">
+</head>
+<body style="overflow:hidden">
+
+<!-- ============================ LOGIN ============================ -->
+<div class="gate" id="gate">
+  <span class="gate__bg"></span>
+  <div class="gate__card">
+    <div class="gate__mark">Alsafran</div>
+    <h1>Brand<br>Blueprint</h1>
+    <p class="sub ar">الصفران — سرّي</p>
+    <p class="lede">
+      The full brand, product, pricing, packaging, launch and expansion plan.
+      Confidential — please don't forward the code.
+    </p>
+
+    <div class="stats">
+      <div><b class="num">11</b><span>Sections</span></div>
+      <div><b class="num">24k</b><span>Words</span></div>
+      <div><b class="num">DROP 01</b><span>Gold Route</span></div>
+    </div>
+
+    <p class="err" id="gateErr" hidden></p>
+
+    <form id="gateForm" autocomplete="on">
+      <div class="f">
+        <label for="gateEmail">Your email</label>
+        <input id="gateEmail" type="email" placeholder="you@example.com"
+               autocomplete="email" required>
+      </div>
+      <div class="f">
+        <label for="gateCode">Access code</label>
+        <input id="gateCode" type="password" placeholder="••••••••"
+               autocomplete="current-password" required>
+      </div>
+      <label class="row" for="gateKeep">
+        <input type="checkbox" id="gateKeep" checked>
+        Keep me signed in on this device
+      </label>
+      <button type="submit" id="gateBtn">Open the brand book</button>
+    </form>
+
+    <p class="foot">
+      <b>How this is protected:</b> the book is encrypted with AES-256-GCM and your code
+      derives the key in your browser. Without the right code there is nothing readable in
+      this page or on the server — a wrong code simply fails to decrypt.
+      Your email is stored only on this device, to watermark your copy.
+    </p>
+  </div>
+</div>
+
+<!-- ============================ BOOK ============================ -->
+<div id="shell" hidden>
+  <div class="wm" id="wm" aria-hidden="true"></div>
+
+  <header class="topbar">
+    <button class="iconbtn" id="menuBtn" aria-label="Contents">
+      <svg viewBox="0 0 24 24"><path d="M3 6h18M3 12h18M3 18h18"/></svg>
+    </button>
+    <a href="#contents" class="topbar__mark" style="text-decoration:none">
+      Alsafran<small>Brand blueprint</small>
+    </a>
+    <span class="grow"></span>
+    <span class="confid" title="Watermarked to the signed-in viewer">Confidential</span>
+    <button class="chipbtn" id="printBtn" title="Print or save the whole book as a PDF">PDF</button>
+    <button class="iconbtn" id="lockBtn" aria-label="Sign out" title="Sign out">
+      <svg viewBox="0 0 24 24"><rect x="4" y="10" width="16" height="10" rx="2"/><path d="M8 10V7a4 4 0 0 1 8 0v3"/></svg>
+    </button>
+  </header>
+
+  <div class="scrim" id="scrim"></div>
+
+  <div class="layout">
+    <aside class="side" id="side" aria-label="Contents">
+      <div class="side__top">
+        <strong>Contents</strong>
+        <button class="iconbtn" id="sideClose" aria-label="Close">
+          <svg viewBox="0 0 24 24" style="stroke:#F4F1EA"><path d="M6 6l12 12M18 6L6 18"/></svg>
+        </button>
+      </div>
+      <div class="side__search">
+        <input id="q" type="search" placeholder="Search the book — press /" aria-label="Search">
+      </div>
+      <div class="side__scroll">
+        <a class="navsec" href="#contents"><b><em>—</em>Contents</b><span>Cover &amp; overview</span></a>
+        <div id="nav"></div>
+      </div>
+      <div class="side__foot">
+        <div class="progress"><i id="progBar" style="width:0"></i></div>
+        <div id="progTxt">0 sections read</div>
+        <div id="navMeta" style="margin-top:6px"></div>
+        <div style="margin-top:8px;display:flex;gap:8px;align-items:center;flex-wrap:wrap">
+          <span id="viewer" style="max-width:100%;overflow:hidden;text-overflow:ellipsis;white-space:nowrap"></span>
+        </div>
+        <div id="built" style="margin-top:2px"></div>
+      </div>
+    </aside>
+
+    <main class="reader" id="reader"></main>
+  </div>
+</div>
+
+<script src="assets/book.js"></script>
+</body>
+</html>

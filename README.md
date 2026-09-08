@@ -25,6 +25,18 @@ and read as an international lifestyle label.
 | [`10-long-term-vision.md`](docs/10-long-term-vision.md) | Category roadmap from cases to a lifestyle house, Year 0 → Year 5 |
 | [`11-recommendation-and-budget.md`](docs/11-recommendation-and-budget.md) | **Final recommendation, startup budget in KWD, what to launch with, first 10 actions** |
 
+### `brandbook/` — the strategy as a private, gated website
+The same eleven documents as a login-protected reader: contents, search, progress, a
+confidential watermark, and print-to-PDF. The book is AES-256-GCM encrypted, so the login
+page is real protection rather than a hidden `<div>` — see
+[`brandbook/README.md`](brandbook/README.md).
+
+```bash
+python3 -m http.server 8080   # from the repo root, then open /brandbook/
+```
+Default access code **`goldroute`** — change it with
+`ALSAFRAN_CODE="…" python3 brandbook/build.py` before sharing.
+
 ### `site/` — a working storefront prototype
 A mobile-first, dependency-free static prototype of the full store: 11 pages, live cart,
 model/colour/MagSafe selection, and a working case customiser with live preview.
@@ -44,3 +56,6 @@ It is a **design and UX reference**, not the production store — see
 
 ## Start here
 If you read one file, read [`11-recommendation-and-budget.md`](docs/11-recommendation-and-budget.md).
+
+If you want to *send* this to someone — a designer, a manufacturer, an investor — send them
+the `brandbook/` site with the access code, not the raw markdown.

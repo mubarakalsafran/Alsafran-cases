@@ -133,7 +133,7 @@ function chrome(){
             <div class="ftr__mark">Alsafran</div>
             <p class="ar" style="color:var(--gold);margin-top:.5rem">البسه ، لا تخبيه</p>
             <p class="muted" style="font-size:.8rem;max-width:34ch">A Kuwait-born carry label. Numbered drops, Arabic typography drawn properly, your name on it in three days.</p>
-            <span class="thread"><s></s><i></i><s></s><s></s></span>
+            <span class="thread"><i></i><s></s><s></s><s></s></span>
           </div>
           <div><h4>Shop</h4><ul>
             <li><a href="shop.html">All cases</a></li><li><a href="drops.html">New drops</a></li>
