@@ -1,0 +1,129 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>ALSAFRAN — Wear Your Phone</title>
+<meta name="description" content="Premium phone cases from Kuwait. Numbered drops, Arabic typography drawn properly, your name on it in three days.">
+<meta name="theme-color" content="#0B0B0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Archivo:wght@600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%230B0B0C%22/%3E%3Ctext x=%2216%22 y=%2223%22 font-family=%22Archivo,sans-serif%22 font-size=%2220%22 font-weight=%22700%22 fill=%22%23C9922E%22 text-anchor=%22middle%22%3EA%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="home">
+<div id="alsTicker"></div>
+<div id="alsHeader"></div>
+<main>
+<section class="hero">
+  <span class="hero__bg"></span>
+  <div class="hero__case" id="heroCase"></div>
+  <div class="wrap hero__in">
+    <p class="eyebrow" style="color:var(--gold)">Drop 01 — Gold Route · Live now</p>
+    <h1 class="display">Wear<br>Your<br>Phone</h1>
+    <p class="ar">البسه ، لا تخبيه</p>
+    <p class="muted" style="max-width:38ch;margin-top:1rem">Eleven cases about the most precious cargo that ever crossed this water. 100 to 200 of each. Then never again.</p>
+    <div class="hero__cta">
+      <a class="btn btn--gold" href="shop.html">Shop drop 01</a>
+      <a class="btn btn--ghost" href="drops.html">Watch the film</a>
+    </div>
+  </div>
+</section>
+
+<section class="dropstrip">
+  <div class="wrap dropstrip__row">
+    <div>
+      <p class="eyebrow" style="margin:0">965 · Limited · numbered</p>
+      <b class="num" style="font-size:1.25rem">87 / 100 claimed</b>
+    </div>
+    <div class="meter"><i style="width:87%"></i></div>
+    <a class="btn btn--sm btn--light" href="product.html?id=965">Claim yours</a>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <div>
+        <p class="eyebrow">Featured collection</p>
+        <h2>Drop 01<br>Gold Route</h2>
+      </div>
+      <a href="collections.html">All collections</a>
+    </div>
+    <div class="rail" id="featured"></div>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="wrap">
+    <div class="sec-head"><h2>New drops</h2><a href="drops.html">See all</a></div>
+    <div class="grid grid--4" id="newdrops"></div>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="wrap">
+    <div class="sec-head"><h2>Most carried</h2><a href="best-sellers.html">Best sellers</a></div>
+    <div class="grid grid--4" id="best"></div>
+  </div>
+</section>
+
+<section class="section dark">
+  <div class="wrap split">
+    <div class="card__media" style="background:#131315;border-radius:var(--r-lg)" id="czPreview"></div>
+    <div>
+      <p class="eyebrow">Customize</p>
+      <h2>Your name<br>belongs on it.</h2>
+      <p class="muted">Arabic or Latin, five type styles, four finishes. Arabic ligatures set properly — not typed into a Latin box and stretched. Printed here in Kuwait and on your door in three working days.</p>
+      <a class="btn btn--gold" href="customize.html">Make yours — from 11.900 KD</a>
+    </div>
+  </div>
+</section>
+
+<section class="section--tight dark" style="padding-top:0">
+  <div class="wrap">
+    <div class="proof">
+      <div><b>2 m drop tested</b><p>Air-cushion corners, 1.4 mm camera lip, 1.1 mm screen lip.</p></div>
+      <div><b>MagSafe native</b><p>12× N42 in every Signature. No upsell, no glued-on ring.</p></div>
+      <div><b>Arabic, drawn properly</b><p>Hand-kerned, native-reviewed. Every single design.</p></div>
+      <div><b>Numbered, never restocked</b><p>One run. When it's gone it goes to the archive.</p></div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap">
+    <div class="sec-head">
+      <div><p class="eyebrow">4.9 ★ from 212 customers</p><h2>What they say</h2></div>
+      <a href="#">All reviews</a>
+    </div>
+    <div class="grid grid--3" id="reviews"></div>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="wrap">
+    <div class="sec-head"><h2>Seen in Kuwait</h2><a href="#">@alsafran.co</a></div>
+    <div class="ugc" id="ugc"></div>
+  </div>
+</section>
+
+<section class="section dark">
+  <div class="wrap" style="text-align:center;max-width:46ch">
+    <span class="thread"><s></s><i></i><s></s><s></s></span>
+    <h2 style="margin-top:1rem">Get the next drop<br>30 minutes early.</h2>
+    <p class="muted">The Drop Pass is a WhatsApp list. Lookbooks 48 hours early, a reserved unit, three messages a month. Nothing else.</p>
+    <form class="inline" style="max-width:340px;margin:0 auto"
+      onsubmit="event.preventDefault();this.reset();ALS.toast('You are on the list');">
+      <input class="input" type="tel" placeholder="9XXX XXXX" required aria-label="Phone number">
+      <button class="btn btn--gold" type="submit">Join</button>
+    </form>
+  </div>
+</section>
+</main>
+<div id="alsFooter"></div>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

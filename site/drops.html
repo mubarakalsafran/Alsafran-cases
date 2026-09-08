@@ -1,0 +1,77 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>New Drops — ALSAFRAN</title>
+<meta name="description" content="Drop 01 — Gold Route. One run, numbered, never restocked. Plus the archive.">
+<meta name="theme-color" content="#0B0B0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Archivo:wght@600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%230B0B0C%22/%3E%3Ctext x=%2216%22 y=%2223%22 font-family=%22Archivo,sans-serif%22 font-size=%2220%22 font-weight=%22700%22 fill=%22%23C9922E%22 text-anchor=%22middle%22%3EA%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="drops">
+<div id="alsTicker"></div>
+<div id="alsHeader"></div>
+<main>
+<section class="section dark">
+  <div class="wrap split">
+    <div class="card__media" style="background:#131315;border-radius:var(--r-lg)" id="dropHero"></div>
+    <div>
+      <p class="eyebrow">Live now · Drop 01</p>
+      <h1 class="display" style="font-size:var(--step-4)">Gold<br>Route</h1>
+      <p class="ar gold">طريق الذهب</p>
+      <p class="muted">Saffron was the most valuable thing that ever crossed this water — worth more than gold, gram for gram, and it moved through here. Eleven cases about the route: the sea, the cargo, the coast, and the city it built.</p>
+      <div class="stat" style="margin:1.5rem 0">
+        <div><b class="num">11</b><span>Cases</span></div>
+        <div><b class="num">100</b><span>Of the 965</span></div>
+        <div><b class="num">4</b><span>iPhone models</span></div>
+        <div><b class="num">0</b><span>Restocks, ever</span></div>
+      </div>
+      <a class="btn btn--gold" href="#live">Shop the drop</a>
+    </div>
+  </div>
+</section>
+
+<section class="section--tight" id="live">
+  <div class="wrap">
+    <div class="sec-head"><div><p class="eyebrow">Available now</p><h2>Part one</h2></div></div>
+    <div class="grid grid--3" id="dropGrid"></div>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="wrap">
+    <div class="sec-head"><div><p class="eyebrow">Six weeks out</p><h2>Part two</h2></div></div>
+    <p class="muted" style="font-size:var(--step--1);margin-bottom:1rem">Designed, shot and dated. Join the Drop Pass and you'll see them 48 hours before anyone else.</p>
+    <div class="grid grid--3" id="waveGrid"></div>
+  </div>
+</section>
+
+<section class="section dark">
+  <div class="wrap">
+    <div class="sec-head"><div><p class="eyebrow">Nothing here comes back</p><h2>The archive</h2></div></div>
+    <div class="grid grid--3" id="archive"></div>
+    <div class="note" style="margin-top:1.5rem">We publish the run size before a drop opens and we never print another unit. Not for a friend, not for a creator, not for a big order. That's the whole promise — and it's the reason the number on the back of your case means something.</div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="wrap" style="text-align:center;max-width:44ch">
+    <h2>Drop 02 opens in November.</h2>
+    <p class="muted">Drop Pass members get in 30 minutes early and can reserve one unit.</p>
+    <form class="inline" style="max-width:340px;margin:0 auto"
+      onsubmit="event.preventDefault();this.reset();ALS.toast('You are on the list');">
+      <input class="input" type="tel" placeholder="9XXX XXXX" required aria-label="Phone number">
+      <button class="btn btn--gold" type="submit">Join</button>
+    </form>
+  </div>
+</section>
+</main>
+<div id="alsFooter"></div>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

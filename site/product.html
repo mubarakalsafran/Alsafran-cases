@@ -1,0 +1,78 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Case — ALSAFRAN</title>
+<meta name="description" content="ALSAFRAN case — pick your phone, your colourway and your name.">
+<meta name="theme-color" content="#0B0B0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Archivo:wght@600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%230B0B0C%22/%3E%3Ctext x=%2216%22 y=%2223%22 font-family=%22Archivo,sans-serif%22 font-size=%2220%22 font-weight=%22700%22 fill=%22%23C9922E%22 text-anchor=%22middle%22%3EA%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="product">
+<div id="alsTicker"></div>
+<div id="alsHeader"></div>
+<main>
+<section class="section--tight">
+  <div class="wrap pdp">
+    <div class="pdp__media">
+      <div class="pdp__gallery" id="pdpArt"></div>
+      <div class="pdp__thumbs" id="pdpThumbs"></div>
+    </div>
+    <div>
+      <p class="eyebrow" id="pdpEyebrow"></p>
+      <h1 class="display" id="pdpName" style="font-size:var(--step-3)"></h1>
+      <div class="price-row" style="margin-top:.5rem">
+        <span class="p" id="pdpPrice"></span>
+        <span class="stars" id="pdpRating"></span>
+      </div>
+      <p class="muted" style="font-size:var(--step--1)" id="tabbyLine"></p>
+      <p style="margin-top:1rem" id="pdpDesc"></p>
+
+      <div class="field">
+        <label>Colour — <span id="colorName" style="color:var(--ink);letter-spacing:0"></span></label>
+        <div class="swatches" id="swatches"></div>
+      </div>
+
+      <div class="field">
+        <label>Your phone</label>
+        <div class="chips" id="models"></div>
+      </div>
+
+      <div class="field" id="magRow"></div>
+      <div class="field" id="customRow"></div>
+
+      <div class="freeship" id="claimed"></div>
+
+      <div id="specs"></div>
+
+      <div class="section--tight">
+        <p class="eyebrow">Complete the look</p>
+        <p class="muted" style="font-size:var(--step--1)">Mag wallet 9.900 · wrist strap 5.900 · AirPods case 8.900 — colour-matched to this case. <em>Arriving month 4.</em></p>
+      </div>
+
+      <div id="pdpReviews" class="grid" style="gap:.75rem"></div>
+    </div>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="wrap">
+    <div class="sec-head"><h2>You might also like</h2><a href="shop.html">Shop all</a></div>
+    <div class="grid grid--4" id="related"></div>
+  </div>
+</section>
+
+<div class="stickybar">
+  <button class="btn" id="addBtn">Add to cart</button>
+  <button class="applepay" onclick="ALS.toast('Prototype — Apple Pay is not connected')"> Pay</button>
+</div>
+</main>
+<div id="alsFooter"></div>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>

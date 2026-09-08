@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Customize — ALSAFRAN</title>
+<meta name="description" content="Your name, set properly. Arabic or Latin, five type styles, printed in Kuwait in three days.">
+<meta name="theme-color" content="#0B0B0C">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=IBM+Plex+Sans+Arabic:wght@400;600;700&family=Archivo:wght@600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%230B0B0C%22/%3E%3Ctext x=%2216%22 y=%2223%22 font-family=%22Archivo,sans-serif%22 font-size=%2220%22 font-weight=%22700%22 fill=%22%23C9922E%22 text-anchor=%22middle%22%3EA%3C/text%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/style.css">
+</head>
+<body data-page="customize">
+<div id="alsTicker"></div>
+<div id="alsHeader"></div>
+<main>
+<section class="section--tight">
+  <div class="wrap">
+    <p class="eyebrow">Customize · from 11.900 KD</p>
+    <h1 class="display">Your name<br>belongs on it.</h1>
+    <p class="muted" style="max-width:44ch">Arabic ligatures set properly, kerned by hand, checked by a native reader before we print. Made here in Kuwait, on your door in three working days.</p>
+  </div>
+</section>
+
+<section class="section--tight">
+  <div class="wrap cz">
+    <div class="cz__stage" id="czStage"></div>
+    <div>
+      <div class="step">
+        <h3><em>01</em> Pick a base</h3>
+        <div class="chips" id="czBase" style="margin-top:.75rem"></div>
+        <div class="swatches" id="czColors" style="margin-top:.75rem"></div>
+      </div>
+
+      <div class="step">
+        <h3><em>02</em> Your text</h3>
+        <div class="chips" id="czScript" style="margin:.75rem 0">
+          <button class="chip on" data-s="ar">أبج Arabic</button>
+          <button class="chip" data-s="en">ABC Latin</button>
+        </div>
+        <input class="input" id="czText" maxlength="12" value="مبارك" aria-label="Your text">
+        <p class="muted" style="font-size:var(--step--1)">Up to 12 characters. Names, initials, a number, a date, coordinates.</p>
+      </div>
+
+      <div class="step">
+        <h3><em>03</em> Type style</h3>
+        <div class="chips" id="czStyle" style="margin-top:.75rem">
+          <button class="chip on" data-st="kufi">Geometric Kufi</button>
+          <button class="chip" data-st="naskh">Soft Naskh</button>
+          <button class="chip" data-st="stencil">Athletic Stencil</button>
+          <button class="chip" data-st="grot">Grotesque Caps</button>
+          <button class="chip" data-st="mono">Monogram</button>
+        </div>
+      </div>
+
+      <div class="step">
+        <h3><em>04</em> Finish</h3>
+        <div class="chips" id="czFinish" style="margin-top:.75rem">
+          <button class="chip on" data-f="#C9922E" data-n="Gold foil">Gold foil</button>
+          <button class="chip" data-f="#F4F1EA" data-n="White">White</button>
+          <button class="chip" data-f="#0B0B0C" data-n="Black">Black</button>
+          <button class="chip" data-f="#00000033" data-n="Tonal deboss">Tonal deboss</button>
+        </div>
+      </div>
+
+      <div class="step">
+        <h3><em>05</em> Placement</h3>
+        <div class="chips" id="czPlace" style="margin-top:.75rem">
+          <button class="chip on" data-p="bottom">Bottom centre</button>
+          <button class="chip" data-p="back">Back centre</button>
+          <button class="chip" data-p="left">Vertical left</button>
+        </div>
+      </div>
+
+      <div class="step">
+        <h3><em>06</em> Your phone</h3>
+        <div class="chips" id="czModel" style="margin-top:.75rem"></div>
+      </div>
+
+      <div class="step">
+        <h3><em>07</em> Confirm &amp; add</h3>
+        <p id="czSummary" class="muted" style="margin:.5rem 0"></p>
+        <label class="toggle" style="margin-bottom:.75rem">
+          <input type="checkbox" id="czConfirm" style="width:20px;height:20px;accent-color:#C9922E">
+          <span><b>I've checked the preview</b><small>Spelling, script and placement. Custom cases aren't returnable unless faulty.</small></span>
+        </label>
+        <div class="price-row" style="margin-bottom:.75rem">
+          <span class="p" id="czTotal"></span>
+          <span class="muted" style="font-size:var(--step--1)">ships in 3 working days</span>
+        </div>
+        <button class="btn btn--block" id="czAdd">Add to cart</button>
+        <button class="btn btn--ghost btn--block btn--sm" style="margin-top:.5rem"
+          onclick="ALS.toast('Preview link copied')">Share my preview</button>
+      </div>
+
+      <div class="note">We check every Arabic lockup by hand before it goes on the printer. If a name won't sit right at that size, we message you with two alternatives instead of printing it badly.</div>
+    </div>
+  </div>
+</section>
+<div class="stickybar">
+  <button class="btn" id="czAddBar">Add to cart</button>
+</div>
+</main>
+<div id="alsFooter"></div>
+<script src="assets/js/data.js"></script>
+<script src="assets/js/app.js"></script>
+</body>
+</html>
