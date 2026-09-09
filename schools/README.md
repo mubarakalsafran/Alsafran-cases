@@ -65,6 +65,10 @@ annual tuition per grade band in KWD · Instagram · save · add-to-compare.
 
 ### Reviews
 
+**No reviews are seeded.** Every school ships with an empty comment section: the ratings on this
+site are only ever what real parents wrote. Nothing was pre-written to make the directory look
+busy, so the homepage's top-rated list starts as an invitation to review rather than a leaderboard.
+
 - 1–5 stars, free text, and optional tags for teaching quality, facilities, safety,
   communication and value.
 - **Only signed-in accounts can post**, one review per school per account.
@@ -133,7 +137,7 @@ schools/
 ├── index.html directory.html american.html british.html kindergarten.html
 ├── school.html compare.html favorites.html login.html account.html about.html admin.html
 ├── assets/css/style.css     design system + every layout
-├── assets/js/data.js        41 schools, 59 seed reviews, curricula, districts, grade ladder
+├── assets/js/data.js        41 schools (no seeded reviews), curricula, districts, grade ladder
 ├── assets/js/app.js         i18n/RTL, auth, favourites, compare, cards, filter engine, chrome
 ├── assets/js/pages.js       one controller per public page + SEO/JSON-LD injection
 ├── assets/js/admin.js       dashboard: overview, schools CRUD, moderation, users, data

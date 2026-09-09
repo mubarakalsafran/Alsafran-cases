@@ -123,6 +123,8 @@ A.overview = function(){
   const users   = Auth.users();
   const revs    = store.get(K.reviews,[]);
   const views   = Data.views();
+  /* zero by design — nothing is seeded — but still summed so the count stays
+     correct if a future import ever ships reviews alongside a school */
   const seedRevCount = schools.reduce((n,s)=> n + (s.reviews ? s.reviews.length : 0), 0);
   const pending = revs.filter(r => r.status === 'pending');
 
@@ -483,8 +485,8 @@ A.reviews = function(){
     '</div>' +
 
     '<div class="msg msg-info">' + esc(Lang.isAr()
-      ? 'التقييمات المرسلة من أولياء الأمور لا تُنشر قبل الموافقة. التقييمات الأساسية في ملف البيانات منشورة دائماً.'
-      : 'Parent-submitted reviews stay unpublished until approved here. Seed reviews shipped in data.js are always published.') +
+      ? 'كل تقييم على الموقع يكتبه ولي أمر مسجّل ولا يُنشر قبل موافقتك — لا توجد تقييمات جاهزة في ملف البيانات.'
+      : 'Every review on the site is written by a signed-in parent and stays unpublished until you approve it — no reviews are seeded in data.js.') +
     '</div>' +
 
     '<div class="card-flat"><header><h2>' + list.length + ' ' +

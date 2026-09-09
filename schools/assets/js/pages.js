@@ -110,15 +110,40 @@ Pages.home = function(){
   /* quick access */
   $('#quickMount').innerHTML = quickCardsHTML();
 
-  /* top rated — only schools with at least 2 reviews, so one glowing
-     review cannot put a school at the top of the homepage */
+  /* Top rated needs at least 2 reviews per school, so one glowing review
+     cannot put a school at the top of the homepage. Nothing is seeded, so
+     until parents have actually reviewed, this invites them to instead of
+     printing an empty grid. */
   const top = all
     .filter(s => Data.rating(s.id).count >= 2)
     .sort((a,b)=>{
       const ra = Data.rating(a.id), rb = Data.rating(b.id);
       return (rb.avg - ra.avg) || (rb.count - ra.count);
     }).slice(0,6);
-  renderCards($('#topMount'), top, { gridClass:'grid grid-wide' });
+
+  const anyReviews = all.some(s => Data.rating(s.id).count > 0);
+  if(top.length){
+    renderCards($('#topMount'), top, { gridClass:'grid grid-wide' });
+  }else{
+    $('#topMount').className = '';
+    $('#topMount').innerHTML =
+      '<div class="empty">' + I.star.replace('<svg','<svg style="stroke:var(--gold);fill:none"') +
+      '<h3>' + esc(Lang.isAr()
+        ? 'لا توجد تقييمات بعد — كن أول من يكتب'
+        : 'No parent reviews yet — be the first') + '</h3>' +
+      '<p>' + esc(Lang.isAr()
+        ? (anyReviews
+            ? 'التقييمات الأولى في انتظار المراجعة. تحتاج المدرسة إلى تقييمين منشورين لتظهر هنا.'
+            : 'لم نكتب أي تقييم بأنفسنا. كل تقييم على هذا الموقع يكتبه ولي أمر مسجّل، لذلك تبدأ هذه القائمة فارغة حتى يشاركك الأهل تجاربهم.')
+        : (anyReviews
+            ? 'The first reviews are awaiting moderation. A school needs two published reviews to appear here.'
+            : 'We have not written a single review ourselves. Every review here comes from a signed-in parent, so this list starts empty until families share what they know.')) + '</p>' +
+      '<p><a class="btn btn-pri" href="directory.html">' + esc(Lang.isAr()
+        ? 'اختر مدرسة وقيّمها'
+        : 'Pick a school and review it') + '</a>' +
+      ' <a class="btn btn-ghost" href="login.html">' + esc(t('login')) + '</a></p>' +
+      '</div>';
+  }
 
   /* featured */
   const feat = all.filter(s => s.featured).slice(0,6);

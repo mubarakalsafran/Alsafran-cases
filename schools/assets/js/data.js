@@ -64,7 +64,11 @@ const REVIEW_TAGS = [
 /* ---------------- the catalogue ---------------- */
 /* fees[] : { band, from, to, amount }  — amount is KWD per academic year
    ig     : Instagram handle when known, otherwise null → the UI falls back
-            to an Instagram keyword search so we never link a wrong account. */
+            to an Instagram keyword search so we never link a wrong account.
+   reviews: intentionally empty. Every review on this site is written by a
+            signed-in parent through the profile page and published only after
+            moderation — nothing is seeded, so a school's star rating is only
+            ever what real parents gave it. */
 
 const SCHOOLS = [
 /* ===== AMERICAN ===== */
@@ -85,11 +89,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8',from:'Grade 6',  to:'Grade 8',  amount:4850 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:5600 }
   ],
-  reviews:[
-    { name:'Noura A.', date:'2026-04-18', rating:5, tags:['teaching','facilities'], text:'Our two boys have been here since KG1. The teaching in the elementary school is genuinely strong and the AP options in high school opened up university choices we did not expect. Facilities are the best we have seen in Kuwait.' },
-    { name:'Mark T.',  date:'2026-03-02', rating:4, tags:['communication','value'], text:'Excellent academics and a real sense of community. Communication from the front office can be slow during admissions season, and the fees are at the top of the market — but the outcomes justify it for us.' },
-    { name:'Dana K.',  date:'2026-01-27', rating:4, tags:['safety','teaching'], text:'Very safe and well-run campus. Pick-up traffic in Hawalli is the one real headache, so budget time for it.' }
-  ]
+  reviews:[]
 },
 {
   id:'ais', name:'American International School', nameAr:'المدرسة الأمريكية العالمية', abbr:'AIS',
@@ -108,10 +108,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:4100 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:4700 }
   ],
-  reviews:[
-    { name:'Hessa M.', date:'2026-05-06', rating:5, tags:['teaching','communication'], text:'The homeroom teachers actually know my daughter as a person. Weekly updates through the parent portal mean I am never guessing about how she is doing.' },
-    { name:'Ravi S.',  date:'2026-02-14', rating:4, tags:['facilities','value'], text:'Good value compared with the very top tier. The pool and the theatre get real use — my son has been in three productions.' }
-  ]
+  reviews:[]
 },
 {
   id:'uas', name:'Universal American School', nameAr:'المدرسة الأمريكية العالمية الجامعة', abbr:'UAS',
@@ -130,11 +127,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:5200 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:6300 }
   ],
-  reviews:[
-    { name:'Layla F.',  date:'2026-06-01', rating:5, tags:['teaching','value'], text:'The IB Diploma here is the real thing, not a badge. My eldest went into a UK university with credit and, more importantly, she knows how to write and how to argue.' },
-    { name:'Ahmed Q.',  date:'2026-03-21', rating:4, tags:['facilities','safety'], text:'Strong campus and very organised. IB workload in DP1 hit hard — worth talking to the counsellors early about subject choices.' },
-    { name:'Sara B.',   date:'2025-12-09', rating:5, tags:['communication'], text:'Parent–teacher conferences are properly structured and you leave with an actual plan.' }
-  ]
+  reviews:[]
 },
 {
   id:'bbs', name:'Al-Bayan Bilingual School', nameAr:'مدرسة البيان ثنائية اللغة', abbr:'BBS',
@@ -153,10 +146,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:4800 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:5900 }
   ],
-  reviews:[
-    { name:'Abdullah S.', date:'2026-05-19', rating:5, tags:['teaching','communication'], text:'The only school we found where our children are truly fluent and literate in both languages. Arabic is taught as a serious subject, not an afterthought.' },
-    { name:'Maryam H.',   date:'2026-02-02', rating:4, tags:['value','facilities'], text:'Waiting lists are long and admission is competitive. Once you are in, the academic culture is excellent.' }
-  ]
+  reviews:[]
 },
 {
   id:'aca', name:'American Creativity Academy', nameAr:'أكاديمية الإبداع الأمريكية', abbr:'ACA',
@@ -175,10 +165,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:3200 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:3700 }
   ],
-  reviews:[
-    { name:'Fatima R.', date:'2026-04-04', rating:4, tags:['teaching','safety'], text:'We chose it for the balance — proper American academics with Quran and Arabic taken seriously. Class sizes in the middle school are on the large side.' },
-    { name:'Yousef A.', date:'2025-11-16', rating:4, tags:['value'], text:'Good value for an American curriculum. The bus service is reliable, which matters more than people admit.' }
-  ]
+  reviews:[]
 },
 {
   id:'aus', name:'American United School', nameAr:'المدرسة الأمريكية المتحدة', abbr:'AUS',
@@ -197,10 +184,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:3900 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:4500 }
   ],
-  reviews:[
-    { name:'Nadia J.', date:'2026-05-28', rating:5, tags:['facilities','teaching'], text:'The robotics and design labs are not decoration — my son is in there every week and came home able to explain a CAD model to me.' },
-    { name:'Omar D.',  date:'2026-01-11', rating:3, tags:['communication'], text:'Facilities and teaching are good. Staff turnover in the middle school has been noticeable and we have had three different maths teachers in two years.' }
-  ]
+  reviews:[]
 },
 {
   id:'fsis', name:'Fawzia Sultan International School', nameAr:'مدرسة فوزية السلطان العالمية', abbr:'FSIS',
@@ -219,10 +203,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:4300 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:4800 }
   ],
-  reviews:[
-    { name:'Huda M.',   date:'2026-06-12', rating:5, tags:['teaching','safety','communication'], text:'After two schools that could not cope with my son’s dyslexia, this one built an actual plan and reviews it with us every term. It changed his relationship with school.' },
-    { name:'Peter L.',  date:'2026-03-08', rating:4, tags:['value'], text:'Expensive per child, but you are paying for a 12-to-1 class and specialists on staff.' }
-  ]
+  reviews:[]
 },
 {
   id:'dbs', name:'Dasman Bilingual School', nameAr:'مدرسة دسمان ثنائية اللغة', abbr:'DBS',
@@ -241,9 +222,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:3700 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:4200 }
   ],
-  reviews:[
-    { name:'Bader K.', date:'2026-02-25', rating:4, tags:['teaching','communication'], text:'Solid bilingual programme and teachers who reply to emails. Facilities are good but not lavish.' }
-  ]
+  reviews:[]
 },
 {
   id:'kbs', name:'Kuwait Bilingual School', nameAr:'المدرسة الكويتية ثنائية اللغة', abbr:'KBS',
@@ -262,10 +241,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:2500 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:2900 }
   ],
-  reviews:[
-    { name:'Shaikha N.', date:'2026-04-30', rating:4, tags:['value'], text:'Genuinely affordable for a bilingual school and the teachers care. Do not expect a swimming pool.' },
-    { name:'Talal E.',   date:'2025-10-22', rating:3, tags:['facilities','communication'], text:'Academics are fine. The building is tight and the yard gets crowded at break.' }
-  ]
+  reviews:[]
 },
 {
   id:'gas', name:'Gulf American School', nameAr:'مدرسة الخليج الأمريكية', abbr:'GAS',
@@ -284,9 +260,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:3000 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:3500 }
   ],
-  reviews:[
-    { name:'Reem A.', date:'2026-01-19', rating:4, tags:['teaching','communication'], text:'The college counsellor was the deciding factor for us. She knew exactly which universities would take our transcript seriously.' }
-  ]
+  reviews:[]
 },
 {
   id:'aag', name:'American Academy for Girls', nameAr:'الأكاديمية الأمريكية للبنات', abbr:'AAG',
@@ -305,9 +279,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:2950 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:3400 }
   ],
-  reviews:[
-    { name:'Amal S.', date:'2026-03-15', rating:5, tags:['safety','teaching'], text:'My daughters are confident here in a way they were not in a mixed school. Strong on Arabic too.' }
-  ]
+  reviews:[]
 },
 {
   id:'kas', name:'Kuwait American School', nameAr:'المدرسة الكويتية الأمريكية', abbr:'KAS',
@@ -326,9 +298,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:2750 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:3150 }
   ],
-  reviews:[
-    { name:'Jassim W.', date:'2025-12-18', rating:3, tags:['value','facilities'], text:'Reasonable fees and a convenient location. The campus is showing its age.' }
-  ]
+  reviews:[]
 },
 {
   id:'alrowad', name:'Al Rowad American School', nameAr:'مدرسة الرواد الأمريكية', abbr:'ARAS',
@@ -347,9 +317,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:1950 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:2250 }
   ],
-  reviews:[
-    { name:'Mona I.', date:'2026-02-08', rating:4, tags:['value','teaching'], text:'For the price, the teaching is better than I expected. Large classes, but my daughter is happy and reading well.' }
-  ]
+  reviews:[]
 },
 
 /* ===== BRITISH ===== */
@@ -370,11 +338,7 @@ const SCHOOLS = [
     { band:'Years 7 – 9',             from:'Grade 6',  to:'Grade 8',  amount:5100 },
     { band:'Years 10 – 13',           from:'Grade 9',  to:'Grade 12', amount:6200 }
   ],
-  reviews:[
-    { name:'Claire D.', date:'2026-05-11', rating:5, tags:['teaching','facilities'], text:'We moved from London and the transition was seamless — same curriculum, same expectations. A-Level results speak for themselves.' },
-    { name:'Faisal A.', date:'2026-04-02', rating:4, tags:['communication','value'], text:'Excellent school, top of the fee range. The sixth form is where it really shows its quality.' },
-    { name:'Ines P.',   date:'2026-01-08', rating:4, tags:['safety'], text:'Very secure site and well-organised drop-off. Early Years staff are wonderful with settling new starters.' }
-  ]
+  reviews:[]
 },
 {
   id:'kes', name:'Kuwait English School', nameAr:'المدرسة الإنجليزية الكويتية', abbr:'KES',
@@ -393,10 +357,7 @@ const SCHOOLS = [
     { band:'Years 7 – 9',    from:'Grade 6', to:'Grade 8',  amount:4400 },
     { band:'Years 10 – 13',  from:'Grade 9', to:'Grade 12', amount:5300 }
   ],
-  reviews:[
-    { name:'Salem G.',  date:'2026-03-27', rating:5, tags:['teaching'], text:'Rigorous in the best sense. My son was pushed hard for his IGCSEs and came out with the grades he needed.' },
-    { name:'Emma R.',   date:'2025-11-30', rating:4, tags:['facilities','communication'], text:'Good teaching, slightly dated buildings in the primary block. Reports are detailed and honest.' }
-  ]
+  reviews:[]
 },
 {
   id:'tes', name:'The English School Kuwait', nameAr:'المدرسة الإنجليزية بالكويت', abbr:'TES',
@@ -415,9 +376,7 @@ const SCHOOLS = [
     { band:'Years 7 – 9',   from:'Grade 6',  to:'Grade 8',  amount:3900 },
     { band:'Years 10 – 11', from:'Grade 9',  to:'Grade 11', amount:4400 }
   ],
-  reviews:[
-    { name:'Helen M.', date:'2026-02-19', rating:4, tags:['teaching','safety'], text:'Small, personal and kind. The trade-off is no sixth form, so plan the A-Level move in Year 10.' }
-  ]
+  reviews:[]
 },
 {
   id:'nes', name:'The New English School', nameAr:'المدرسة الإنجليزية الجديدة', abbr:'NES',
@@ -436,10 +395,7 @@ const SCHOOLS = [
     { band:'Years 7 – 9',   from:'Grade 6', to:'Grade 8',  amount:4200 },
     { band:'Years 10 – 13', from:'Grade 9', to:'Grade 12', amount:5000 }
   ],
-  reviews:[
-    { name:'Ghanim T.', date:'2026-06-05', rating:5, tags:['teaching','value'], text:'Academically the strongest value in Kuwait in my view. Entrance test is real — prepare for it.' },
-    { name:'Priya N.',  date:'2026-03-12', rating:4, tags:['communication','facilities'], text:'Big school, so you have to be proactive with communication. Once you know the right people it runs well.' }
-  ]
+  reviews:[]
 },
 {
   id:'ges', name:'Gulf English School', nameAr:'مدرسة الخليج الإنجليزية', abbr:'GES',
@@ -458,9 +414,7 @@ const SCHOOLS = [
     { band:'Years 7 – 9',   from:'Grade 6', to:'Grade 8',  amount:3300 },
     { band:'Years 10 – 13', from:'Grade 9', to:'Grade 12', amount:3900 }
   ],
-  reviews:[
-    { name:'Zainab O.', date:'2026-01-24', rating:4, tags:['value','teaching'], text:'Good middle option — proper British curriculum without the top-tier fees.' }
-  ]
+  reviews:[]
 },
 {
   id:'knes', name:'Kuwait National English School', nameAr:'المدرسة الوطنية الإنجليزية', abbr:'KNES',
@@ -479,9 +433,7 @@ const SCHOOLS = [
     { band:'Years 7 – 9',   from:'Grade 6', to:'Grade 8',  amount:3000 },
     { band:'Years 10 – 13', from:'Grade 9', to:'Grade 12', amount:3550 }
   ],
-  reviews:[
-    { name:'Latifa B.', date:'2025-12-02', rating:4, tags:['teaching','communication'], text:'Warm school. My daughter picked up French properly here, which we did not find elsewhere at this price.' }
-  ]
+  reviews:[]
 },
 {
   id:'ces', name:'Cambridge English School', nameAr:'مدرسة كامبريدج الإنجليزية', abbr:'CES',
@@ -500,9 +452,7 @@ const SCHOOLS = [
     { band:'Years 7 – 9',   from:'Grade 6', to:'Grade 8',  amount:2100 },
     { band:'Years 10 – 11', from:'Grade 9', to:'Grade 11', amount:2450 }
   ],
-  reviews:[
-    { name:'Hamad Y.', date:'2026-04-21', rating:4, tags:['value','safety'], text:'A real relief not to drive to Salwa every morning. Solid school for the money.' }
-  ]
+  reviews:[]
 },
 {
   id:'kies', name:'Kuwait International English School', nameAr:'المدرسة الإنجليزية الدولية الكويتية', abbr:'KIES',
@@ -521,9 +471,7 @@ const SCHOOLS = [
     { band:'Years 7 – 9',   from:'Grade 6', to:'Grade 8',  amount:1850 },
     { band:'Years 10 – 11', from:'Grade 9', to:'Grade 11', amount:2150 }
   ],
-  reviews:[
-    { name:'Sundus A.', date:'2026-02-27', rating:3, tags:['value','facilities'], text:'Affordable and the staff try hard. Facilities are basic and the classes are full.' }
-  ]
+  reviews:[]
 },
 {
   id:'sabahalsalem-british', name:'Sabah Al Salem British Academy', nameAr:'أكاديمية صباح السالم البريطانية', abbr:'SSBA',
@@ -541,9 +489,7 @@ const SCHOOLS = [
     { band:'Years 1 – 6',   from:'Grade 1',  to:'Grade 5', amount:2100 },
     { band:'Years 7 – 10',  from:'Grade 6',  to:'Grade 9', amount:2450 }
   ],
-  reviews:[
-    { name:'Wafa D.', date:'2026-05-02', rating:4, tags:['communication','safety'], text:'Small enough that the head knows every child by name. Being a new school, some things are still being built out.' }
-  ]
+  reviews:[]
 },
 
 /* ===== INDIAN ===== */
@@ -564,11 +510,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:890 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1150 }
   ],
-  reviews:[
-    { name:'Anil V.',    date:'2026-04-09', rating:5, tags:['value','teaching'], text:'Outstanding value. CBSE board results are consistently strong and the maths and science teaching is serious.' },
-    { name:'Deepa R.',   date:'2026-02-11', rating:4, tags:['communication'], text:'Large classes, so individual attention depends on the teacher. The parent app works well for circulars and fees.' },
-    { name:'Suresh N.',  date:'2025-10-30', rating:4, tags:['safety','facilities'], text:'Well-managed and safe. Sports facilities are shared across a lot of students.' }
-  ]
+  reviews:[]
 },
 {
   id:'faips', name:'FAIPS – DPS Kuwait', nameAr:'مدرسة الفحيحيل الوطنية الهندية', abbr:'FAIPS',
@@ -587,9 +529,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:850 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1090 }
   ],
-  reviews:[
-    { name:'Kavita J.', date:'2026-03-05', rating:4, tags:['teaching','value'], text:'Strong CBSE school. My son got into an Indian engineering college straight from here.' }
-  ]
+  reviews:[]
 },
 {
   id:'bhavans', name:'Bhavans SIS – Smart Indian School', nameAr:'مدرسة بهافانز الهندية', abbr:'Bhavans',
@@ -608,9 +548,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:870 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1120 }
   ],
-  reviews:[
-    { name:'Meera K.', date:'2026-01-30', rating:5, tags:['teaching','facilities'], text:'The cultural programme is what sets it apart — my daughter learned Bharatanatyam here and still topped her class.' }
-  ]
+  reviews:[]
 },
 {
   id:'uis', name:'United Indian School', nameAr:'المدرسة الهندية المتحدة', abbr:'UIS',
@@ -629,9 +567,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:690 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:880 }
   ],
-  reviews:[
-    { name:'Rajesh P.', date:'2025-11-08', rating:4, tags:['value'], text:'Hard to beat on price and the board results are respectable. Do not expect much in the way of facilities.' }
-  ]
+  reviews:[]
 },
 {
   id:'iis', name:'Integrated Indian School', nameAr:'المدرسة الهندية المتكاملة', abbr:'IIS',
@@ -650,9 +586,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:720 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:920 }
   ],
-  reviews:[
-    { name:'Nisha T.', date:'2026-02-20', rating:4, tags:['teaching','value'], text:'The Grade 12 teachers here are excellent and available after hours. Worth the commute for us.' }
-  ]
+  reviews:[]
 },
 {
   id:'carmel', name:'Carmel School Kuwait', nameAr:'مدرسة الكرمل', abbr:'Carmel',
@@ -671,9 +605,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:750 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:960 }
   ],
-  reviews:[
-    { name:'Joseph M.', date:'2026-03-18', rating:5, tags:['safety','communication'], text:'The class teachers call you before a small problem becomes a big one. That is rare.' }
-  ]
+  reviews:[]
 },
 {
   id:'ies', name:'Indian Educational School', nameAr:'المدرسة الهندية التعليمية', abbr:'IES',
@@ -692,9 +624,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:810 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1020 }
   ],
-  reviews:[
-    { name:'Vinod S.', date:'2026-01-15', rating:4, tags:['value','communication'], text:'Convenient and reasonably priced. The building is cramped but the teaching is fine.' }
-  ]
+  reviews:[]
 },
 {
   id:'gis', name:'Gulf Indian School', nameAr:'مدرسة الخليج الهندية', abbr:'GIS',
@@ -713,9 +643,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:730 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:940 }
   ],
-  reviews:[
-    { name:'Asha D.', date:'2025-12-27', rating:3, tags:['facilities','value'], text:'Fees are manageable. Classes are very large — 35 plus in my daughter’s section.' }
-  ]
+  reviews:[]
 },
 
 /* ===== ARABIC / PUBLIC ===== */
@@ -733,10 +661,7 @@ const SCHOOLS = [
   fees:[
     { band:'KG1 – Grade 12 (Kuwaiti citizens)', from:'KG1', to:'Grade 12', amount:0 }
   ],
-  reviews:[
-    { name:'Mohammed A.', date:'2026-02-05', rating:4, tags:['value','teaching'], text:'Free, close to home, and the Arabic and Islamic studies are far stronger than any private school. English is the weak point — we top it up privately.' },
-    { name:'Sheikha F.',  date:'2025-11-19', rating:3, tags:['facilities','communication'], text:'Varies enormously by school and by principal. Ask other parents about the specific school, not the system.' }
-  ]
+  reviews:[]
 },
 {
   id:'najat', name:'Al-Najat Bilingual School', nameAr:'مدرسة النجاة ثنائية اللغة', abbr:'Najat',
@@ -755,9 +680,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:1300 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1500 }
   ],
-  reviews:[
-    { name:'Abdulrahman K.', date:'2026-04-14', rating:5, tags:['teaching','safety'], text:'For a family that wants the national curriculum done properly with real Quran teaching, this is the one. English is decent, not brilliant.' }
-  ]
+  reviews:[]
 },
 {
   id:'maali', name:'Al-Maali Bilingual School', nameAr:'مدرسة المعالي ثنائية اللغة', abbr:'Maali',
@@ -776,9 +699,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:1400 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1650 }
   ],
-  reviews:[
-    { name:'Dalal H.', date:'2026-01-06', rating:4, tags:['communication','value'], text:'Well organised and the Arabic is strong. Reasonable fees for what you get.' }
-  ]
+  reviews:[]
 },
 {
   id:'rawdat', name:'Rawdat Al-Uloom Bilingual School', nameAr:'مدرسة روضة العلوم ثنائية اللغة', abbr:'RUS',
@@ -797,9 +718,7 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:1220 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1420 }
   ],
-  reviews:[
-    { name:'Nawal Z.', date:'2025-12-14', rating:4, tags:['teaching'], text:'Good balance of religious studies and academics. English is improving year on year.' }
-  ]
+  reviews:[]
 },
 
 /* ===== PRE-K & KINDERGARTEN / NURSERIES ===== */
@@ -819,10 +738,7 @@ const SCHOOLS = [
     { band:'Pre-KG (3 – 4 yrs)',  from:'Pre-KG',  to:'Pre-KG',  amount:1650 },
     { band:'KG1 – KG2 (4 – 6 yrs)',from:'KG1',    to:'KG2',     amount:1900 }
   ],
-  reviews:[
-    { name:'Rana E.',   date:'2026-05-22', rating:5, tags:['safety','communication'], text:'Both my children started here at two and a half. The staff send photos through the day, which as a first-time mother I needed more than I expected.' },
-    { name:'Hussain M.',date:'2026-03-30', rating:4, tags:['facilities','value'], text:'Branch quality varies — visit the specific branch, not the brand. Ours in Mishref is excellent.' }
-  ]
+  reviews:[]
 },
 {
   id:'little-hearts', name:'Little Hearts Nursery', nameAr:'حضانة القلوب الصغيرة', abbr:'LHN',
@@ -840,9 +756,7 @@ const SCHOOLS = [
     { band:'Pre-KG (2.5 – 3.5 yrs)',   from:'Pre-KG',  to:'Pre-KG',  amount:1400 },
     { band:'KG1 (3.5 – 4 yrs)',        from:'KG1',     to:'KG1',     amount:1550 }
   ],
-  reviews:[
-    { name:'Farah A.', date:'2026-04-25', rating:5, tags:['safety','teaching'], text:'One carer for every four toddlers, and they actually know my son’s routine. Worth every dinar at this age.' }
-  ]
+  reviews:[]
 },
 {
   id:'kangaroo', name:'Kangaroo Kids Nursery', nameAr:'حضانة كانجرو كيدز', abbr:'KKN',
@@ -860,9 +774,7 @@ const SCHOOLS = [
     { band:'Pre-KG (3 – 4 yrs)',  from:'Pre-KG',  to:'Pre-KG',  amount:1300 },
     { band:'KG1 – KG2 (4 – 5 yrs)',from:'KG1',    to:'KG2',     amount:1450 }
   ],
-  reviews:[
-    { name:'Yasmin S.', date:'2026-02-16', rating:4, tags:['facilities','communication'], text:'The garden is the reason we chose it — my daughter is outside twice a day even in spring.' }
-  ]
+  reviews:[]
 },
 {
   id:'sunflower', name:'Sunflower Bilingual Nursery', nameAr:'حضانة عين الشمس ثنائية اللغة', abbr:'SBN',
@@ -880,9 +792,7 @@ const SCHOOLS = [
     { band:'Pre-KG (3 – 4 yrs)',  from:'Pre-KG',  to:'Pre-KG',  amount:1450 },
     { band:'KG1 – KG2 (4 – 5 yrs)',from:'KG1',    to:'KG2',     amount:1600 }
   ],
-  reviews:[
-    { name:'Munira A.', date:'2026-05-15', rating:5, tags:['teaching','value'], text:'My son switches between Arabic and English without thinking about it. That was the whole point and they delivered it.' }
-  ]
+  reviews:[]
 },
 {
   id:'bright-start', name:'Bright Start Early Learning Centre', nameAr:'مركز البداية المشرقة للتعلم المبكر', abbr:'BSELC',
@@ -900,9 +810,7 @@ const SCHOOLS = [
     { band:'Pre-KG (3 – 4 yrs)',   from:'Pre-KG',  to:'Pre-KG',  amount:1700 },
     { band:'KG1 – KG2 (4 – 6 yrs)',from:'KG1',     to:'KG2',     amount:1850 }
   ],
-  reviews:[
-    { name:'Tareq B.', date:'2026-06-08', rating:5, tags:['teaching','communication'], text:'Our son was not talking at three. Eighteen months here with the speech team and he is chatting away. They kept us in the loop every single week.' }
-  ]
+  reviews:[]
 },
 {
   id:'tiny-steps', name:'Tiny Steps Nursery', nameAr:'حضانة الخطوات الصغيرة', abbr:'TSN',
@@ -920,9 +828,7 @@ const SCHOOLS = [
     { band:'Pre-KG (2.5 – 3.5 yrs)',   from:'Pre-KG',  to:'Pre-KG',  amount:1180 },
     { band:'KG1 (3.5 – 4 yrs)',        from:'KG1',     to:'KG1',     amount:1300 }
   ],
-  reviews:[
-    { name:'Amira K.', date:'2026-03-24', rating:4, tags:['value','safety'], text:'The long hours saved us. Very few options this far south and this one is clean and well staffed.' }
-  ]
+  reviews:[]
 },
 {
   id:'discovery-kg', name:'Discovery Kindergarten', nameAr:'روضة الاستكشاف', abbr:'DKG',
@@ -939,9 +845,7 @@ const SCHOOLS = [
     { band:'Pre-KG (3 – 4 yrs)',   from:'Pre-KG', to:'Pre-KG', amount:1600 },
     { band:'KG1 – KG2 (4 – 6 yrs)',from:'KG1',    to:'KG2',    amount:1750 }
   ],
-  reviews:[
-    { name:'Lulwa M.', date:'2026-04-11', rating:5, tags:['teaching','facilities'], text:'Completely different from the worksheet nurseries. My daughter spent a month on a project about ants and can tell you more about them than I can.' }
-  ]
+  reviews:[]
 }
 ];
 

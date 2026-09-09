@@ -54,8 +54,9 @@ It is a **design and UX reference**, not the production store — see
 
 ### `schools/` — Kuwait Schools Guide
 A separate, complete directory platform for parents choosing a school in Kuwait: 41 schools with
-curricula, annual tuition per grade level, years offered, locations, Instagram accounts and
-moderated parent reviews — plus comparison, accounts, favourites and a full admin dashboard.
+curricula, annual tuition per grade level, years offered, locations and Instagram accounts, plus
+comparison, accounts, favourites and a full admin dashboard. Review sections start empty — every
+rating comes from a signed-in parent and is published only after moderation.
 Dependency-free, mobile-first, bilingual EN/AR with RTL.
 
 ```bash

@@ -250,7 +250,9 @@ const Data = {
   },
   byId(id){ return this.all().find(s => s.id === id) || null; },
 
-  /* published reviews = seed reviews + approved user reviews */
+  /* Published reviews are approved parent submissions only. The seed array is
+     empty on every school by design and is folded in purely so an imported
+     catalogue that does carry reviews would still render. */
   reviewsFor(id){
     const s = this.byId(id);
     const seed = (s && s.reviews ? s.reviews : []).map(r => Object.assign({ seed:true, status:'approved' }, r));
