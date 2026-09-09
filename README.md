@@ -52,6 +52,19 @@ It is a **design and UX reference**, not the production store — see
 [`07-online-store.md`](docs/07-online-store.md) for the recommended production stack
 (Shopify + custom theme) and how this prototype maps onto it.
 
+### `schools/` — Kuwait Schools Guide
+A separate, complete directory platform for parents choosing a school in Kuwait: 41 schools with
+curricula, annual tuition per grade level, years offered, locations, Instagram accounts and
+moderated parent reviews — plus comparison, accounts, favourites and a full admin dashboard.
+Dependency-free, mobile-first, bilingual EN/AR with RTL.
+
+```bash
+cd schools && python3 -m http.server 8080   # then open http://localhost:8080
+```
+
+Admin demo login `admin@kuwaitschools.kw` / `admin1234`. **The fee figures are indicative seed
+data, not confirmed with the schools** — see [`schools/README.md`](schools/README.md).
+
 ---
 
 ## Start here

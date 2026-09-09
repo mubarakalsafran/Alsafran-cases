@@ -1,0 +1,8 @@
+User-agent: *
+Allow: /
+Disallow: /admin.html
+Disallow: /account.html
+Disallow: /favorites.html
+Disallow: /login.html
+
+Sitemap: https://kuwaitschoolsguide.example/sitemap.xml
