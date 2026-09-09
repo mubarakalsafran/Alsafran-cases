@@ -74,8 +74,8 @@ const SCHOOLS = [
 /* ===== AMERICAN ===== */
 {
   id:'ask', name:'American School of Kuwait', nameAr:'المدرسة الأمريكية بالكويت', abbr:'ASK',
-  curriculum:'American', extras:['AP'], gender:'Mixed', founded:1964, verified:false, featured:true,
-  district:'Hawalli', governorate:'Hawalli', address:'Block 8, Al-Othman Street, Hawalli',
+  curriculum:'American', extras:['AP'], gender:'Mixed', founded:1964, verified:true, featured:true,
+  district:'Hawalli', governorate:'Hawalli', address:'Al Muthanna Street, Hawally',
   lat:29.3320, lng:48.0295, website:'https://www.ask.edu.kw', ig:'americanschoolofkuwait',
   from:'KG1', to:'Grade 12', ages:'4 – 18 years',
   languages:['English','Arabic','French'], accreditation:['NEASC','CIS','College Board (AP)'],
@@ -84,16 +84,22 @@ const SCHOOLS = [
   about:'Founded in 1964, ASK follows a US college-preparatory programme from kindergarten through Grade 12, with Advanced Placement courses in the upper school. The campus sits in Hawalli and serves a broad international community alongside Kuwaiti families.',
   facilities:['Two swimming pools','Full-size gymnasium','Auditorium (600 seats)','Science and robotics labs','Library and media centre','Outdoor athletics track'],
   fees:[
-    { band:'KG1 – KG2',        from:'KG1',      to:'KG2',      amount:3450 },
-    { band:'Grade 1 – Grade 5',from:'Grade 1',  to:'Grade 5',  amount:4300 },
-    { band:'Grade 6 – Grade 8',from:'Grade 6',  to:'Grade 8',  amount:4850 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:5600 }
+    { band:'KG1 – KG2', from:'KG1', to:'KG2', amount:3314 },
+    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5', amount:4306 },
+    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8', amount:4636 },
+    { band:'Grade 9 – Grade 12', from:'Grade 9', to:'Grade 12', amount:5191 }
   ],
+  feeBasis:'school',
+  feeYear:'2026/27',
+  feeSource:'https://www.ask.edu.kw/admissions/tuition-fees/',
+  feeNote:'Enrolment deposit KD 100. Extended day care KD 250.',
+  phone:'1800262',
+  email:'ask@ask.edu.kw',
   reviews:[]
 },
 {
   id:'ais', name:'American International School', nameAr:'المدرسة الأمريكية العالمية', abbr:'AIS',
-  curriculum:'American', extras:['AP'], gender:'Mixed', founded:1994, verified:false, featured:true,
+  curriculum:'American', extras:['AP'], gender:'Mixed', founded:1994, verified:true, featured:true,
   district:'Maidan Hawalli', governorate:'Hawalli', address:'Maidan Hawalli, Block 2',
   lat:29.3208, lng:48.0247, website:'https://www.ais-kuwait.org', ig:'aiskuwait',
   from:'Pre-KG', to:'Grade 12', ages:'3 – 18 years',
@@ -103,11 +109,16 @@ const SCHOOLS = [
   about:'AIS delivers a US standards-based curriculum from Pre-KG to Grade 12 across a purpose-built campus in Maidan Hawalli. The school is known for a wide activities programme and a sizeable secondary school.',
   facilities:['Indoor swimming pool','Two gymnasiums','Theatre','Design and technology workshop','Cafeteria','Dedicated early-years playground'],
   fees:[
-    { band:'Pre-KG – KG2',      from:'Pre-KG',  to:'KG2',      amount:2850 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:3600 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:4100 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:4700 }
+    { band:'KG1', from:'KG1', to:'KG1', amount:2650 },
+    { band:'KG2', from:'KG2', to:'KG2', amount:2871 },
+    { band:'Grade 1 – Grade 4', from:'Grade 1', to:'Grade 4', amount:3917 },
+    { band:'Grade 5 – Grade 8', from:'Grade 5', to:'Grade 8', amount:4136 },
+    { band:'Grade 9 – Grade 12', from:'Grade 9', to:'Grade 12', amount:4581 }
   ],
+  feeBasis:'school',
+  feeYear:'2026/27',
+  feeSource:'https://ais.edu.kw/admissions/tuition-fees',
+  feeNote:'Registration KD 100. Optional book fee KD 50 (Grades 1–12). Bus KD 200–375.',
   reviews:[]
 },
 {
@@ -122,16 +133,21 @@ const SCHOOLS = [
   about:'UAS is one of the longest-standing IB World Schools in Kuwait, offering the Primary Years, Middle Years and Diploma Programmes on a Bayan campus. Students graduate with both an American high-school diploma and, optionally, the IB Diploma.',
   facilities:['Two swimming pools','Sports hall and fitness centre','Black-box theatre','Maker space','IB resource library','Cafeteria'],
   fees:[
-    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:3600 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:4500 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:5200 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:6300 }
+    { band:'KG1 – KG2', from:'KG1', to:'KG2', amount:2265 },
+    { band:'KG3 / Pre-Grade 1', from:'Pre-KG', to:'Pre-KG', amount:2636 },
+    { band:'Grade 1 – Grade 4', from:'Grade 1', to:'Grade 4', amount:3527 },
+    { band:'Grade 5 – Grade 8', from:'Grade 5', to:'Grade 8', amount:3738 },
+    { band:'Grade 9 – Grade 12', from:'Grade 9', to:'Grade 12', amount:3954 }
   ],
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait/the-universal-american-school-kuwait-city/fees',
+  feeNote:'One-time application fee KD 65. Seat deposit KD 350.',
   reviews:[]
 },
 {
   id:'bbs', name:'Al-Bayan Bilingual School', nameAr:'مدرسة البيان ثنائية اللغة', abbr:'BBS',
-  curriculum:'IB', extras:['American','IB DP','Bilingual'], gender:'Mixed', founded:1977, verified:false, featured:true,
+  curriculum:'IB', extras:['American','IB DP','Bilingual'], gender:'Mixed', founded:1977, verified:true, featured:true,
   district:'Hawalli', governorate:'Hawalli', address:'Block 5, Hawalli',
   lat:29.3345, lng:48.0221, website:'https://www.bbs.edu.kw', ig:'bbskuwait',
   from:'KG1', to:'Grade 12', ages:'4 – 18 years',
@@ -141,11 +157,16 @@ const SCHOOLS = [
   about:'BBS was established to give Kuwaiti students a rigorous English-medium education without giving up Arabic and Islamic studies. Instruction is bilingual through the elementary years, and the high school offers the IB Diploma Programme.',
   facilities:['Swimming pool','Two sports halls','Arabic library','Science research labs','Theatre','Art studios'],
   fees:[
-    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:3200 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:4100 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:4800 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:5900 }
+    { band:'KG1', from:'KG1', to:'KG1', amount:2434 },
+    { band:'KG2', from:'KG2', to:'KG2', amount:2650 },
+    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5', amount:4086 },
+    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8', amount:4306 },
+    { band:'Grade 9 – Grade 12', from:'Grade 9', to:'Grade 12', amount:4505 }
   ],
+  feeBasis:'school',
+  feeYear:'2026/27',
+  feeSource:'https://www.bbs.edu.kw/page.dropdown.php?id=237&menu=2',
+  feeNote:'Registration deposit KD 100. Paid in three instalments (40/30/30).',
   reviews:[]
 },
 {
@@ -159,12 +180,12 @@ const SCHOOLS = [
   blurb:'American curriculum with an Islamic ethos, running separate boys’ and girls’ campuses from Grade 5 upward.',
   about:'ACA combines a US standards-based curriculum with Arabic and Islamic studies, and separates boys and girls from the upper elementary years. It is one of the larger private school groups in Kuwait by enrolment.',
   facilities:['Sports halls on both campuses','Swimming pool','Prayer halls','Computer and science labs','Libraries','Bus fleet'],
-  fees:[
-    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:2200 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:2800 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:3200 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:3700 }
-  ],
+  fees:[],
+  feeRange:{ min:2427, max:4516 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  feeNote:'Registration KD 100. Staff children receive tuition discounts.',
   reviews:[]
 },
 {
@@ -179,11 +200,18 @@ const SCHOOLS = [
   about:'AUS opened in 2007 on a new campus in Salmiya and has grown quickly. The school leans into STEAM, with dedicated engineering and design spaces, alongside a conventional US college-preparatory pathway.',
   facilities:['Indoor pool','Engineering and robotics labs','Rooftop play areas','Auditorium','Art and music suites','Cafeteria'],
   fees:[
-    { band:'Pre-KG – KG2',      from:'Pre-KG',  to:'KG2',      amount:2700 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:3400 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:3900 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:4500 }
+    { band:'KG2', from:'KG2', to:'KG2', amount:4700 },
+    { band:'Pre-Grade 1', from:'Pre-KG', to:'Pre-KG', amount:5000 },
+    { band:'Grade 1 – Grade 3', from:'Grade 1', to:'Grade 3', amount:5650 },
+    { band:'Grade 4 – Grade 5', from:'Grade 4', to:'Grade 5', amount:6000 },
+    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8', amount:6750 },
+    { band:'Grade 9 – Grade 10', from:'Grade 9', to:'Grade 10', amount:7850 },
+    { band:'Grade 11 – Grade 12', from:'Grade 11', to:'Grade 12', amount:7950 }
   ],
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait/american-united-school-kuwait-city/fees',
+  feeNote:'One-time assessment fee KD 125.',
   reviews:[]
 },
 {
@@ -203,6 +231,10 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:4300 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:4800 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 {
@@ -216,12 +248,11 @@ const SCHOOLS = [
   blurb:'Bilingual American school with a strong Arabic stream and a compact, well-run campus.',
   about:'Dasman Bilingual School teaches a US curriculum in English while maintaining a full Arabic and Islamic studies programme, aimed primarily at Kuwaiti families who want both without compromise.',
   facilities:['Sports hall','Swimming pool','Science labs','Arabic and English libraries','Music room','Prayer hall'],
-  fees:[
-    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:2600 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:3300 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:3700 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:4200 }
-  ],
+  fees:[],
+  feeRange:{ min:1786, max:3101 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
   reviews:[]
 },
 {
@@ -235,12 +266,11 @@ const SCHOOLS = [
   blurb:'Mid-market bilingual American school serving Mishref and the surrounding suburbs.',
   about:'KBS offers an English-medium American curriculum with Arabic and Islamic studies, positioned as an affordable bilingual option for families in the southern Hawalli suburbs.',
   facilities:['Sports courts','Computer labs','Library','Science labs','Cafeteria','Bus service'],
-  fees:[
-    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:1750 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:2200 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:2500 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:2900 }
-  ],
+  fees:[],
+  feeRange:{ min:3760, max:5665 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
   reviews:[]
 },
 {
@@ -260,6 +290,10 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:3000 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:3500 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 {
@@ -273,12 +307,11 @@ const SCHOOLS = [
   blurb:'All-girls American curriculum school from kindergarten through Grade 12.',
   about:'AAG serves girls only across all grades, pairing a US curriculum with Arabic and Islamic studies. It appeals to families who want a single-sex environment through the secondary years.',
   facilities:['Girls-only sports hall','Swimming pool','Science labs','Library','Art studio','Prayer hall'],
-  fees:[
-    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:2050 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:2600 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:2950 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:3400 }
-  ],
+  fees:[],
+  feeRange:{ min:1648, max:4200 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
   reviews:[]
 },
 {
@@ -292,12 +325,11 @@ const SCHOOLS = [
   blurb:'Established American-curriculum school in the heart of Salmiya.',
   about:'Kuwait American School delivers a US curriculum from KG1 to Grade 12 on a central Salmiya site, with a long-standing local reputation and a mixed international intake.',
   facilities:['Multi-purpose hall','Science labs','Computer suites','Library','Rooftop courts','Cafeteria'],
-  fees:[
-    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:1900 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:2400 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:2750 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:3150 }
-  ],
+  fees:[],
+  feeRange:{ min:1756, max:3488 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
   reviews:[]
 },
 {
@@ -317,6 +349,10 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:1950 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:2250 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 
@@ -324,7 +360,7 @@ const SCHOOLS = [
 {
   id:'bsk', name:'The British School of Kuwait', nameAr:'المدرسة البريطانية بالكويت', abbr:'BSK',
   curriculum:'British', extras:['IGCSE','A-Level','EYFS'], gender:'Mixed', founded:1978, verified:false, featured:true,
-  district:'Salwa', governorate:'Hawalli', address:'Block 10, Salwa',
+  district:'Salwa', governorate:'Hawalli', address:'Salwa, Area 1, Street 1',
   lat:29.2879, lng:48.0776, website:'https://www.bsk.edu.kw', ig:'bskkuwait',
   from:'Nursery', to:'Grade 12', ages:'3 – 18 years',
   languages:['English','Arabic','French'], accreditation:['BSO','COBIS','Cambridge International','Edexcel'],
@@ -332,12 +368,13 @@ const SCHOOLS = [
   blurb:'The best-known British school in Kuwait — EYFS through IGCSE and A-Level on a large Salwa campus.',
   about:'BSK follows the National Curriculum for England from Early Years to Year 13, leading to IGCSEs and A-Levels. It is a British Schools Overseas inspected school and a member of COBIS, with a substantial expatriate and Kuwaiti intake.',
   facilities:['Two swimming pools','Sports fields and courts','Theatre','Sixth-form centre','Design technology suite','Libraries in each school'],
-  fees:[
-    { band:'Nursery – KG2 (FS1–FS2)', from:'Nursery',  to:'KG2',      amount:3300 },
-    { band:'Years 1 – 6',             from:'Grade 1',  to:'Grade 5',  amount:4400 },
-    { band:'Years 7 – 9',             from:'Grade 6',  to:'Grade 8',  amount:5100 },
-    { band:'Years 10 – 13',           from:'Grade 9',  to:'Grade 12', amount:6200 }
-  ],
+  fees:[],
+  feeBasis:'on-request',
+  feeYear:'2026/27',
+  feeSource:'https://www.bsk.edu.kw/admissions/tuition-fees',
+  feeNote:'BSK does not publish fees. Its Accounts Team quotes per year group on request.',
+  phone:'+965 1830456',
+  email:'accounts@bie.com.kw',
   reviews:[]
 },
 {
@@ -351,12 +388,12 @@ const SCHOOLS = [
   blurb:'Long-established British school in Salwa with a strong IGCSE and A-Level record.',
   about:'KES teaches the English National Curriculum through to A-Level, with a reputation built on academic results and a stable, largely British teaching staff.',
   facilities:['Swimming pool','Sports hall','Astroturf pitch','Science labs','Sixth-form study centre','Auditorium'],
-  fees:[
-    { band:'KG1 – KG2',      from:'KG1',     to:'KG2',      amount:2900 },
-    { band:'Years 1 – 6',    from:'Grade 1', to:'Grade 5',  amount:3800 },
-    { band:'Years 7 – 9',    from:'Grade 6', to:'Grade 8',  amount:4400 },
-    { band:'Years 10 – 13',  from:'Grade 9', to:'Grade 12', amount:5300 }
-  ],
+  fees:[],
+  feeRange:{ min:1778, max:4800 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  feeNote:'Registration / re-enrolment KD 100, set under Ministry of Education rules.',
   reviews:[]
 },
 {
@@ -370,18 +407,17 @@ const SCHOOLS = [
   blurb:'The oldest English-medium school in Kuwait, running from Nursery to IGCSE in Shamiya.',
   about:'Founded in 1953, The English School is the longest-established British school in Kuwait. It runs the English National Curriculum from Early Years to Year 11, finishing with IGCSEs.',
   facilities:['Swimming pool','Playing fields','Library','Science labs','Music and drama rooms','Early Years garden'],
-  fees:[
-    { band:'Nursery – KG2', from:'Nursery',  to:'KG2',      amount:2500 },
-    { band:'Years 1 – 6',   from:'Grade 1',  to:'Grade 5',  amount:3300 },
-    { band:'Years 7 – 9',   from:'Grade 6',  to:'Grade 8',  amount:3900 },
-    { band:'Years 10 – 11', from:'Grade 9',  to:'Grade 11', amount:4400 }
-  ],
+  fees:[],
+  feeRange:{ min:1841, max:3535 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
   reviews:[]
 },
 {
   id:'nes', name:'The New English School', nameAr:'المدرسة الإنجليزية الجديدة', abbr:'NES',
-  curriculum:'British', extras:['IGCSE','A-Level'], gender:'Mixed', founded:1969, verified:false, featured:true,
-  district:'Jabriya', governorate:'Hawalli', address:'Block 3, Jabriya',
+  curriculum:'British', extras:['IGCSE','A-Level'], gender:'Mixed', founded:1969, verified:true, featured:true,
+  district:'Jabriya', governorate:'Hawalli', address:'Jabriya, Block 12, Street 1',
   lat:29.3172, lng:48.0246, website:'https://www.neskt.com', ig:'nes_kuwait',
   from:'KG1', to:'Grade 12', ages:'4 – 18 years',
   languages:['English','Arabic','French'], accreditation:['BSO','COBIS','Cambridge International'],
@@ -390,11 +426,19 @@ const SCHOOLS = [
   about:'NES has run the English National Curriculum in Jabriya since 1969, with entry assessments and a strong record at IGCSE and A-Level. It is one of the largest British schools in the country by enrolment.',
   facilities:['Two swimming pools','Sports halls','Auditorium','Sixth-form block','Science and IT labs','Libraries'],
   fees:[
-    { band:'KG1 – KG2',     from:'KG1',     to:'KG2',      amount:2750 },
-    { band:'Years 1 – 6',   from:'Grade 1', to:'Grade 5',  amount:3600 },
-    { band:'Years 7 – 9',   from:'Grade 6', to:'Grade 8',  amount:4200 },
-    { band:'Years 10 – 13', from:'Grade 9', to:'Grade 12', amount:5000 }
+    { band:'Kindergarten', from:'KG1', to:'KG2', amount:1733 },
+    { band:'Reception – Year 2', from:'Grade 1', to:'Grade 2', amount:2678 },
+    { band:'Years 3 – 6', from:'Grade 3', to:'Grade 6', amount:2977 },
+    { band:'Years 7 – 9', from:'Grade 7', to:'Grade 9', amount:3510 },
+    { band:'Years 10 – 11', from:'Grade 10', to:'Grade 11', amount:3510 },
+    { band:'Years 12 – 13 (A Level)', from:'Grade 12', to:'Grade 12', amount:4430 }
   ],
+  feeBasis:'school',
+  feeYear:'2024/25',
+  feeSource:'https://www.neskt.com',
+  feeNote:'Resources & technology fee KD 25–180 by year group. No sibling discount.',
+  phone:'+965 2531 8060',
+  email:'admin@neskt.org',
   reviews:[]
 },
 {
@@ -408,12 +452,11 @@ const SCHOOLS = [
   blurb:'British curriculum school in Hawalli covering KG1 to A-Level.',
   about:'Gulf English School follows the English National Curriculum with IGCSE and A-Level examinations, serving a mixed Kuwaiti and expatriate community in central Hawalli.',
   facilities:['Sports hall','Swimming pool','Science labs','Library','ICT suites','Cafeteria'],
-  fees:[
-    { band:'KG1 – KG2',     from:'KG1',     to:'KG2',      amount:2200 },
-    { band:'Years 1 – 6',   from:'Grade 1', to:'Grade 5',  amount:2900 },
-    { band:'Years 7 – 9',   from:'Grade 6', to:'Grade 8',  amount:3300 },
-    { band:'Years 10 – 13', from:'Grade 9', to:'Grade 12', amount:3900 }
-  ],
+  fees:[],
+  feeRange:{ min:1692, max:3893 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
   reviews:[]
 },
 {
@@ -428,11 +471,16 @@ const SCHOOLS = [
   about:'KNES teaches the English National Curriculum to A-Level, with French from the primary years and a well-regarded music programme.',
   facilities:['Sports hall','Music suite','Science labs','Library','Language rooms','Rooftop play area'],
   fees:[
-    { band:'KG1 – KG2',     from:'KG1',     to:'KG2',      amount:2000 },
-    { band:'Years 1 – 6',   from:'Grade 1', to:'Grade 5',  amount:2600 },
-    { band:'Years 7 – 9',   from:'Grade 6', to:'Grade 8',  amount:3000 },
-    { band:'Years 10 – 13', from:'Grade 9', to:'Grade 12', amount:3550 }
+    { band:'KG1', from:'KG1', to:'KG1', amount:1494 },
+    { band:'KG2', from:'KG2', to:'KG2', amount:2289 },
+    { band:'Grade 1 – Grade 4', from:'Grade 1', to:'Grade 4', amount:2765 },
+    { band:'Grade 5 – Grade 10', from:'Grade 5', to:'Grade 10', amount:2926 },
+    { band:'Grade 11', from:'Grade 11', to:'Grade 11', amount:4630 },
+    { band:'Grade 12', from:'Grade 12', to:'Grade 12', amount:4862 }
   ],
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait/kuwait-national-english-school/fees',
   reviews:[]
 },
 {
@@ -446,12 +494,11 @@ const SCHOOLS = [
   blurb:'British curriculum school serving Mangaf, Fahaheel and the Ahmadi governorate.',
   about:'Cambridge English School delivers the English National Curriculum through to IGCSE in the south of Kuwait, where British options are thinner on the ground.',
   facilities:['Sports courts','Science labs','Library','ICT lab','Cafeteria','Bus fleet'],
-  fees:[
-    { band:'KG1 – KG2',     from:'KG1',     to:'KG2',      amount:1400 },
-    { band:'Years 1 – 6',   from:'Grade 1', to:'Grade 5',  amount:1800 },
-    { band:'Years 7 – 9',   from:'Grade 6', to:'Grade 8',  amount:2100 },
-    { band:'Years 10 – 11', from:'Grade 9', to:'Grade 11', amount:2450 }
-  ],
+  fees:[],
+  feeBasis:'on-request',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  feeNote:'Cambridge English School does not publish its fees.',
   reviews:[]
 },
 {
@@ -465,12 +512,11 @@ const SCHOOLS = [
   blurb:'Affordable British curriculum school in Hawalli through to IGCSE.',
   about:'KIES offers the English National Curriculum at accessible fees, with a mixed intake drawn largely from Hawalli and Salmiya.',
   facilities:['Multi-purpose hall','Science labs','Library','Computer lab','Prayer room','Cafeteria'],
-  fees:[
-    { band:'KG1 – KG2',     from:'KG1',     to:'KG2',      amount:1250 },
-    { band:'Years 1 – 6',   from:'Grade 1', to:'Grade 5',  amount:1600 },
-    { band:'Years 7 – 9',   from:'Grade 6', to:'Grade 8',  amount:1850 },
-    { band:'Years 10 – 11', from:'Grade 9', to:'Grade 11', amount:2150 }
-  ],
+  fees:[],
+  feeRange:{ min:1389, max:3689 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
   reviews:[]
 },
 {
@@ -489,6 +535,10 @@ const SCHOOLS = [
     { band:'Years 1 – 6',   from:'Grade 1',  to:'Grade 5', amount:2100 },
     { band:'Years 7 – 10',  from:'Grade 6',  to:'Grade 9', amount:2450 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 
@@ -504,12 +554,12 @@ const SCHOOLS = [
   blurb:'The largest Indian school group in Kuwait, CBSE affiliated, across several branches.',
   about:'ICSK has served the Indian community in Kuwait since 1964 and now operates multiple branches under CBSE affiliation, offering Science, Commerce and Humanities streams in the senior secondary years.',
   facilities:['Auditoriums','Sports grounds','Science and computer labs','Libraries','Medical rooms','Large bus fleet'],
-  fees:[
-    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:620 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:760 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:890 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1150 }
-  ],
+  fees:[],
+  feeRange:{ min:378, max:561 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  feeNote:'Varies by branch. One-time admission fee KD 10; three instalments.',
   reviews:[]
 },
 {
@@ -529,6 +579,10 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:850 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1090 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 {
@@ -548,6 +602,10 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:870 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1120 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 {
@@ -567,6 +625,10 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:690 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:880 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 {
@@ -580,12 +642,11 @@ const SCHOOLS = [
   blurb:'CBSE school in Abbassiya known for consistent Grade 10 and 12 board results.',
   about:'Integrated Indian School runs the CBSE curriculum with Science and Commerce streams, and a track record of solid board examination performance relative to its fee level.',
   facilities:['Science labs','Computer labs','Library','Assembly hall','Sports courts','Bus fleet'],
-  fees:[
-    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:490 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:610 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:720 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:920 }
-  ],
+  fees:[],
+  feeRange:{ min:340, max:488 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
   reviews:[]
 },
 {
@@ -599,12 +660,11 @@ const SCHOOLS = [
   blurb:'CBSE school in Khaitan with a strong pastoral reputation.',
   about:'Carmel School offers CBSE education from KG1 to Grade 12, with a values-led pastoral programme and a long-standing presence in Khaitan.',
   facilities:['Assembly hall','Science labs','Library','Computer lab','Playground','Bus service'],
-  fees:[
-    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:520 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:640 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:750 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:960 }
-  ],
+  fees:[],
+  feeBasis:'on-request',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  feeNote:'Carmel School does not publish its fees.',
   reviews:[]
 },
 {
@@ -618,12 +678,11 @@ const SCHOOLS = [
   blurb:'CBSE school with a Salmiya location convenient for Hawalli families.',
   about:'Indian Educational School serves the Indian community in Salmiya and Hawalli with a CBSE curriculum and a shorter commute than the Abbassiya cluster.',
   facilities:['Science labs','Computer lab','Library','Indoor hall','Rooftop play area','Bus service'],
-  fees:[
-    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:560 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:690 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:810 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1020 }
-  ],
+  fees:[],
+  feeRange:{ min:715, max:1320 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
   reviews:[]
 },
 {
@@ -643,6 +702,10 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:730 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:940 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 
@@ -661,6 +724,10 @@ const SCHOOLS = [
   fees:[
     { band:'KG1 – Grade 12 (Kuwaiti citizens)', from:'KG1', to:'Grade 12', amount:0 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 {
@@ -680,6 +747,10 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:1300 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1500 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 {
@@ -699,6 +770,10 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:1400 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1650 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 {
@@ -718,6 +793,10 @@ const SCHOOLS = [
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:1220 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1420 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 
@@ -738,6 +817,10 @@ const SCHOOLS = [
     { band:'Pre-KG (3 – 4 yrs)',  from:'Pre-KG',  to:'Pre-KG',  amount:1650 },
     { band:'KG1 – KG2 (4 – 6 yrs)',from:'KG1',    to:'KG2',     amount:1900 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 {
@@ -756,6 +839,10 @@ const SCHOOLS = [
     { band:'Pre-KG (2.5 – 3.5 yrs)',   from:'Pre-KG',  to:'Pre-KG',  amount:1400 },
     { band:'KG1 (3.5 – 4 yrs)',        from:'KG1',     to:'KG1',     amount:1550 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 {
@@ -774,6 +861,10 @@ const SCHOOLS = [
     { band:'Pre-KG (3 – 4 yrs)',  from:'Pre-KG',  to:'Pre-KG',  amount:1300 },
     { band:'KG1 – KG2 (4 – 5 yrs)',from:'KG1',    to:'KG2',     amount:1450 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 {
@@ -792,6 +883,10 @@ const SCHOOLS = [
     { band:'Pre-KG (3 – 4 yrs)',  from:'Pre-KG',  to:'Pre-KG',  amount:1450 },
     { band:'KG1 – KG2 (4 – 5 yrs)',from:'KG1',    to:'KG2',     amount:1600 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 {
@@ -810,6 +905,10 @@ const SCHOOLS = [
     { band:'Pre-KG (3 – 4 yrs)',   from:'Pre-KG',  to:'Pre-KG',  amount:1700 },
     { band:'KG1 – KG2 (4 – 6 yrs)',from:'KG1',     to:'KG2',     amount:1850 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 {
@@ -828,6 +927,10 @@ const SCHOOLS = [
     { band:'Pre-KG (2.5 – 3.5 yrs)',   from:'Pre-KG',  to:'Pre-KG',  amount:1180 },
     { band:'KG1 (3.5 – 4 yrs)',        from:'KG1',     to:'KG1',     amount:1300 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 },
 {
@@ -845,18 +948,34 @@ const SCHOOLS = [
     { band:'Pre-KG (3 – 4 yrs)',   from:'Pre-KG', to:'Pre-KG', amount:1600 },
     { band:'KG1 – KG2 (4 – 6 yrs)',from:'KG1',    to:'KG2',    amount:1750 }
   ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
   reviews:[]
 }
 ];
 
 /* ---------------- derived helpers ---------------- */
 
-/* fee floor / ceiling across all bands, in KWD per year */
+/* Fee floor / ceiling in KWD per academic year.
+   Three shapes exist, so callers must check `known`:
+     - per-band fees[]        → min/max across the bands
+     - feeRange only          → the school publishes a range, not a breakdown
+     - neither ('on-request') → the school publishes nothing at all */
 function feeRange(s){
   const amounts = (s.fees || []).map(f => f.amount);
-  if(!amounts.length) return { min:0, max:0 };
-  return { min:Math.min.apply(null, amounts), max:Math.max.apply(null, amounts) };
+  if(amounts.length){
+    return { min:Math.min.apply(null, amounts), max:Math.max.apply(null, amounts), known:true, banded:true };
+  }
+  if(s.feeRange){
+    return { min:s.feeRange.min, max:s.feeRange.max, known:true, banded:false };
+  }
+  return { min:0, max:0, known:false, banded:false };
 }
+
+/* has this school's fee data been confirmed against a real source? */
+function feesConfirmed(s){ return s.feeBasis === 'school' || s.feeBasis === 'directory'; }
 
 function gradeIndex(g){ return GRADE_LADDER.indexOf(g); }
 
@@ -874,5 +993,8 @@ const GOV_BY_ID        = GOVERNORATES.reduce((m,g)=>{ m[g.id]=g; return m; },{})
 /* districts, de-duplicated, for the location filter */
 const DISTRICTS = Array.from(new Set(SCHOOLS.map(s=>s.district))).sort();
 
-/* the widest fee band in the catalogue, for the slider bounds */
-const FEE_CEILING = SCHOOLS.reduce((n,s)=>Math.max(n, feeRange(s).max), 0);
+/* the widest published fee in the catalogue, for the slider bounds */
+const FEE_CEILING = SCHOOLS.reduce((n,s)=>{
+  const r = feeRange(s);
+  return r.known ? Math.max(n, r.max) : n;
+}, 0);

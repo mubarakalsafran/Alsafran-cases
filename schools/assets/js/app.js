@@ -98,7 +98,17 @@ const T = {
   feeRange:       ['Maximum annual fee','الحد الأعلى للرسوم السنوية'],
   gradeLevels:    ['Grade levels','المراحل الدراسية'],
   verifyPending:  ['Details pending school confirmation','بيانات في انتظار تأكيد المدرسة'],
-  verified:       ['Verified by the school','بيانات مؤكدة من المدرسة'],
+  verified:       ['Fees from the school’s website','الرسوم من موقع المدرسة'],
+  feesOnRequest:  ['Fees on request','الرسوم عند الطلب'],
+  feesNotPublic:  ['This school does not publish its fees','هذه المدرسة لا تنشر رسومها'],
+  feesAskSchool:  ['Contact the school for a quote per year group','تواصل مع المدرسة لمعرفة الرسوم لكل صف'],
+  feesEstimate:   ['Estimate — not confirmed','تقديري — غير مؤكد'],
+  feesDirectory:  ['Published fee data','بيانات رسوم منشورة'],
+  feeRangeOnly:   ['Published as a range — no per-grade breakdown','منشورة كنطاق — بدون تفصيل لكل صف'],
+  feeYearLabel:   ['Academic year','العام الدراسي'],
+  feeSourceLabel: ['Source','المصدر'],
+  feeExtras:      ['Also payable','مبالغ إضافية'],
+  moeNote:        ['Private school fees in Kuwait are set and approved by the Ministry of Education, so they can change year to year.','رسوم المدارس الخاصة في الكويت تُحدَّد وتُعتمد من وزارة التربية، وقد تتغير من سنة إلى أخرى.'],
   featured:       ['Featured','مميزة'],
   topRated:       ['Top rated','الأعلى تقييماً'],
   about:          ['About the school','عن المدرسة'],
@@ -445,6 +455,21 @@ function kwd(n){
   if(n === 0) return t('free');
   return Number(n).toLocaleString('en-US') + ' ' + t('kwd');
 }
+/* one place decides how a school's fee headline reads, whatever shape its
+   data is in — per-band, range-only, or not published at all */
+function feeHeadline(s){
+  const r = feeRange(s);
+  if(!r.known) return t('feesOnRequest');
+  if(r.min === r.max) return kwd(r.min);
+  return kwd(r.min) + ' – ' + kwd(r.max);
+}
+/* the provenance chip shown on cards and profiles */
+function feeBadge(s){
+  if(s.feeBasis === 'school')     return '<span class="badge badge-green">' + esc(t('verified')) + '</span>';
+  if(s.feeBasis === 'on-request') return '<span class="badge badge-soft">' + esc(t('feesOnRequest')) + '</span>';
+  if(s.feeBasis === 'directory')  return '<span class="badge badge-soft">' + esc(t('feesDirectory')) + '</span>';
+  return '<span class="badge badge-pend">' + esc(t('feesEstimate')) + '</span>';
+}
 function fmtDate(iso){
   const d = new Date(iso + (iso.length === 10 ? 'T00:00:00' : ''));
   if(isNaN(d)) return iso;
@@ -644,14 +669,25 @@ function cardHTML(s,opts){
   const cur = CURRICULUM_BY_ID[s.curriculum];
   const showAges = opts.ages || s.curriculum === 'Early';
 
-  /* up to three fee bands on the card; the profile shows the full table */
-  const bands = (s.fees || []).slice(0, opts.feeRows || 3).map(f =>
-    '<span class="fee-row' + (f.amount === 0 ? ' free' : '') + '">' +
-      '<span>' + esc(f.band) + '</span><span class="amt">' + esc(kwd(f.amount)) + '</span></span>').join('');
-  const more = (s.fees || []).length > (opts.feeRows || 3)
-    ? '<span class="fee-row" style="color:var(--muted)"><span>+ ' +
-      ((s.fees.length - (opts.feeRows || 3)) + (Lang.isAr() ? ' مراحل أخرى' : ' more bands')) + '</span><span></span></span>'
-    : '';
+  /* Up to three fee bands on the card; the profile shows the full table.
+     Schools that publish only a range, or nothing at all, say so instead. */
+  const rows = opts.feeRows || 3;
+  let bands, more = '';
+  if(fr.banded){
+    bands = s.fees.slice(0, rows).map(f =>
+      '<span class="fee-row' + (f.amount === 0 ? ' free' : '') + '">' +
+        '<span>' + esc(f.band) + '</span><span class="amt">' + esc(kwd(f.amount)) + '</span></span>').join('');
+    more = s.fees.length > rows
+      ? '<span class="fee-row" style="color:var(--muted)"><span>+ ' +
+        ((s.fees.length - rows) + (Lang.isAr() ? ' مراحل أخرى' : ' more bands')) + '</span><span></span></span>'
+      : '';
+  }else if(fr.known){
+    bands = '<span class="fee-row"><span>' + esc(s.from + ' – ' + s.to) + '</span>' +
+            '<span class="amt">' + esc(kwd(fr.min)) + ' – ' + esc(kwd(fr.max)) + '</span></span>' +
+            '<span class="fee-row" style="color:var(--muted)"><span>' + esc(t('feeRangeOnly')) + '</span><span></span></span>';
+  }else{
+    bands = '<span class="fee-row"><span>' + esc(t('feesNotPublic')) + '</span><span></span></span>';
+  }
 
   return '' +
   '<article class="card" data-school="' + esc(s.id) + '">' +
@@ -675,10 +711,17 @@ function cardHTML(s,opts){
       (showAges ? '<span class="fact">' + I.cal + '<span>' + esc(t('ages')) + ': <b>' + esc(s.ages) + '</b></span></span>' : '') +
       '<span class="fact">' + I.pin + '<span>' + esc(s.district) + ' · ' +
         '<a href="' + mapsUrl(s) + '" target="_blank" rel="noopener noreferrer">' + esc(t('map')) + '</a></span></span>' +
-      '<span class="fact">' + I.wallet + '<span>' + esc(t('feesFrom')) + ' <b class="kwd">' + esc(kwd(fr.min)) +
-        '</b> ' + esc(t('perYear')) + '</span></span>' +
+      '<span class="fact">' + I.wallet + '<span>' +
+        (fr.known
+          ? esc(t('feesFrom')) + ' <b class="kwd">' + esc(kwd(fr.min)) + '</b> ' + esc(t('perYear'))
+          : '<b>' + esc(t('feesOnRequest')) + '</b>') +
+        '</span></span>' +
     '</div>' +
-    '<div class="fee-strip"><b>' + esc(t('fees')) + ' — ' + esc(t('kwd')) + '</b>' + bands + more + '</div>' +
+    '<div class="fee-strip">' +
+      '<b style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">' +
+        esc(t('fees')) + (s.feeYear ? ' ' + esc(s.feeYear) : '') + ' — ' + esc(t('kwd')) +
+        feeBadge(s) +
+      '</b>' + bands + more + '</div>' +
     '<div class="card-foot">' +
       '<a class="btn btn-ghost btn-sm" href="school.html?id=' + encodeURIComponent(s.id) + '">' +
         esc(t('viewProfile')) + '</a>' +
@@ -757,7 +800,12 @@ function matches(s,q){
   if(q.cur.length  && q.cur.indexOf(s.curriculum) < 0) return false;
   if(q.dist.length && q.dist.indexOf(s.district) < 0) return false;
   if(q.gov.length  && q.gov.indexOf(s.governorate) < 0) return false;
-  if(q.max != null && feeRange(s).min > q.max) return false;
+  /* A school that publishes no fees has nothing to compare against, so it is
+     excluded once a fee ceiling is set rather than being treated as free. */
+  if(q.max != null){
+    const r = feeRange(s);
+    if(!r.known || r.min > q.max) return false;
+  }
   if(q.grp.length){
     const groups = GRADE_GROUPS.filter(g => q.grp.indexOf(g.id) >= 0);
     if(!groups.some(g => coversGroup(s,g))) return false;
@@ -767,8 +815,12 @@ function matches(s,q){
 
 function sortList(list,how){
   const arr = list.slice();
-  if(how === 'feeLow')  return arr.sort((a,b)=> feeRange(a).min - feeRange(b).min);
-  if(how === 'feeHigh') return arr.sort((a,b)=> feeRange(b).min - feeRange(a).min);
+  /* schools with no published fees have no place on a price ladder — park
+     them at the end of both directions rather than letting 0 win "cheapest" */
+  const lo = s => { const r = feeRange(s); return r.known ? r.min : Infinity; };
+  if(how === 'feeLow')  return arr.sort((a,b)=> lo(a) - lo(b));
+  if(how === 'feeHigh') return arr.sort((a,b)=>
+    (lo(b) === Infinity ? -1 : lo(b)) - (lo(a) === Infinity ? -1 : lo(a)));
   if(how === 'name')    return arr.sort((a,b)=> schoolName(a).localeCompare(schoolName(b)));
   /* default: rating desc, then review count, then featured */
   return arr.sort((a,b)=>{
@@ -813,7 +865,7 @@ global.KSG = {
   $:$, $$:$$, esc:esc, store:store, K:K,
   t:t, lbl:lbl, Lang:Lang, schoolName:schoolName,
   I:I, starsHTML:starsHTML, logoHTML:logoHTML, curBadge:curBadge,
-  kwd:kwd, fmtDate:fmtDate, initials:initials,
+  kwd:kwd, feeHeadline:feeHeadline, feeBadge:feeBadge, fmtDate:fmtDate, initials:initials,
   mapsUrl:mapsUrl, mapEmbed:mapEmbed, igUrl:igUrl,
   Data:Data, Auth:Auth, Favs:Favs, Compare:Compare, hash:hash,
   toast:toast, cardHTML:cardHTML, renderCards:renderCards, bindCardActions:bindCardActions,

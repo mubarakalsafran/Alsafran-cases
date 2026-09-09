@@ -12,27 +12,38 @@ No build step, no npm install, no framework. Twelve HTML pages, one stylesheet, 
 
 ---
 
-## ⚠️ Read this first — the data is seed data
+## Fee data and where it comes from
 
-**School names, districts and curricula are real. Fee figures, phone numbers and some Instagram
-handles are indicative placeholders and have not been confirmed with the schools.**
+Fees were gathered from the schools' own websites and a cross-checked fee directory. Every school
+carries a `feeBasis` and a badge in the UI saying how good its numbers are:
 
-They are set at realistic levels for each curriculum tier so the filters, sorting and comparison
-behave like the real thing, but no figure in `assets/js/data.js` should be published as fact.
-Every record carries `verified: false`, the site shows a standing "pending confirmation" notice,
-and each profile is badged accordingly.
+| `feeBasis` | Badge | Meaning | Count |
+|---|---|---|---|
+| `school` | Fees from the school's website | Taken from the school's own official site, with the source URL and academic year | 4 |
+| `directory` | Published fee data | From the International Schools Database, cross-checked against schools' own figures | 15 |
+| `on-request` | Fees on request | The school publishes no fees; the profile says so and gives the contact route | 3 |
+| `estimate` | Estimate — not confirmed | No source found. **The figure is a guess and must not be relied on.** | 19 |
 
-Two deliberate choices follow from that:
+The cross-check matters: for the American School of Kuwait (3,314–5,191 KWD) and Al-Bayan
+Bilingual School (2,434–4,505 KWD) the directory matches the schools' own published figures
+exactly, which is why the `directory` tier is trusted — but it is still not the school, so it is
+badged differently.
 
-- **Phone numbers are omitted, not invented.** Fabricating an 8-digit Kuwaiti landline risks
-  printing a real person's number. Profiles show *"Added once the school confirms"* instead.
-- **Unknown Instagram handles resolve to a search, not a guess.** Where `ig` is `null`, the
-  Instagram icon opens an Instagram keyword search for the school name, so the directory never
-  links parents to an account that might belong to someone else.
+**The 19 `estimate` schools still need real numbers.** They are mostly nurseries, Indian-curriculum
+schools and Arabic-curriculum schools that do not publish fees online. Enter them from the admin
+dashboard, which records the source URL and academic year alongside each figure.
 
-Before launch, replace the fee tables and contact fields with figures confirmed by each school —
-the admin dashboard is built for exactly that, and its **Data & reset → Export** view emits the
-live catalogue as JSON to paste back into `data.js`.
+Two deliberate choices remain:
+
+- **Phone numbers are not invented.** Only confirmed numbers are stored (ASK, NES, BSK so far);
+  everything else shows *"Added once the school confirms"* rather than a plausible-looking Kuwaiti
+  landline that might reach a real person.
+- **Unknown Instagram handles resolve to a search, not a guess.** Where `ig` is `null`, the icon
+  opens an Instagram keyword search, so the directory never links parents to an account that might
+  belong to someone else.
+
+Also worth knowing, and stated on the site: **private school fees in Kuwait are set and approved by
+the Ministry of Education**, so they move year to year. Every figure is shown with its academic year.
 
 ---
 

@@ -12,7 +12,7 @@
 
 const {
   $, $$, esc, t, lbl, Lang, schoolName, I, starsHTML, logoHTML, curBadge,
-  kwd, fmtDate, Data, Auth, toast, store, K, ADMIN_SEED
+  kwd, feeHeadline, feeBadge, fmtDate, Data, Auth, toast, store, K, ADMIN_SEED
 } = global.KSG;
 
 const A = {};
@@ -239,7 +239,8 @@ A.schools = function(){
         '<td>' + curBadge(s) + '</td>' +
         '<td>' + esc(s.from + ' – ' + s.to) + '</td>' +
         '<td>' + esc(s.district) + '</td>' +
-        '<td style="font-family:var(--f-num);white-space:nowrap">' + esc(kwd(fr.min)) + ' – ' + esc(kwd(fr.max)) + '</td>' +
+        '<td style="white-space:nowrap"><span style="font-family:var(--f-num)">' +
+          esc(feeHeadline(s)) + '</span><br>' + feeBadge(s) + '</td>' +
         '<td>' + (s.ig ? '@' + esc(s.ig) : '<span style="color:var(--muted)">—</span>') + '</td>' +
         '<td><span class="acts">' +
           '<button class="btn btn-ghost btn-sm" data-edit="' + esc(s.id) + '">' + I.edit +
@@ -266,7 +267,8 @@ A.schoolForm = function(id){
     founded:new Date().getFullYear(), district:'', governorate:'Hawalli', address:'',
     lat:'', lng:'', website:'', ig:'', from:'KG1', to:'Grade 12', ages:'',
     languages:['English','Arabic'], accreditation:[], transport:true, theme:['#0B2545','#1B6CA8'],
-    blurb:'', about:'', facilities:[], fees:[], reviews:[], featured:false, verified:false
+    blurb:'', about:'', facilities:[], fees:[], reviews:[], featured:false, verified:false,
+    feeBasis:'estimate', feeYear:'', feeSource:'', feeNote:'', feeRange:null
   };
 
   const gradeOpts = sel => GRADE_LADDER.map(g =>
@@ -333,6 +335,23 @@ A.schoolForm = function(id){
           esc((v.fees||[]).map(x => [x.band,x.from,x.to,x.amount].join(' | ')).join('\n')) +
           '</textarea></label>' +
 
+        '<label class="field"><span>' + esc(Lang.isAr()?'مصدر الرسوم':'Where the fees came from') + '</span>' +
+          '<select class="inp" name="feeBasis">' +
+            [['school',   Lang.isAr()?'موقع المدرسة (مؤكد)':'The school\u2019s own website (verified)'],
+             ['directory',Lang.isAr()?'دليل رسوم منشور':'A published fee directory'],
+             ['on-request',Lang.isAr()?'المدرسة لا تنشر رسومها':'The school does not publish fees'],
+             ['estimate', Lang.isAr()?'تقدير غير مؤكد':'Unconfirmed estimate']]
+            .map(([val,label]) => '<option value="' + val + '"' +
+              ((v.feeBasis||'estimate') === val ? ' selected' : '') + '>' + esc(label) + '</option>').join('') +
+          '</select></label>' +
+        f('feeYear', Lang.isAr()?'العام الدراسي للرسوم':'Fee academic year (e.g. 2026/27)', v.feeYear) +
+        f('feeSource', Lang.isAr()?'رابط مصدر الرسوم':'Fee source URL', v.feeSource, 'span2') +
+        f('feeNote', Lang.isAr()?'مبالغ إضافية / ملاحظات':'Other payable amounts / notes', v.feeNote, 'span2') +
+        f('feeRangeMin', Lang.isAr()?'أدنى رسوم (إن لم تُفصّل)':'Fee range minimum (if no bands)',
+          v.feeRange ? v.feeRange.min : '') +
+        f('feeRangeMax', Lang.isAr()?'أعلى رسوم (إن لم تُفصّل)':'Fee range maximum (if no bands)',
+          v.feeRange ? v.feeRange.max : '') +
+
         '<label class="field"><span>' + esc(Lang.isAr()?'لون الشعار ١':'Logo colour 1') + '</span>' +
           '<input class="inp" type="color" name="c1" value="' + esc(v.theme[0]) + '"></label>' +
         '<label class="field"><span>' + esc(Lang.isAr()?'لون الشعار ٢':'Logo colour 2') + '</span>' +
@@ -341,10 +360,7 @@ A.schoolForm = function(id){
         '<label class="check span2"><input type="checkbox" name="featured"' + (v.featured?' checked':'') + '>' +
           '<span>' + esc(Lang.isAr()?'إظهار في المدارس المميزة على الرئيسية':'Show in Featured schools on the homepage') +
           '</span></label>' +
-        '<label class="check span2"><input type="checkbox" name="verified"' + (v.verified?' checked':'') + '>' +
-          '<span>' + esc(Lang.isAr()
-            ? 'الرسوم وبيانات التواصل مؤكدة مع المدرسة'
-            : 'Fees and contact details confirmed with the school') + '</span></label>' +
+
       '</div>' +
       '<div id="schMsg"></div>' +
       '<div class="modal-foot">' +
@@ -371,10 +387,15 @@ A.schoolForm = function(id){
       if(GRADE_LADDER.indexOf(p[1]) < 0 || GRADE_LADDER.indexOf(p[2]) < 0 || isNaN(amt)) return;
       fees.push({ band:p[0], from:p[1], to:p[2], amount:amt });
     });
-    if(!fees.length){
+    const basis = get('feeBasis') || 'estimate';
+    const rMin = Number(get('feeRangeMin')), rMax = Number(get('feeRangeMax'));
+    const hasRange = !isNaN(rMin) && !isNaN(rMax) && rMin > 0 && rMax >= rMin;
+    /* Bands are optional: a school may publish only a range, or nothing at
+       all. But anything other than "does not publish" needs some figure. */
+    if(!fees.length && !hasRange && basis !== 'on-request'){
       $('#schMsg').innerHTML = '<div class="msg msg-err">' + esc(Lang.isAr()
-        ? 'أضف مرحلة رسوم واحدة على الأقل بالصيغة الصحيحة.'
-        : 'Add at least one valid fee band — Label | From grade | To grade | Amount.') + '</div>';
+        ? 'أضف مراحل رسوم أو نطاقاً، أو اختر «المدرسة لا تنشر رسومها».'
+        : 'Add fee bands or a fee range — or set the source to “The school does not publish fees”.') + '</div>';
       return;
     }
     if(GRADE_LADDER.indexOf(get('from')) > GRADE_LADDER.indexOf(get('to'))){
@@ -397,9 +418,15 @@ A.schoolForm = function(id){
       transport:get('transport') === '1',
       blurb:get('blurb'), about:get('about') || get('blurb'),
       fees:fees,
+      feeRange:(!fees.length && hasRange) ? { min:rMin, max:rMax } : null,
+      feeBasis:basis,
+      feeYear:get('feeYear'),
+      feeSource:get('feeSource'),
+      feeNote:get('feeNote'),
       theme:[get('c1'), get('c2')],
       featured:!!fd.get('featured'),
-      verified:!!fd.get('verified')
+      /* "verified" means the figures came from the school itself */
+      verified:basis === 'school'
     };
 
     if(isNew){

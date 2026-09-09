@@ -8,16 +8,24 @@
 
 const {
   $, $$, esc, t, lbl, Lang, schoolName, I, starsHTML, logoHTML, curBadge,
-  kwd, fmtDate, initials, mapsUrl, mapEmbed, igUrl,
+  kwd, feeHeadline, feeBadge, fmtDate, initials, mapsUrl, mapEmbed, igUrl,
   Data, Auth, Favs, Compare, toast, renderCards, bindCardActions,
   Query, applyQuery, paintChrome, store, K
 } = global.KSG;
 
 /* ============================ shared bits ============================ */
 
+/* The banner counts the catalogue live, so it always states how much of the
+   directory is actually sourced rather than making a vague disclaimer. */
 function noticeHTML(){
+  const all = Data.all();
+  const confirmed = all.filter(s => feesConfirmed(s)).length;
+  const msg = Lang.isAr()
+    ? confirmed + ' من ' + all.length + ' مدرسة رسومها من مصدر منشور؛ الباقي تقديري في انتظار التأكيد. أكّد الرسوم مع المدرسة دائماً.'
+    : confirmed + ' of ' + all.length + ' schools have fees from a published source; the rest are estimates pending confirmation. Always confirm fees with the school.';
   return '<div class="notice"><div class="wrap notice-in">' + I.info +
-    '<span>' + esc(t('dataNotice')) + '</span></div></div>';
+    '<span>' + esc(msg) + ' <a href="about.html#data" style="color:inherit;text-decoration:underline">' +
+    esc(Lang.isAr()?'كيف نتحقق':'How we source this') + '</a></span></div></div>';
 }
 
 function searchbarHTML(q,action){
@@ -28,7 +36,7 @@ function searchbarHTML(q,action){
     .concat(DISTRICTS.map(d => '<option value="' + esc(d) + '"' +
       (q.dist.length === 1 && q.dist[0] === d ? ' selected' : '') + '>' + esc(d) + '</option>')).join('');
   const feeOpts = [['', t('anyFee')],['700','< 700'],['1500','< 1,500'],['2500','< 2,500'],
-                   ['4000','< 4,000'],['6500','< 6,500']]
+                   ['4000','< 4,000'],['6000','< 6,000'],['8000','< 8,000']]
     .map(([v,label]) => '<option value="' + v + '"' + (String(q.max||'') === v ? ' selected' : '') + '>' +
       esc(v ? label + ' ' + t('kwd') : label) + '</option>').join('');
 
@@ -153,13 +161,15 @@ Pages.home = function(){
   $('#curMount').innerHTML = CURRICULA.map(c => {
     const list = all.filter(s => s.curriculum === c.id);
     if(!list.length) return '';
-    const lo = list.reduce((n,s)=> Math.min(n, feeRange(s).min), Infinity);
+    const priced = list.map(s => feeRange(s)).filter(r => r.known);
+    const lo = priced.length ? Math.min.apply(null, priced.map(r => r.min)) : null;
     return '<a class="card" href="directory.html?cur=' + c.id + '" style="padding:var(--s-4);text-decoration:none">' +
       '<span class="badge badge-cur" style="background:' + c.color + ';align-self:flex-start">' + esc(lbl(c)) + '</span>' +
       '<b style="display:block;font-family:var(--f-head);font-size:var(--t-2);color:var(--navy);margin-top:var(--s-3)">' +
         list.length + ' ' + esc(t('results')) + '</b>' +
-      '<span style="color:var(--muted);font-size:var(--t--1)">' + esc(t('feesFrom')) + ' ' +
-        esc(kwd(lo)) + ' ' + esc(t('perYear')) + '</span>' +
+      '<span style="color:var(--muted);font-size:var(--t--1)">' +
+        (lo != null ? esc(t('feesFrom')) + ' ' + esc(kwd(lo)) + ' ' + esc(t('perYear'))
+                    : esc(t('feesOnRequest'))) + '</span>' +
     '</a>';
   }).join('');
 };
@@ -359,8 +369,8 @@ Pages.school = function(){
   const r = Data.rating(s.id);
   const fr = feeRange(s);
   document.title = schoolName(s) + ' — ' + s.district + ', Kuwait | Kuwait Schools Guide';
-  setMeta('description', s.blurb + ' ' + t('grades') + ': ' + s.from + '–' + s.to +
-    '. ' + t('feesFrom') + ' ' + kwd(fr.min) + '.');
+  setMeta('description', s.blurb + ' ' + t('grades') + ': ' + s.from + '–' + s.to + '. ' +
+    (fr.known ? t('feesFrom') + ' ' + kwd(fr.min) + '.' : t('feesOnRequest') + '.'));
   setLink('canonical', location.origin + location.pathname + '?id=' + encodeURIComponent(s.id));
   injectJSONLD(s,r);
 
@@ -381,9 +391,7 @@ Pages.school = function(){
           (s.nameAr ? '<div class="ar-name" dir="rtl">' + esc(s.nameAr) + '</div>' : '') +
           '<div class="prof-meta">' + curBadge(s) +
             (s.featured ? '<span class="badge badge-gold">' + esc(t('featured')) + '</span>' : '') +
-            (s.verified
-              ? '<span class="badge badge-green">' + esc(t('verified')) + '</span>'
-              : '<span class="badge badge-pend">' + esc(t('verifyPending')) + '</span>') +
+            feeBadge(s) +
             '<span class="dot-sep">·</span><span>' + I.pin.replace('<svg','<svg style="width:14px;height:14px;display:inline;vertical-align:-2px;stroke:currentColor"') +
               ' ' + esc(s.district) + '</span>' +
             '<span class="dot-sep">·</span><span>' + esc(s.from + ' – ' + s.to) + '</span>' +
@@ -418,6 +426,48 @@ Pages.school = function(){
     '<tr><td>' + esc(f.band) + '</td>' +
     '<td class="amt' + (f.amount===0?'" style="color:var(--green)':'') + '">' + esc(kwd(f.amount)) + '</td></tr>').join('');
 
+  /* Provenance line under the fee table: which academic year, where it came
+     from, and — when the school publishes nothing — say so plainly rather
+     than printing a number we invented. */
+  const feeProv =
+    '<p class="photo-note" style="display:flex;flex-wrap:wrap;gap:var(--s-2);align-items:center">' +
+      feeBadge(s) +
+      (s.feeYear ? '<span>' + esc(t('feeYearLabel')) + ': <b>' + esc(s.feeYear) + '</b></span>' : '') +
+      (s.feeSource
+        ? '<span>' + esc(t('feeSourceLabel')) + ': <a href="' + esc(s.feeSource) +
+          '" target="_blank" rel="noopener noreferrer">' +
+          esc(s.feeSource.replace(/^https?:\/\/(www\.)?/,'').split('/')[0]) + '</a></span>'
+        : '') +
+    '</p>' +
+    (s.feeNote ? '<p class="photo-note"><b>' + esc(t('feeExtras')) + ':</b> ' + esc(s.feeNote) + '</p>' : '') +
+    '<p class="photo-note">' + esc(t('moeNote')) + '</p>';
+
+  const feesPanel = fr.banded
+    ? '<div class="tbl-scroll"><table class="feetable">' +
+        '<thead><tr><th>' + esc(t('gradeBand')) + '</th><th style="text-align:end">' +
+          esc(t('annualFee')) + ' (' + esc(t('kwd')) + ')</th></tr></thead>' +
+        '<tbody>' + feeRows + '</tbody>' +
+        '<tfoot><tr><td>' + esc(Lang.isAr()?'النطاق':'Range') + '</td>' +
+          '<td class="amt">' + esc(kwd(fr.min)) + ' – ' + esc(kwd(fr.max)) + '</td></tr></tfoot>' +
+      '</table></div>' + feeProv
+    : fr.known
+    ? '<p style="font-family:var(--f-num);font-size:var(--t-3);color:var(--navy);margin-bottom:var(--s-2)">' +
+        esc(kwd(fr.min)) + ' – ' + esc(kwd(fr.max)) + ' <span style="font-size:var(--t-0);color:var(--muted)">' +
+        esc(t('perYear')) + '</span></p>' +
+      '<p>' + esc(t('feeRangeOnly')) + '</p>' + feeProv
+    : '<div class="gate" style="text-align:start">' +
+        '<h4 style="margin-bottom:var(--s-2)">' + esc(t('feesNotPublic')) + '</h4>' +
+        '<p style="margin-bottom:var(--s-3)">' + esc(t('feesAskSchool')) + '</p>' +
+        (s.feeNote ? '<p style="margin-bottom:var(--s-3)">' + esc(s.feeNote) + '</p>' : '') +
+        (s.website
+          ? '<a class="btn btn-pri btn-sm" href="' + esc(s.website) +
+            '" target="_blank" rel="noopener noreferrer">' + esc(t('website')) + '</a> '
+          : '') +
+        (s.email
+          ? '<a class="btn btn-ghost btn-sm" href="mailto:' + esc(s.email) + '">' + esc(s.email) + '</a>'
+          : '') +
+      '</div>' + feeProv;
+
   const photoTiles = [
     ['building', Lang.isAr()?'المبنى':'Campus'],
     ['layers',   Lang.isAr()?'الفصول':'Classrooms'],
@@ -439,16 +489,7 @@ Pages.school = function(){
     '</section>' +
 
     '<section class="panel" id="fees"><h2>' + esc(t('feesTable')) + '</h2>' +
-      '<div class="tbl-scroll"><table class="feetable">' +
-        '<thead><tr><th>' + esc(t('gradeBand')) + '</th><th style="text-align:end">' +
-          esc(t('annualFee')) + ' (' + esc(t('kwd')) + ')</th></tr></thead>' +
-        '<tbody>' + feeRows + '</tbody>' +
-        '<tfoot><tr><td>' + esc(Lang.isAr()?'النطاق':'Range') + '</td>' +
-          '<td class="amt">' + esc(kwd(fr.min)) + ' – ' + esc(kwd(fr.max)) + '</td></tr></tfoot>' +
-      '</table></div>' +
-      '<p class="photo-note">' + esc(Lang.isAr()
-        ? 'الرسوم إرشادية ولا تشمل عادةً التسجيل والكتب والنقل. أكدها مع المدرسة.'
-        : 'Indicative tuition only — registration, books, uniform and transport are usually extra. Confirm with the school.') + '</p>' +
+      feesPanel +
     '</section>' +
 
     '<section class="panel"><h2>' + esc(t('facilities')) + '</h2>' +
@@ -470,7 +511,7 @@ Pages.school = function(){
     [t('curriculum'),   lbl(cur) + ((s.extras||[]).length ? ' · ' + s.extras.join(', ') : '')],
     [t('grades'),       s.from + ' – ' + s.to],
     [t('ages'),         s.ages],
-    [t('fees'),         kwd(fr.min) + ' – ' + kwd(fr.max) + ' ' + t('perYear')],
+    [t('fees'),         fr.known ? feeHeadline(s) + ' ' + t('perYear') : t('feesOnRequest')],
     [t('gender'),       s.gender],
     [t('founded'),      s.founded],
     [t('languages'),    (s.languages||[]).join(', ')],
@@ -484,8 +525,14 @@ Pages.school = function(){
     ['ig', t('instagram'), '<a href="' + igUrl(s) + '" target="_blank" rel="noopener noreferrer">' +
       (s.ig ? '@' + esc(s.ig) : esc(Lang.isAr()?'ابحث في إنستغرام':'Search on Instagram')) + '</a>'],
     ['pin', t('location'), esc(s.address)],
-    ['phone', t('phone'), '<span style="color:var(--muted)">' +
-      esc(Lang.isAr()?'يُضاف بعد تأكيد المدرسة':'Added once the school confirms') + '</span>']
+    /* Only ever show a number we actually confirmed — never a plausible
+       placeholder, which could route a parent to a stranger. */
+    ['phone', t('phone'), s.phone
+      ? '<a href="tel:' + esc(s.phone.replace(/\s+/g,'')) + '">' + esc(s.phone) + '</a>'
+      : '<span style="color:var(--muted)">' +
+        esc(Lang.isAr()?'يُضاف بعد تأكيد المدرسة':'Added once the school confirms') + '</span>'],
+    s.email ? ['mail', t('email'),
+      '<a href="mailto:' + esc(s.email) + '">' + esc(s.email) + '</a>'] : null
   ].filter(Boolean).map(([ico,k,v]) =>
     '<div class="defrow"><dt>' + esc(k) + '</dt><dd>' + v + '</dd></div>').join('');
 
@@ -691,7 +738,8 @@ Pages.compare = function(){
   const list = ids.map(id => Data.byId(id));
   const ranges = list.map(s => feeRange(s));
   const rates  = list.map(s => Data.rating(s.id));
-  const cheapest = Math.min.apply(null, ranges.map(r => r.min));
+  const priced = ranges.filter(r => r.known);
+  const cheapest = priced.length ? Math.min.apply(null, priced.map(r => r.min)) : null;
   const best     = Math.max.apply(null, rates.map(r => r.avg));
 
   /* every fee band label across the compared schools, in ladder order */
@@ -739,9 +787,13 @@ Pages.compare = function(){
             (rates[i].avg === best ? ' <span class="badge badge-green">' + esc(t('highestRated')) + '</span>' : '')
           : '<span style="color:var(--muted)">' + esc(t('noReviews')) + '</span>')) +
         row(t('feesFrom'), list.map((s,i) =>
-          '<span class="kwd" style="font-family:var(--f-num);font-weight:650;color:var(--navy)">' +
-          esc(kwd(ranges[i].min)) + '</span>' +
-          (ranges[i].min === cheapest ? ' <span class="badge badge-green">' + esc(t('lowestFee')) + '</span>' : ''))) +
+          ranges[i].known
+            ? '<span class="kwd" style="font-family:var(--f-num);font-weight:650;color:var(--navy)">' +
+              esc(kwd(ranges[i].min)) + '</span>' +
+              (ranges[i].min === cheapest ? ' <span class="badge badge-green">' + esc(t('lowestFee')) + '</span>' : '')
+            : '<span class="badge badge-soft">' + esc(t('feesOnRequest')) + '</span>')) +
+        row(t('feeSourceLabel'), list.map(s => feeBadge(s) +
+          (s.feeYear ? '<br><span style="font-size:var(--t--1);color:var(--muted)">' + esc(s.feeYear) + '</span>' : ''))) +
         row(t('grades'), list.map(s => esc(s.from + ' – ' + s.to))) +
         row(t('ages'), list.map(s => esc(s.ages))) +
         row(t('location'), list.map(s => esc(s.district) + '<br><a href="' + mapsUrl(s) +
@@ -940,14 +992,16 @@ function injectJSONLD(s,r){
     geo:(s.lat && s.lng) ? { '@type':'GeoCoordinates', latitude:s.lat, longitude:s.lng } : undefined,
     knowsLanguage:s.languages,
     slogan:s.blurb,
-    offers:(s.fees||[]).map(f => ({
+    /* only publish fees in structured data when we actually have them —
+       a school that keeps its fees private must not appear priced */
+    offers:(s.fees && s.fees.length) ? s.fees.map(f => ({
       '@type':'Offer',
       name:f.band,
       price:f.amount,
       priceCurrency:'KWD',
-      category:'Annual tuition'
-    })),
-    priceRange:kwd(fr.min) + ' – ' + kwd(fr.max)
+      category:'Annual tuition (' + (s.feeYear || 'current year') + ')'
+    })) : undefined,
+    priceRange:fr.known ? (kwd(fr.min) + ' – ' + kwd(fr.max)) : undefined
   };
   if(r.count){
     node.aggregateRating = {
