@@ -10,7 +10,7 @@ const {
   $, $$, esc, t, lbl, Lang, schoolName, I, starsHTML, logoHTML, curBadge,
   kwd, feeHeadline, feeBadge, fmtDate, initials, mapsUrl, mapEmbed, igUrl,
   Data, Auth, Favs, Compare, toast, renderCards, bindCardActions,
-  Query, applyQuery, paintChrome, store, K
+  Query, Route, applyQuery, paintChrome, store, K
 } = global.KSG;
 
 /* ============================ shared bits ============================ */
@@ -186,7 +186,7 @@ Pages.directory = function(opts){
   if(opts.forceGroup && !q.grp.length) q.grp = [opts.forceGroup];
 
   const searchHost = $('#searchMount');
-  if(searchHost) searchHost.innerHTML = searchbarHTML(q,location.pathname.split('/').pop());
+  if(searchHost) searchHost.innerHTML = searchbarHTML(q,Route.page());
 
   function counts(list){
     const m = {};
@@ -260,7 +260,7 @@ Pages.directory = function(opts){
     $('#fReset').addEventListener('click', ()=>{
       q = { q:'', cur:[], dist:[], gov:[], grp:opts.forceGroup ? [opts.forceGroup] : [], max:null, sort:q.sort };
       commit(); renderFilters();
-      if(searchHost) searchHost.innerHTML = searchbarHTML(q,location.pathname.split('/').pop());
+      if(searchHost) searchHost.innerHTML = searchbarHTML(q,Route.page());
       bindSearch();
     });
   }
@@ -332,7 +332,22 @@ Pages.directory = function(opts){
   renderFilters();
   bindSearch();
   render();
-  window.addEventListener('popstate', ()=>{ q = Query.read(); renderFilters(); render(); });
+
+  /* Back/forward has to re-read the query and repaint. On the multi-page site
+     this listener dies with the document; in the single-file build the page is
+     entered many times in one document, so the previous visit's listener would
+     survive and write into a filter rail that no longer exists. Tear the old
+     one down first, and bail out if the mount has since gone. */
+  if(Pages.directory._detach) Pages.directory._detach();
+  const onPop = ()=>{
+    if(!$('#filterMount')){ Pages.directory._detach(); return; }
+    q = Query.read(); renderFilters(); render();
+  };
+  window.addEventListener('popstate', onPop);
+  Pages.directory._detach = ()=>{
+    window.removeEventListener('popstate', onPop);
+    Pages.directory._detach = null;
+  };
 };
 
 /* Schools that run their own kindergarten but are not early-years providers —
@@ -352,7 +367,7 @@ Pages.kgDivisions = function(sel){
 /* ============================ school profile ============================ */
 
 Pages.school = function(){
-  const id = new URLSearchParams(location.search).get('id');
+  const id = Route.params().get('id');
   const s = id ? Data.byId(id) : null;
 
   if(!s){
@@ -569,6 +584,13 @@ function wireMapFallback(school){
   const poster = $('#mapPoster'), box = $('#mapBox');
   if(!poster || !box) return;
   poster.addEventListener('click', ()=>{
+    /* A sandboxed host (the single-file build published as an artifact) blocks
+       third-party frames, so there the pin opens Google Maps in a new tab
+       instead of embedding a frame that would silently stay blank. */
+    if(Route.spa()){
+      window.open(mapsUrl(school),'_blank','noopener');
+      return;
+    }
     box.innerHTML = '<iframe id="mapFrame" title="' + esc(schoolName(school)) + ' — map" ' +
       'referrerpolicy="no-referrer-when-downgrade" src="' + esc(mapEmbed(school)) + '"></iframe>';
   });
@@ -826,8 +848,10 @@ Pages.compare = function(){
 
 Pages.login = function(){
   const host = $('#authMount');
-  const next = new URLSearchParams(location.search).get('next') || 'index.html';
-  let mode = location.hash === '#signup' ? 'signup' : 'login';
+  const next = Route.params().get('next') || 'index.html';
+  /* signup is selected with ?mode=signup rather than #signup: in the
+     single-file build the hash belongs to the router. */
+  let mode = Route.params().get('mode') === 'signup' ? 'signup' : 'login';
 
   const me = Auth.current();
   if(me){
@@ -885,7 +909,7 @@ Pages.login = function(){
 
     $$('[data-mode]').forEach(b => b.addEventListener('click', ()=>{
       mode = b.dataset.mode;
-      history.replaceState({},'',location.pathname + (mode==='signup' ? '#signup' : ''));
+      Route.set('login.html', mode === 'signup' ? 'mode=signup' : '', true);
       draw();
     }));
 
@@ -899,13 +923,13 @@ Pages.login = function(){
         $('#authMsg').innerHTML = '<div class="msg msg-err">' + esc(res.err) + '</div>';
         return;
       }
-      location.href = next;
+      Route.go(next);
     });
 
     $$('[data-social]').forEach(b => b.addEventListener('click', ()=>{
       const res = Auth.social(b.dataset.social);
       if(res.err){ $('#authMsg').innerHTML = '<div class="msg msg-err">' + esc(res.err) + '</div>'; return; }
-      location.href = next;
+      Route.go(next);
     }));
   }
   draw();
@@ -916,7 +940,7 @@ Pages.login = function(){
 Pages.account = function(){
   const me = Auth.current();
   const host = $('#accMount');
-  if(!me){ location.href = 'login.html?next=account.html'; return; }
+  if(!me){ Route.go('login.html?next=account.html'); return; }
 
   const favs = Favs.all().map(id => Data.byId(id)).filter(Boolean);
   const mine = store.get(K.reviews,[]).filter(r => r.userId === me.id);
@@ -957,7 +981,7 @@ Pages.account = function(){
         : '<p style="color:var(--muted)">' + esc(Lang.isAr()?'لم تكتب أي تقييم بعد.':'You have not written any reviews yet.') + '</p>') +
     '</section>';
 
-  $('#accOut').addEventListener('click', ()=>{ Auth.logout(); location.href = 'index.html'; });
+  $('#accOut').addEventListener('click', ()=>{ Auth.logout(); Route.go('index.html'); });
   const af = $('#accFavs');
   if(af) bindCardActions(af);
 };

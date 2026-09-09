@@ -157,6 +157,22 @@ schools/
 └── README.md
 ```
 
+### Viewing it as a single file
+
+`bundle.py` packs all twelve pages, the stylesheet and the four scripts into one
+self-contained HTML file that routes on the hash — useful for sharing, or for opening the guide
+where a folder of files is awkward:
+
+```bash
+python3 bundle.py                      # → dist/kuwait-schools-guide.html (~262 KB)
+python3 bundle.py /tmp/preview.html    # or anywhere you like
+```
+
+The multi-page site stays the source of truth; the bundle is generated from it and is
+git-ignored, so it can never drift out of sync in the repository. `KSG.Route` is what lets the
+same controllers serve both builds: page plus query string comes from the URL on the multi-page
+site and from the hash in the bundle.
+
 Adding or removing schools:
 
 ```bash

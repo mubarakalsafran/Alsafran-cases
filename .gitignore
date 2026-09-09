@@ -1,3 +1,8 @@
 # python
 __pycache__/
 *.pyc
+
+# build output — regenerate with `python3 schools/bundle.py`.
+# A committed bundle drifts from the source pages on every edit, and a stale
+# one is worse than none.
+schools/dist/

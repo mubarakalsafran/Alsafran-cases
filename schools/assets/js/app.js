@@ -518,7 +518,7 @@ function brandHTML(href){
 function renderHeader(){
   const host = $('#hdr');
   if(!host) return;
-  const here = location.pathname.split('/').pop() || 'index.html';
+  const here = Route.page();
   const user = Auth.current();
   const navLinks = NAV.map(([href,en,ar]) =>
     '<a href="' + href + '"' + (href === here ? ' aria-current="page"' : '') + '>' +
@@ -576,7 +576,7 @@ function renderHeader(){
     $('#navToggle').setAttribute('aria-expanded','false');
   }));
   const dl = $('#drLogout');
-  if(dl) dl.addEventListener('click', e => { e.preventDefault(); Auth.logout(); location.href = 'index.html'; });
+  if(dl) dl.addEventListener('click', e => { e.preventDefault(); Auth.logout(); Route.go('index.html'); });
   $('#langBtn').addEventListener('click', ()=> Lang.toggle());
 
   paintChrome();
@@ -600,7 +600,7 @@ function renderFooter(){
         '</ul></div>' +
         '<div><h4>' + esc(t('account2')) + '</h4><ul>' +
           '<li><a href="login.html">' + esc(t('login')) + '</a></li>' +
-          '<li><a href="login.html#signup">' + esc(t('signup')) + '</a></li>' +
+          '<li><a href="login.html?mode=signup">' + esc(t('signup')) + '</a></li>' +
           '<li><a href="favorites.html">' + esc(t('favourites')) + '</a></li>' +
           '<li><a href="account.html">' + esc(t('account')) + '</a></li>' +
         '</ul></div>' +
@@ -759,13 +759,52 @@ function bindCardActions(root){
   paintChrome();
 }
 
+/* ============================ routing ============================ */
+
+/* The multi-page site addresses a page by filename plus query string. The
+   single-file bundle serves every page from one document, so the same route
+   lives behind the hash instead. Route hides that difference so no page
+   controller has to care which build it is running in. */
+const Route = {
+  spa(){ return document.documentElement.hasAttribute('data-spa'); },
+  read(){
+    if(this.spa()){
+      const h = location.hash.replace(/^#\/?/,'');
+      const cut = h.indexOf('?');
+      return {
+        page:   (cut < 0 ? h : h.slice(0,cut)) || 'index.html',
+        params: new URLSearchParams(cut < 0 ? '' : h.slice(cut+1))
+      };
+    }
+    return {
+      page:   location.pathname.split('/').pop() || 'index.html',
+      params: new URLSearchParams(location.search)
+    };
+  },
+  page(){   return this.read().page; },
+  params(){ return this.read().params; },
+  /* an href that works in whichever build is running */
+  href(target){ return this.spa() ? '#/' + target : target; },
+  /* follow a route from script */
+  go(target){
+    if(this.spa()) location.hash = '#/' + target;
+    else location.href = target;
+  },
+  /* update the address bar in place, without navigating */
+  set(page, qs, replace){
+    const tail = qs ? '?' + qs : '';
+    const url = this.spa() ? '#/' + page + tail : page + tail;
+    history[replace ? 'replaceState' : 'pushState']({},'',url);
+  }
+};
+
 /* ============================ filter engine ============================ */
 
 /* A single query object drives the homepage search, the directory and every
    section page, so the behaviour is identical everywhere. */
 const Query = {
   read(){
-    const p = new URLSearchParams(location.search);
+    const p = Route.params();
     return {
       q:    (p.get('q') || '').trim(),
       cur:  (p.get('cur') || '').split(',').filter(Boolean),
@@ -785,8 +824,7 @@ const Query = {
     if(q.grp.length)  p.set('grp',q.grp.join(','));
     if(q.max != null && q.max < FEE_CEILING) p.set('max',q.max);
     if(q.sort && q.sort !== 'rating') p.set('sort',q.sort);
-    const url = location.pathname + (p.toString() ? '?' + p : '');
-    history[replace ? 'replaceState' : 'pushState']({},'',url);
+    Route.set(Route.page(), p.toString(), replace);
   }
 };
 
@@ -869,7 +907,7 @@ global.KSG = {
   mapsUrl:mapsUrl, mapEmbed:mapEmbed, igUrl:igUrl,
   Data:Data, Auth:Auth, Favs:Favs, Compare:Compare, hash:hash,
   toast:toast, cardHTML:cardHTML, renderCards:renderCards, bindCardActions:bindCardActions,
-  Query:Query, matches:matches, sortList:sortList, applyQuery:applyQuery,
+  Query:Query, Route:Route, matches:matches, sortList:sortList, applyQuery:applyQuery,
   paintChrome:paintChrome, paintCompareBar:paintCompareBar, boot:boot,
   ADMIN_SEED:ADMIN_SEED
 };
