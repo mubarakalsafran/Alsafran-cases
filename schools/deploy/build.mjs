@@ -30,7 +30,20 @@ const host =
   'kuwait-schools-guide.vercel.app';
 const ORIGIN = 'https://' + host;
 
-const raw = f => `https://raw.githubusercontent.com/${REPO}/${REF}/${SUB}/${f}`;
+/* Resolve the ref to a commit first. Branch-name raw URLs sit behind a CDN
+   cache that can serve a stale copy for minutes after a push, and a build that
+   silently ships yesterday's site is worse than one that fails. A commit URL is
+   immutable, so what gets built is exactly what the log names. */
+async function resolveSha(){
+  if(/^[0-9a-f]{40}$/i.test(REF)) return REF;
+  const res = await fetch(`https://api.github.com/repos/${REPO}/commits/${REF}`,
+    { headers:{ Accept:'application/vnd.github+json', 'User-Agent':'ksg-build' } });
+  if(!res.ok) throw new Error(`cannot resolve ${REF} → HTTP ${res.status}`);
+  return (await res.json()).sha;
+}
+
+const SHA = await resolveSha();
+const raw = f => `https://raw.githubusercontent.com/${REPO}/${SHA}/${SUB}/${f}`;
 
 async function get(f){
   const res = await fetch(raw(f));
@@ -55,5 +68,5 @@ for(let [f, body] of results){
 /* A silent partial build would publish a broken directory, so fail loudly. */
 if(results.length !== FILES.length) throw new Error('missing files in build');
 
-console.log(`built ${results.length} files (${Math.round(bytes/1024)} KB) from ${REPO}@${REF}/${SUB}`);
+console.log(`built ${results.length} files (${Math.round(bytes/1024)} KB) from ${REPO}@${SHA.slice(0,7)} (${REF})/${SUB}`);
 console.log(`absolute URLs point at ${ORIGIN}`);
