@@ -5,4 +5,4 @@ Disallow: /account.html
 Disallow: /favorites.html
 Disallow: /login.html
 
-Sitemap: https://kuwaitschoolsguide.example/sitemap.xml
+Sitemap: https://kuwait-schools-guide.vercel.app/sitemap.xml

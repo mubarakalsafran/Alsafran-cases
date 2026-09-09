@@ -1130,8 +1130,21 @@ function applyQuery(q,pool){
 
 /* ============================ boot ============================ */
 
+/* The pages ship with a placeholder origin in their canonical and og:url, so
+   the markup does not hard-code one host. Point them at wherever the site is
+   actually being served from — the same files go to more than one place. */
+function fixCanonical(){
+  if(!/^https?:$/.test(location.protocol)) return;
+  const here = location.origin + location.pathname;
+  const link = document.querySelector('link[rel="canonical"]');
+  if(link) link.setAttribute('href', here);
+  const og = document.querySelector('meta[property="og:url"]');
+  if(og) og.setAttribute('content', here);
+}
+
 function boot(){
   Auth.init();
+  fixCanonical();
   const l = Lang.get();
   document.documentElement.lang = l;
   document.documentElement.dir  = l === 'ar' ? 'rtl' : 'ltr';
