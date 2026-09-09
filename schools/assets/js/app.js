@@ -85,6 +85,14 @@ const T = {
   allDistricts:   ['All areas','جميع المناطق'],
   anyFee:         ['Any fee','أي رسوم'],
   search:         ['Search','بحث'],
+  acSchools:      ['Schools','مدارس'],
+  acCurricula:    ['Curricula','مناهج'],
+  acAreas:        ['Areas','مناطق'],
+  acBrowse:       ['Browse by curriculum','تصفح حسب المنهج'],
+  acAllFor:       ['See all results for','كل النتائج عن'],
+  acNothing:      ['No school matches that','لا توجد مدرسة مطابقة'],
+  acNothingHint:  ['Try a district, a curriculum, or part of the name.','جرّب اسم منطقة أو منهج أو جزءاً من الاسم.'],
+  acHint:         ['Use ↑ ↓ to move, Enter to open','استخدم ↑ ↓ للتنقل و Enter للفتح'],
   filters:        ['Filters','التصفية'],
   reset:          ['Reset','إعادة تعيين'],
   results:        ['schools','مدرسة'],
@@ -759,6 +767,255 @@ function bindCardActions(root){
   paintChrome();
 }
 
+/* ============================ search suggestions ============================ */
+
+const AC_MAX = { schools:6, facets:3 };
+
+function acNorm(v){ return String(v == null ? '' : v).toLowerCase().trim(); }
+
+/* How well one school answers what has been typed. Higher wins; 0 excludes.
+   The tiers matter more than the numbers: an abbreviation people actually use
+   ("BSK") should beat a stray substring match inside somebody else's blurb. */
+function scoreSchool(s, q){
+  const name = acNorm(s.name), abbr = acNorm(s.abbr), ar = String(s.nameAr || '');
+  const dist = acNorm(s.district), cur = acNorm(s.curriculum);
+  if(abbr && abbr === q)                              return 100;
+  if(name.indexOf(q) === 0)                           return 92;
+  if(abbr && abbr.indexOf(q) === 0)                   return 88;
+  if(name.split(/\s+/).some(w => w.indexOf(q) === 0)) return 80;
+  if(name.indexOf(q) >= 0)                            return 70;
+  if(ar.indexOf(q) >= 0)                              return 66;
+  if(dist.indexOf(q) === 0)                           return 55;
+  if(dist.indexOf(q) >= 0)                            return 50;
+  if(cur.indexOf(q) === 0)                            return 45;
+  if((s.extras || []).some(x => acNorm(x).indexOf(q) >= 0)) return 30;
+  if(acNorm(s.blurb).indexOf(q) >= 0)                 return 20;
+  return 0;
+}
+
+/* Suggestions for what has been typed: matching schools first, then the
+   curricula and areas that match, as one-tap filters, then an escape hatch
+   to the full result list. An empty box offers the curricula instead. */
+function suggest(raw){
+  const q = acNorm(raw);
+  const pool = Data.all();
+
+  if(!q){
+    return CURRICULA
+      .filter(c => pool.some(x => x.curriculum === c.id))
+      .map(c => ({ kind:'curriculum', cur:c, count:pool.filter(x => x.curriculum === c.id).length }));
+  }
+
+  const schools = pool
+    .map(s => ({ s:s, score:scoreSchool(s,q) }))
+    .filter(x => x.score > 0)
+    .sort((a,b) =>
+      b.score - a.score ||
+      Data.rating(b.s.id).count - Data.rating(a.s.id).count ||
+      (b.s.featured ? 1 : 0) - (a.s.featured ? 1 : 0) ||
+      schoolName(a.s).localeCompare(schoolName(b.s)))
+    .slice(0, AC_MAX.schools)
+    .map(x => ({ kind:'school', school:x.s }));
+
+  const curricula = CURRICULA
+    .filter(c => pool.some(x => x.curriculum === c.id))
+    .filter(c => acNorm(c.en).indexOf(q) >= 0 || String(c.ar).indexOf(q) >= 0 || acNorm(c.id).indexOf(q) >= 0)
+    .slice(0, AC_MAX.facets)
+    .map(c => ({ kind:'curriculum', cur:c, count:pool.filter(x => x.curriculum === c.id).length }));
+
+  const areas = Array.from(new Set(pool.map(x => x.district)))
+    .filter(d => acNorm(d).indexOf(q) >= 0)
+    .sort()
+    .slice(0, AC_MAX.facets)
+    .map(d => ({ kind:'area', value:d, count:pool.filter(x => x.district === d).length }));
+
+  const hits = pool.filter(x => matches(x, { q:raw, cur:[], dist:[], gov:[], grp:[], max:null })).length;
+  const out = schools.concat(curricula, areas);
+  if(hits > schools.length) out.push({ kind:'all', q:raw, count:hits });
+  return out;
+}
+
+/* highlight the typed run inside a label */
+function acMark(text,q){
+  const hay = acNorm(text), needle = acNorm(q);
+  const i = needle ? hay.indexOf(needle) : -1;
+  if(i < 0) return esc(text);
+  return esc(text.slice(0,i)) + '<mark>' + esc(text.slice(i, i + needle.length)) +
+         '</mark>' + esc(text.slice(i + needle.length));
+}
+
+function acRowHTML(item,i,q){
+  const id = 'acOpt' + i;
+  if(item.kind === 'school'){
+    const s = item.school, r = Data.rating(s.id), fr = feeRange(s);
+    return '<div class="ac-row" role="option" id="' + id + '" data-i="' + i + '" aria-selected="false">' +
+      logoHTML(s) +
+      '<span class="ac-main">' +
+        '<b>' + acMark(schoolName(s),q) + '</b>' +
+        '<span class="ac-sub">' + esc(lbl(CURRICULUM_BY_ID[s.curriculum])) + ' · ' +
+          acMark(s.district,q) + ' · ' + esc(s.from + ' – ' + s.to) + '</span>' +
+      '</span>' +
+      '<span class="ac-meta">' +
+        (fr.known ? '<span class="ac-fee">' + esc(kwd(fr.min)) + '</span>' : '') +
+        (r.count ? '<span class="ac-rate">' + starsHTML(r.avg) + '</span>' : '') +
+      '</span>' +
+    '</div>';
+  }
+  if(item.kind === 'curriculum'){
+    return '<div class="ac-row" role="option" id="' + id + '" data-i="' + i + '" aria-selected="false">' +
+      '<span class="ac-ico" style="background:' + item.cur.color + '">' + I.layers + '</span>' +
+      '<span class="ac-main"><b>' + acMark(lbl(item.cur),q) + '</b>' +
+        '<span class="ac-sub">' + esc(t('curriculum')) + '</span></span>' +
+      '<span class="ac-meta"><span class="ac-count">' + item.count + '</span></span>' +
+    '</div>';
+  }
+  if(item.kind === 'area'){
+    return '<div class="ac-row" role="option" id="' + id + '" data-i="' + i + '" aria-selected="false">' +
+      '<span class="ac-ico" style="background:var(--blue)">' + I.pin + '</span>' +
+      '<span class="ac-main"><b>' + acMark(item.value,q) + '</b>' +
+        '<span class="ac-sub">' + esc(t('district')) + '</span></span>' +
+      '<span class="ac-meta"><span class="ac-count">' + item.count + '</span></span>' +
+    '</div>';
+  }
+  return '<div class="ac-row ac-all" role="option" id="' + id + '" data-i="' + i + '" aria-selected="false">' +
+    '<span class="ac-ico" style="background:var(--navy)">' + I.search + '</span>' +
+    '<span class="ac-main"><b>' + esc(t('acAllFor')) + ' “' + esc(item.q) + '”</b></span>' +
+    '<span class="ac-meta"><span class="ac-count">' + item.count + '</span></span>' +
+  '</div>';
+}
+
+/* where selecting a suggestion takes you */
+function acTarget(item){
+  if(item.kind === 'school')     return 'school.html?id=' + encodeURIComponent(item.school.id);
+  if(item.kind === 'curriculum') return 'directory.html?cur=' + encodeURIComponent(item.cur.id);
+  if(item.kind === 'area')       return 'directory.html?dist=' + encodeURIComponent(item.value);
+  return 'directory.html?q=' + encodeURIComponent(item.q);
+}
+
+/* Wire a search input up to a suggestion list.
+   opts.onType(value) — optional; called debounced so a results grid on the
+   same page can filter live as the visitor types. */
+function attachTypeahead(input,opts){
+  opts = opts || {};
+  if(!input || input.dataset.ac) return;
+  input.dataset.ac = '1';
+
+  const panel = document.createElement('div');
+  panel.className = 'ac';
+  panel.id = 'acPanel';
+  panel.setAttribute('role','listbox');
+  panel.hidden = true;
+  (input.closest('.sb-field') || input.parentNode).appendChild(panel);
+
+  input.setAttribute('role','combobox');
+  input.setAttribute('aria-autocomplete','list');
+  input.setAttribute('aria-expanded','false');
+  input.setAttribute('aria-controls','acPanel');
+  input.setAttribute('autocomplete','off');
+
+  let items = [], active = -1;
+
+  function close(){
+    panel.hidden = true;
+    input.setAttribute('aria-expanded','false');
+    input.removeAttribute('aria-activedescendant');
+    active = -1;
+  }
+
+  function paint(){
+    $$('.ac-row',panel).forEach((row,i) => {
+      const on = i === active;
+      row.classList.toggle('on',on);
+      row.setAttribute('aria-selected', on ? 'true' : 'false');
+      if(on){
+        input.setAttribute('aria-activedescendant',row.id);
+        row.scrollIntoView({ block:'nearest' });
+      }
+    });
+  }
+
+  function open(){
+    const q = input.value;
+    items = suggest(q);
+    if(!items.length){
+      panel.innerHTML = '<div class="ac-empty"><b>' + esc(t('acNothing')) + '</b>' +
+        '<span>' + esc(t('acNothingHint')) + '</span></div>';
+      panel.hidden = false;
+      input.setAttribute('aria-expanded','true');
+      active = -1;
+      return;
+    }
+    /* group headers, but only where a group actually starts */
+    let html = '', last = '';
+    items.forEach((item,i) => {
+      const group = item.kind === 'school' ? 'acSchools'
+                  : item.kind === 'curriculum' ? (acNorm(q) ? 'acCurricula' : 'acBrowse')
+                  : item.kind === 'area' ? 'acAreas' : '';
+      if(group && group !== last){ html += '<div class="ac-head">' + esc(t(group)) + '</div>'; last = group; }
+      html += acRowHTML(item,i,q);
+    });
+    panel.innerHTML = html + '<div class="ac-foot">' + esc(t('acHint')) + '</div>';
+    panel.hidden = false;
+    input.setAttribute('aria-expanded','true');
+    active = -1;
+    $$('.ac-row',panel).forEach(row => {
+      row.addEventListener('mouseenter', ()=>{ active = Number(row.dataset.i); paint(); });
+      /* mousedown, not click: the input's blur would close the panel first */
+      row.addEventListener('mousedown', e => { e.preventDefault(); choose(Number(row.dataset.i)); });
+    });
+  }
+
+  function choose(i){
+    const item = items[i];
+    if(!item) return;
+    close();
+    Route.go(acTarget(item));
+  }
+
+  let timer = null;
+  input.addEventListener('input', ()=>{
+    open();
+    if(opts.onType){
+      clearTimeout(timer);
+      timer = setTimeout(()=> opts.onType(input.value), 220);
+    }
+  });
+  input.addEventListener('focus', open);
+  input.addEventListener('blur', ()=> setTimeout(close,140));
+  input.addEventListener('keydown', e => {
+    if(e.key === 'ArrowDown' || e.key === 'ArrowUp'){
+      if(panel.hidden){ open(); return; }
+      e.preventDefault();
+      const n = items.length;
+      if(!n) return;
+      active = e.key === 'ArrowDown'
+        ? (active + 1) % n
+        : (active <= 0 ? n - 1 : active - 1);
+      paint();
+      return;
+    }
+    if(e.key === 'Enter'){
+      if(!panel.hidden && active >= 0){ e.preventDefault(); choose(active); }
+      return;
+    }
+    if(e.key === 'Escape'){
+      /* A type="search" input clears itself on Escape, and that fires `input`,
+         which would immediately reopen the panel. So follow the usual combobox
+         behaviour instead: the first Escape closes the list and keeps what was
+         typed, a second Escape clears the box. */
+      if(!panel.hidden){
+        e.preventDefault();
+        e.stopPropagation();
+        close();
+      }else if(input.value){
+        e.preventDefault();
+        input.value = '';
+        if(opts.onType) opts.onType('');
+      }
+    }
+  });
+}
+
 /* ============================ routing ============================ */
 
 /* The multi-page site addresses a page by filename plus query string. The
@@ -907,6 +1164,7 @@ global.KSG = {
   mapsUrl:mapsUrl, mapEmbed:mapEmbed, igUrl:igUrl,
   Data:Data, Auth:Auth, Favs:Favs, Compare:Compare, hash:hash,
   toast:toast, cardHTML:cardHTML, renderCards:renderCards, bindCardActions:bindCardActions,
+  suggest:suggest, attachTypeahead:attachTypeahead,
   Query:Query, Route:Route, matches:matches, sortList:sortList, applyQuery:applyQuery,
   paintChrome:paintChrome, paintCompareBar:paintCompareBar, boot:boot,
   ADMIN_SEED:ADMIN_SEED

@@ -68,6 +68,27 @@ the Ministry of Education**, so they move year to year. Every figure is shown wi
 Menu: **Home · Schools · American · British · Pre-K & Kindergarten · Compare**, plus language,
 favourites, compare and login in the header.
 
+### Search
+
+The search box suggests as you type, on the homepage and on every listing page:
+
+- **Schools** ranked so the useful match wins — an abbreviation people actually
+  use (`BSK`, `ICSK`) beats a stray substring buried in someone else's description. Each row
+  carries the logo, curriculum, district, years offered, fee and rating, so the suggestion often
+  answers the question without opening the profile.
+- **Curricula and areas** as one-tap filters, with a count of how many schools each holds.
+- **See all results for "…"** as an escape hatch to the full filtered list.
+- An empty box offers the curricula, so the search is useful before anything is typed.
+- Arabic school names match too, so typing `البيان` finds Al-Bayan.
+
+It is a proper combobox: `↑`/`↓` move and wrap, `Enter` opens the highlighted row, the first
+`Escape` closes the list while keeping what was typed, and a second `Escape` clears the box.
+`role`/`aria-expanded`/`aria-activedescendant` are set throughout.
+
+On the directory and section pages the grid also **filters live as you type** (debounced), so
+nothing needs the Search button. Only the results repaint, not the filter rail, so the input
+keeps focus — and the query lands in the URL, so a search stays shareable.
+
 ### Each school card shows
 
 Logo (generated monogram, no image requests) · name · curriculum badge · star rating and review

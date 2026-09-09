@@ -9,7 +9,7 @@
 const {
   $, $$, esc, t, lbl, Lang, schoolName, I, starsHTML, logoHTML, curBadge,
   kwd, feeHeadline, feeBadge, fmtDate, initials, mapsUrl, mapEmbed, igUrl,
-  Data, Auth, Favs, Compare, toast, renderCards, bindCardActions,
+  Data, Auth, Favs, Compare, toast, renderCards, bindCardActions, attachTypeahead,
   Query, Route, applyQuery, paintChrome, store, K
 } = global.KSG;
 
@@ -114,6 +114,9 @@ Pages.home = function(){
           all.reduce((n,s)=> n + Data.rating(s.id).count, 0) + '</b><span>' + esc(t('reviewsCount')) + '</span></span>' +
       '</div>' +
     '</div></div>' + noticeHTML();
+
+  /* suggestions as the visitor types in the hero search */
+  attachTypeahead($('#heroSearch input[name="q"]'));
 
   /* quick access */
   $('#quickMount').innerHTML = quickCardsHTML();
@@ -326,6 +329,18 @@ Pages.directory = function(opts){
       q.dist = fd.get('dist') ? [fd.get('dist')] : [];
       q.max  = fd.get('max')  ? Number(fd.get('max')) : null;
       commit(); renderFilters();
+    });
+
+    /* Suggestions while typing, and the grid below filters live so the
+       visitor never has to press Search to see the effect. Only the results
+       are repainted, not the filter rail, so the input keeps focus. */
+    attachTypeahead(form.querySelector('input[name="q"]'), {
+      onType(value){
+        const next = value.trim();
+        if(next === q.q) return;
+        q.q = next;
+        commit();
+      }
     });
   }
 

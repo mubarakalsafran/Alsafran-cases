@@ -220,7 +220,10 @@ body[dir="rtl"] .drawer-panel{ transform:translateX(100%) }
 
 /* ============================ hero + search ============================ */
 .hero{
-  position:relative; overflow:hidden; color:#fff;
+  /* No overflow:hidden — the search suggestions panel is absolutely
+     positioned inside the hero and must be allowed to escape it. The
+     decorative ::after layer is inset:0 so it cannot overflow anyway. */
+  position:relative; color:#fff;
   background:linear-gradient(160deg,var(--navy) 0%,var(--navy-2) 46%,var(--blue) 100%);
   padding-block:var(--s-7) var(--s-8);
 }
@@ -241,11 +244,18 @@ body[dir="rtl"] .hero-stat span{ letter-spacing:0; text-transform:none }
 .searchbar{
   background:var(--white); border-radius:var(--r-lg); box-shadow:var(--sh-3);
   padding:var(--s-2); display:flex; gap:var(--s-2); align-items:center; flex-wrap:wrap;
+  /* The hero sets color:#fff for its own copy. The bar is white, so it has to
+     reset the text colour or everything typed into it is white on white. */
+  color:var(--ink);
 }
-.searchbar .sb-field{ flex:1 1 220px; display:flex; align-items:center; gap:var(--s-2); padding-inline:var(--s-3); min-width:0 }
+.searchbar .sb-field{
+  flex:1 1 220px; display:flex; align-items:center; gap:var(--s-2);
+  padding-inline:var(--s-3); min-width:0; position:relative;
+}
 .searchbar .sb-field svg{ width:19px; height:19px; fill:none; stroke:var(--muted); stroke-width:1.8; flex-shrink:0 }
 .searchbar input[type="search"], .searchbar input[type="text"]{
-  flex:1; border:0; background:transparent; padding:var(--s-3) 0; min-width:0; font-size:var(--t-1);
+  flex:1; border:0; background:transparent; padding:var(--s-3) 0; min-width:0;
+  font-size:var(--t-1); color:var(--ink);
 }
 .searchbar input::placeholder{ color:var(--muted) }
 .searchbar input:focus{ outline:none; box-shadow:none }
@@ -735,3 +745,48 @@ body[dir="rtl"] .ftr h4{ letter-spacing:0; text-transform:none }
 }
 .toast.on{ opacity:1; transform:translateY(0) }
 .body-cmp{ padding-bottom:80px }
+
+
+/* ============================ search suggestions ============================ */
+.ac{
+  position:absolute; top:calc(100% + var(--s-2)); inset-inline-start:0; z-index:120;
+  width:max(100%, 380px); max-height:min(60vh, 460px); overflow-y:auto;
+  background:var(--white); border:1px solid var(--line-2); border-radius:var(--r-md);
+  box-shadow:var(--sh-3); padding:var(--s-2); text-align:start; color:var(--ink);
+}
+@media (max-width:719px){ .ac{ width:100% } }
+.ac-head{
+  font-size:10px; font-weight:700; letter-spacing:.08em; text-transform:uppercase;
+  color:var(--muted); padding:var(--s-2) var(--s-3) var(--s-1);
+}
+body[dir="rtl"] .ac-head{ letter-spacing:0; text-transform:none; font-size:var(--t--1) }
+.ac-row{
+  display:flex; align-items:center; gap:var(--s-3); padding:var(--s-2) var(--s-3);
+  border-radius:var(--r-sm); cursor:pointer; scroll-margin:var(--s-3);
+}
+.ac-row.on{ background:var(--blue-soft) }
+.ac-row .logo{ width:38px; height:38px; border-radius:9px; font-size:10px }
+.ac-ico{
+  width:38px; height:38px; border-radius:9px; flex-shrink:0; display:grid; place-items:center; color:#fff;
+}
+.ac-ico svg{ width:18px; height:18px; fill:none; stroke:currentColor; stroke-width:1.8; stroke-linecap:round; stroke-linejoin:round }
+.ac-main{ min-width:0; flex:1; display:flex; flex-direction:column; line-height:1.3 }
+.ac-main b{ font-weight:600; color:var(--navy); overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.ac-main mark{ background:transparent; color:var(--blue); font-weight:750; padding:0 }
+.ac-sub{ font-size:var(--t--1); color:var(--muted); overflow:hidden; text-overflow:ellipsis; white-space:nowrap }
+.ac-meta{ display:flex; flex-direction:column; align-items:flex-end; gap:2px; flex-shrink:0 }
+.ac-fee{ font-family:var(--f-num); font-size:var(--t--1); font-weight:650; color:var(--navy); white-space:nowrap }
+.ac-count{
+  font-family:var(--f-num); font-size:var(--t--1); color:var(--ink-2);
+  background:var(--paper-2); border-radius:var(--r-pill); padding:1px var(--s-2);
+}
+.ac-all b{ color:var(--navy) }
+.ac-empty{ padding:var(--s-4) var(--s-3); display:flex; flex-direction:column; gap:var(--s-1) }
+.ac-empty b{ color:var(--ink) }
+.ac-empty span{ font-size:var(--t--1); color:var(--muted) }
+.ac-foot{
+  border-top:1px solid var(--line); margin-top:var(--s-2); padding:var(--s-2) var(--s-3) var(--s-1);
+  font-size:10px; color:var(--muted);
+}
+body[dir="rtl"] .ac-foot{ font-size:var(--t--1) }
+@media (hover:none){ .ac-foot{ display:none } }
