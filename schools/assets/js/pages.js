@@ -491,8 +491,10 @@ Pages.school = function(){
         esc(t('perYear')) + '</span></p>' +
       '<p>' + esc(t('feeRangeOnly')) + '</p>' + feeProv
     : '<div class="gate" style="text-align:start">' +
-        '<h4 style="margin-bottom:var(--s-2)">' + esc(t('feesNotPublic')) + '</h4>' +
-        '<p style="margin-bottom:var(--s-3)">' + esc(t('feesAskSchool')) + '</p>' +
+        '<h4 style="margin-bottom:var(--s-2)">' +
+          esc(s.feeBasis === 'unknown' ? t('feesUnknown') : t('feesNotPublic')) + '</h4>' +
+        '<p style="margin-bottom:var(--s-3)">' +
+          esc(s.feeBasis === 'unknown' ? t('feesUnknownWhy') : t('feesAskSchool')) + '</p>' +
         (s.feeNote ? '<p style="margin-bottom:var(--s-3)">' + esc(s.feeNote) + '</p>' : '') +
         (s.website
           ? '<a class="btn btn-pri btn-sm" href="' + esc(s.website) +

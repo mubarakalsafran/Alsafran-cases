@@ -12,6 +12,36 @@ No build step, no npm install, no framework. Twelve HTML pages, one stylesheet, 
 
 ---
 
+## Nine records were removed because they could not be verified
+
+The seed catalogue I first shipped contained **nine schools that appear not to exist.** They were
+cross-checked against the International Schools Database listing of 46 Kuwait schools and against
+targeted searches; none of them appears in either:
+
+| Removed | What the search actually found |
+|---|---|
+| Gulf American School | Nothing. Searches surface *Gulf English* School |
+| Al Rowad American School | No Kuwait school of that name |
+| Sabah Al Salem British Academy | Nothing; the school in that area is American United School |
+| Little Hearts Nursery | Only exists in the UAE |
+| Kangaroo Kids Nursery | A Dubai nursery, since renamed Yellow Kite |
+| Sunflower Bilingual Nursery | Nothing |
+| Bright Start Early Learning Centre | Only match is in Australia |
+| Tiny Steps Nursery | Nothing |
+| Discovery Kindergarten | Nothing |
+
+A parent could have tried to enrol at a school that was never there. Fees and phone numbers were
+flagged as unverified from the start, but the *names* were presented as real, and for these nine
+they were not.
+
+Six **real** early-years providers replace them — The Sunshine Kindergarten, Little Me Preschool,
+Busy Bodies Montessori, Bubbles Montessori, Lollipops English Nursery and J's Preschool — each
+with a source recorded, and each carrying deliberately thin data. Thin and true beats rich and
+invented. They use a fourth `feeBasis`, `unknown`: no figure at all, which is a different claim
+from *the school does not publish its fees* and from *this is an estimate*.
+
+**34 schools** now: American 9 · British 8 · Indian 8 · Early Years 7 · IB 2.
+
 ## Fee data and where it comes from
 
 Fees were gathered from the schools' own websites and a cross-checked fee directory. Every school
@@ -133,7 +163,11 @@ its own address, its own provenance badge and its own map link:
 |---|---|---|
 | The English Playgroup (EPG) | 4 school campuses | Salwa · Salmiya · Sabah Al-Salem · Fahaheel |
 | Indian Community School (ICSK) | 4 branches | Salmiya (Senior, Junior, Amman) · Khaitan |
-| American Creativity Academy | 2 campuses, boys and girls | Hawalli |
+| American Creativity Academy | 3 campuses | Hawally (boys, kindergarten) · **Salmiya** (girls) |
+| Cambridge English School | 2 campuses | Mangaf (primary) · Hawally (secondary) |
+
+ACA's third campus is the one worth calling out: its Salmiya Girls Campus on Al Muthana Street is
+the original ACA site, and the directory had the school pinned to Hawalli alone.
 
 This matters for finding a school, not just for describing it: **a school is matched by any of its
 campus districts.** Filtering to Fahaheel surfaces The English Playgroup because it has a campus

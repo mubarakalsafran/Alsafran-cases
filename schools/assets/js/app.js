@@ -119,6 +119,8 @@ const T = {
   feesNotPublic:  ['This school does not publish its fees','هذه المدرسة لا تنشر رسومها'],
   feesAskSchool:  ['Contact the school for a quote per year group','تواصل مع المدرسة لمعرفة الرسوم لكل صف'],
   feesEstimate:   ['Estimate — not confirmed','تقديري — غير مؤكد'],
+  feesUnknown:    ['Fees not found','لم نجد الرسوم'],
+  feesUnknownWhy: ['We have not found published fees for this one. Ask them directly.','لم نجد رسوماً منشورة لهذه المدرسة. تواصل معها مباشرة.'],
   feesDirectory:  ['Published fee data','بيانات رسوم منشورة'],
   feeRangeOnly:   ['Published as a range — no per-grade breakdown','منشورة كنطاق — بدون تفصيل لكل صف'],
   feeYearLabel:   ['Academic year','العام الدراسي'],
@@ -475,7 +477,7 @@ function kwd(n){
    data is in — per-band, range-only, or not published at all */
 function feeHeadline(s){
   const r = feeRange(s);
-  if(!r.known) return t('feesOnRequest');
+  if(!r.known) return s.feeBasis === 'unknown' ? t('feesUnknown') : t('feesOnRequest');
   if(r.min === r.max) return kwd(r.min);
   return kwd(r.min) + ' – ' + kwd(r.max);
 }
@@ -491,6 +493,9 @@ function feeBadge(s){
   if(s.feeBasis === 'school')     return '<span class="badge badge-green">' + esc(t('verified')) + '</span>';
   if(s.feeBasis === 'on-request') return '<span class="badge badge-soft">' + esc(t('feesOnRequest')) + '</span>';
   if(s.feeBasis === 'directory')  return '<span class="badge badge-soft">' + esc(t('feesDirectory')) + '</span>';
+  /* 'unknown' is distinct from 'estimate': there is no figure at all, rather
+     than a figure we invented. Saying so is the honest option. */
+  if(s.feeBasis === 'unknown')    return '<span class="badge badge-pend">' + esc(t('feesUnknown')) + '</span>';
   return '<span class="badge badge-pend">' + esc(t('feesEstimate')) + '</span>';
 }
 function fmtDate(iso){
@@ -725,7 +730,9 @@ function cardHTML(s,opts){
             '<span class="amt">' + esc(kwd(fr.min)) + ' – ' + esc(kwd(fr.max)) + '</span></span>' +
             '<span class="fee-row" style="color:var(--muted)"><span>' + esc(t('feeRangeOnly')) + '</span><span></span></span>';
   }else{
-    bands = '<span class="fee-row"><span>' + esc(t('feesNotPublic')) + '</span><span></span></span>';
+    bands = '<span class="fee-row"><span>' +
+      esc(s.feeBasis === 'unknown' ? t('feesUnknownWhy') : t('feesNotPublic')) +
+      '</span><span></span></span>';
   }
 
   return '' +
