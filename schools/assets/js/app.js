@@ -80,6 +80,10 @@ const T = {
   locUnverified:  ['Area only — address not confirmed','المنطقة فقط — العنوان غير مؤكد'],
   locAskSchool:   ['We list the district; confirm the exact address with the school.','نعرض المنطقة فقط؛ تأكد من العنوان الدقيق مع المدرسة.'],
   locSource:      ['Source','المصدر'],
+  campuses:       ['Campuses','الفروع'],
+  campusOne:      ['Campus','الفرع'],
+  campusesCount:  ['campuses','فروع'],
+  allCampuses:    ['All campuses','كل الفروع'],
   instagram:      ['Instagram','إنستغرام'],
   website:        ['Website','الموقع الإلكتروني'],
   phone:          ['Phone','الهاتف'],
@@ -523,6 +527,13 @@ function mapsQuery(s){
 function mapsUrl(s){
   return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(mapsQuery(s));
 }
+/* the same ordering of precision, for one campus of a multi-site school */
+function campusMapsUrl(s,c){
+  const q = (c.lat && c.lng) ? (c.lat + ',' + c.lng)
+          : (c.basis === 'school' && c.address) ? (s.name + ', ' + c.address + ', Kuwait')
+          : (s.name + (c.name ? ' ' + c.name : '') + ', ' + c.district + ', Kuwait');
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(q);
+}
 function mapEmbed(s){
   /* Google's keyless embed endpoint — no API key, no tracking script. */
   return 'https://maps.google.com/maps?q=' + encodeURIComponent(mapsQuery(s)) +
@@ -737,8 +748,20 @@ function cardHTML(s,opts){
       '<span class="fact">' + I.layers + '<span>' + esc(t('grades')) + ': <b>' +
         esc(s.from + ' – ' + s.to) + '</b></span></span>' +
       (showAges ? '<span class="fact">' + I.cal + '<span>' + esc(t('ages')) + ': <b>' + esc(s.ages) + '</b></span></span>' : '') +
-      '<span class="fact">' + I.pin + '<span>' + esc(s.district) + ' · ' +
-        '<a href="' + mapsUrl(s) + '" target="_blank" rel="noopener noreferrer">' + esc(t('map')) + '</a></span></span>' +
+      '<span class="fact">' + I.pin + '<span>' +
+        (campusesOf(s).length > 1
+          /* Four branches in three of the same district should read
+             "Salmiya · Khaitan", not "Salmiya · Salmiya · Salmiya · Khaitan" —
+             the count already says how many there are. */
+          ? '<b>' + campusesOf(s).length + ' ' + esc(t('campusesCount')) + '</b>: ' +
+            districtsOf(s).map(d => {
+              const c = campusesOf(s).find(x => x.district === d);
+              return '<a href="' + campusMapsUrl(s,c) + '" target="_blank" rel="noopener noreferrer">' +
+                     esc(d) + '</a>';
+            }).join(' · ')
+          : esc(s.district) + ' · <a href="' + mapsUrl(s) +
+            '" target="_blank" rel="noopener noreferrer">' + esc(t('map')) + '</a>') +
+        '</span></span>' +
       '<span class="fact">' + I.wallet + '<span>' +
         (fr.known
           ? esc(t('feesFrom')) + ' <b class="kwd">' + esc(kwd(fr.min)) + '</b> ' + esc(t('perYear'))
@@ -798,14 +821,15 @@ function acNorm(v){ return String(v == null ? '' : v).toLowerCase().trim(); }
    ("BSK") should beat a stray substring match inside somebody else's blurb. */
 function scoreSchool(s, q){
   const name = acNorm(s.name), abbr = acNorm(s.abbr), ar = String(s.nameAr || '');
-  const dist = acNorm(s.district), cur = acNorm(s.curriculum);
+  const dists = districtsOf(s).map(acNorm);
+  const dist = dists.join(' '), cur = acNorm(s.curriculum);
   if(abbr && abbr === q)                              return 100;
   if(name.indexOf(q) === 0)                           return 92;
   if(abbr && abbr.indexOf(q) === 0)                   return 88;
   if(name.split(/\s+/).some(w => w.indexOf(q) === 0)) return 80;
   if(name.indexOf(q) >= 0)                            return 70;
   if(ar.indexOf(q) >= 0)                              return 66;
-  if(dist.indexOf(q) === 0)                           return 55;
+  if(dists.some(d => d.indexOf(q) === 0))             return 55;
   if(dist.indexOf(q) >= 0)                            return 50;
   if(cur.indexOf(q) === 0)                            return 45;
   if((s.extras || []).some(x => acNorm(x).indexOf(q) >= 0)) return 30;
@@ -843,11 +867,11 @@ function suggest(raw){
     .slice(0, AC_MAX.facets)
     .map(c => ({ kind:'curriculum', cur:c, count:pool.filter(x => x.curriculum === c.id).length }));
 
-  const areas = Array.from(new Set(pool.map(x => x.district)))
+  const areas = DISTRICTS
     .filter(d => acNorm(d).indexOf(q) >= 0)
-    .sort()
     .slice(0, AC_MAX.facets)
-    .map(d => ({ kind:'area', value:d, count:pool.filter(x => x.district === d).length }));
+    .map(d => ({ kind:'area', value:d,
+                 count:pool.filter(x => districtsOf(x).indexOf(d) >= 0).length }));
 
   const hits = pool.filter(x => matches(x, { q:raw, cur:[], dist:[], gov:[], grp:[], max:null })).length;
   const out = schools.concat(curricula, areas);
@@ -873,7 +897,7 @@ function acRowHTML(item,i,q){
       '<span class="ac-main">' +
         '<b>' + acMark(schoolName(s),q) + '</b>' +
         '<span class="ac-sub">' + esc(lbl(CURRICULUM_BY_ID[s.curriculum])) + ' · ' +
-          acMark(s.district,q) + ' · ' + esc(s.from + ' – ' + s.to) + '</span>' +
+          districtsOf(s).map(d => acMark(d,q)).join(' · ') + ' · ' + esc(s.from + ' – ' + s.to) + '</span>' +
       '</span>' +
       '<span class="ac-meta">' +
         (fr.known ? '<span class="ac-fee">' + esc(kwd(fr.min)) + '</span>' : '') +
@@ -1108,13 +1132,17 @@ const Query = {
 function matches(s,q){
   if(q.q){
     const needle = q.q.toLowerCase();
-    const hay = [s.name, s.nameAr, s.abbr, s.district, s.governorate, s.curriculum,
-                 s.blurb, (s.extras||[]).join(' ')].join(' ').toLowerCase();
+    const hay = [s.name, s.nameAr, s.abbr, s.curriculum, s.blurb,
+                 (s.extras||[]).join(' '),
+                 campusesOf(s).map(c => c.name + ' ' + c.district + ' ' + c.governorate).join(' ')
+                ].join(' ').toLowerCase();
     if(hay.indexOf(needle) < 0) return false;
   }
   if(q.cur.length  && q.cur.indexOf(s.curriculum) < 0) return false;
-  if(q.dist.length && q.dist.indexOf(s.district) < 0) return false;
-  if(q.gov.length  && q.gov.indexOf(s.governorate) < 0) return false;
+  /* A school with four campuses should be findable under any of their
+     districts, not only whichever one happens to be listed first. */
+  if(q.dist.length && !districtsOf(s).some(d => q.dist.indexOf(d) >= 0)) return false;
+  if(q.gov.length  && !governoratesOf(s).some(g => q.gov.indexOf(g) >= 0)) return false;
   /* A school that publishes no fees has nothing to compare against, so it is
      excluded once a fee ceiling is set rather than being treated as free. */
   if(q.max != null){
@@ -1194,7 +1222,8 @@ global.KSG = {
   t:t, lbl:lbl, Lang:Lang, schoolName:schoolName,
   I:I, starsHTML:starsHTML, logoHTML:logoHTML, curBadge:curBadge,
   kwd:kwd, feeHeadline:feeHeadline, feeBadge:feeBadge, fmtDate:fmtDate, initials:initials,
-  mapsUrl:mapsUrl, mapsQuery:mapsQuery, mapEmbed:mapEmbed, igUrl:igUrl, locBadge:locBadge,
+  mapsUrl:mapsUrl, campusMapsUrl:campusMapsUrl, mapsQuery:mapsQuery, mapEmbed:mapEmbed,
+  igUrl:igUrl, locBadge:locBadge,
   Data:Data, Auth:Auth, Favs:Favs, Compare:Compare, hash:hash,
   toast:toast, cardHTML:cardHTML, renderCards:renderCards, bindCardActions:bindCardActions,
   suggest:suggest, attachTypeahead:attachTypeahead,

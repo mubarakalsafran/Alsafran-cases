@@ -8,7 +8,7 @@
 
 const {
   $, $$, esc, t, lbl, Lang, schoolName, I, starsHTML, logoHTML, curBadge,
-  kwd, feeHeadline, feeBadge, fmtDate, initials, mapsUrl, mapEmbed, igUrl, locBadge,
+  kwd, feeHeadline, feeBadge, fmtDate, initials, mapsUrl, mapEmbed, igUrl, locBadge, campusMapsUrl,
   Data, Auth, Favs, Compare, toast, renderCards, bindCardActions, attachTypeahead,
   Query, Route, applyQuery, paintChrome, store, K
 } = global.KSG;
@@ -234,13 +234,13 @@ Pages.directory = function(opts){
         '<div class="fgroup"><b>' + esc(t('location')) + '</b>' +
           '<label class="field"><span>' + esc(Lang.isAr()?'المحافظة':'Governorate') + '</span>' +
           '<select class="inp" id="fGov"><option value="">' + esc(Lang.isAr()?'كل المحافظات':'All governorates') + '</option>' +
-            GOVERNORATES.filter(g => pool.some(s => s.governorate === g.id)).map(g =>
+            GOVERNORATES.filter(g => pool.some(s => governoratesOf(s).indexOf(g.id) >= 0)).map(g =>
               '<option value="' + g.id + '"' + (q.gov.indexOf(g.id) >= 0 ? ' selected' : '') + '>' +
               esc(lbl(g)) + '</option>').join('') +
           '</select></label>' +
           '<label class="field"><span>' + esc(t('district')) + '</span>' +
           '<select class="inp" id="fDist"><option value="">' + esc(t('allDistricts')) + '</option>' +
-            Array.from(new Set(pool.map(s => s.district))).sort().map(d =>
+            Array.from(new Set(pool.reduce((a,s)=> a.concat(districtsOf(s)), []))).sort().map(d =>
               '<option value="' + esc(d) + '"' + (q.dist.indexOf(d) >= 0 ? ' selected' : '') + '>' +
               esc(d) + '</option>').join('') +
           '</select></label>' +
@@ -426,7 +426,9 @@ Pages.school = function(){
             (s.featured ? '<span class="badge badge-gold">' + esc(t('featured')) + '</span>' : '') +
             feeBadge(s) +
             '<span class="dot-sep">·</span><span>' + I.pin.replace('<svg','<svg style="width:14px;height:14px;display:inline;vertical-align:-2px;stroke:currentColor"') +
-              ' ' + esc(s.district) + '</span>' +
+              ' ' + esc(districtsOf(s).join(' · ')) +
+              (campusesOf(s).length > 1 ? ' (' + campusesOf(s).length + ' ' + esc(t('campusesCount')) + ')' : '') +
+              '</span>' +
             '<span class="dot-sep">·</span><span>' + esc(s.from + ' – ' + s.to) + '</span>' +
             '<span class="dot-sep">·</span>' +
             '<span class="rate">' + starsHTML(r.avg) +
@@ -560,10 +562,13 @@ Pages.school = function(){
       esc(s.website.replace(/^https?:\/\//,'')) + '</a>'] : null,
     ['ig', t('instagram'), '<a href="' + igUrl(s) + '" target="_blank" rel="noopener noreferrer">' +
       (s.ig ? '@' + esc(s.ig) : esc(Lang.isAr()?'ابحث في إنستغرام':'Search on Instagram')) + '</a>'],
-    ['pin', t('location'), s.locationBasis === 'school'
-      ? esc(s.address)
-      : esc(s.district) + ', ' + esc(Lang.isAr()?'الكويت':'Kuwait') +
-        ' <span style="color:var(--muted)">(' + esc(t('locUnverified')) + ')</span>'],
+    ['pin', t('location'), campusesOf(s).length > 1
+      ? esc(districtsOf(s).join(' · ')) +
+        ' <span style="color:var(--muted)">(' + campusesOf(s).length + ' ' + esc(t('campusesCount')) + ')</span>'
+      : (s.locationBasis === 'school'
+          ? esc(s.address)
+          : esc(s.district) + ', ' + esc(Lang.isAr()?'الكويت':'Kuwait') +
+            ' <span style="color:var(--muted)">(' + esc(t('locUnverified')) + ')</span>')],
     /* Only ever show a number we actually confirmed — never a plausible
        placeholder, which could route a parent to a stranger. */
     ['phone', t('phone'), s.phone
@@ -579,7 +584,23 @@ Pages.school = function(){
     '<section class="panel"><h2>' + esc(t('atAGlance')) + '</h2>' +
       '<dl class="deftable">' + glance + '</dl></section>' +
 
-    '<section class="panel"><h2>' + esc(t('location')) + '</h2>' +
+    (campusesOf(s).length > 1
+      ? '<section class="panel"><h2>' + esc(t('campuses')) + ' (' + campusesOf(s).length + ')</h2>' +
+          campusesOf(s).map(c =>
+            '<div class="defrow" style="display:block">' +
+              '<b style="color:var(--navy)">' + esc(c.name || c.district) + '</b>' +
+              (c.basis === 'school'
+                ? ' <span class="badge badge-green">' + esc(t('locVerified')) + '</span>'
+                : ' <span class="badge badge-pend">' + esc(t('locUnverified')) + '</span>') +
+              '<div style="color:var(--ink-2);margin-top:2px">' + esc(c.address || c.district) + '</div>' +
+              '<a href="' + campusMapsUrl(s,c) + '" target="_blank" rel="noopener noreferrer" ' +
+                'style="font-size:var(--t--1)">' + esc(t('map')) + '</a>' +
+            '</div>').join('') +
+          (s.campusNote ? '<p class="photo-note">' + esc(s.campusNote) + '</p>' : '') +
+        '</section>'
+      : '') +
+
+    '<section class="panel"><h2>' + esc(campusesOf(s).length > 1 ? t('location') : t('location')) + '</h2>' +
       '<p style="margin-bottom:var(--s-3)">' + locBadge(s) + '</p>' +
       '<div class="mapbox" id="mapBox">' +
         '<button type="button" class="map-fallback map-poster" id="mapPoster">' +
@@ -851,7 +872,10 @@ Pages.compare = function(){
           (s.feeYear ? '<br><span style="font-size:var(--t--1);color:var(--muted)">' + esc(s.feeYear) + '</span>' : ''))) +
         row(t('grades'), list.map(s => esc(s.from + ' – ' + s.to))) +
         row(t('ages'), list.map(s => esc(s.ages))) +
-        row(t('location'), list.map(s => esc(s.district) + '<br><a href="' + mapsUrl(s) +
+        row(t('location'), list.map(s => esc(districtsOf(s).join(' · ')) +
+          (campusesOf(s).length > 1 ? ' <span class="badge badge-soft">' + campusesOf(s).length + ' ' +
+            esc(t('campusesCount')) + '</span>' : '') +
+          '<br><a href="' + mapsUrl(s) +
           '" target="_blank" rel="noopener noreferrer" style="font-size:var(--t--1)">' + esc(t('map')) + '</a>')) +
         row(t('gender'), list.map(s => esc(s.gender))) +
         row(t('founded'), list.map(s => esc(String(s.founded)))) +

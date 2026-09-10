@@ -70,6 +70,11 @@ const REVIEW_TAGS = [
             District-centre coordinates were invented and have been removed.
    feeEmail: the address that actually answers a fee question, where a school
             routes those separately from admissions.
+   campuses: every site a school teaches at. Present only where a school has
+            more than one, or where the campus is named; a single-site school
+            is described by its own district/address fields. Each campus
+            carries its own basis and source, because a group often publishes
+            one address properly and the rest not at all.
    locationBasis: 'school'      – address taken from the school's own website
                   'unverified'  – district only, not yet confirmed
    reviews: intentionally empty. Every review on this site is written by a
@@ -164,6 +169,12 @@ const SCHOOLS = [
   lat:null, lng:null, website:'https://www.bbs.edu.kw', ig:'bbskuwait',
   from:'KG1', to:'Grade 12', ages:'4 – 18 years',
   languages:['English','Arabic'], accreditation:['IB World School','NEASC','CIS'],
+  campuses:[
+    { name:'Hawalli Campus', district:'Hawalli', governorate:'Hawalli',
+      address:'Block 5, Hawalli',
+      basis:'school', source:'https://www.bbs.edu.kw/page.gallery.php?id=61&menu=1' }
+  ],
+  campusNote:'The school refers to two campuses but names only the Hawalli one.',
   locationBasis:'unverified',
   transport:true, theme:['#166534','#22c55e'],
   blurb:'A genuinely bilingual American/IB school with a strong Arabic programme and an IB Diploma in the high school.',
@@ -189,6 +200,15 @@ const SCHOOLS = [
   lat:null, lng:null, website:'https://www.aca.edu.kw', ig:'aca_kuwait',
   from:'KG1', to:'Grade 12', ages:'4 – 18 years',
   languages:['English','Arabic'], accreditation:['NEASC','College Board (AP)'],
+  campuses:[
+    { name:'Boys Campus', district:'Hawalli', governorate:'Hawalli',
+      address:'Hawalli, near the Fourth Ring Road and Fahaheel Expressway junction',
+      basis:'directory', source:'https://aca.edu.kw/ExploreACA/Campuses' },
+    { name:'Girls Campus', district:'Hawalli', governorate:'Hawalli',
+      address:'Al Muthanna Street, Hawalli',
+      basis:'directory', source:'https://aca.edu.kw/ExploreACA/Campuses' }
+  ],
+  campusNote:'Two campuses, boys and girls. The school’s own campuses page did not load, so the areas still need confirming.',
   locationBasis:'unverified',
   transport:true, theme:['#1d4ed8','#60a5fa'],
   blurb:'American curriculum with an Islamic ethos, running separate boys’ and girls’ campuses from Grade 5 upward.',
@@ -596,6 +616,21 @@ const SCHOOLS = [
   languages:['English','Hindi','Arabic','Malayalam'], accreditation:['CBSE (New Delhi)'],
   phone:'+965 2562 9583',
   email:'icsksenior@icsk-kw.com',
+  campuses:[
+    { name:'ICSK Senior', district:'Salmiya', governorate:'Hawalli',
+      address:'Essa Al Qatami Street, Jiddha-8, Block 10, Salmiya',
+      basis:'school', source:'https://www.icsk-kw.com/contact.php' },
+    { name:'ICSK Junior', district:'Salmiya', governorate:'Hawalli',
+      address:'Salmiya',
+      basis:'directory', source:'https://www.icsk-kw.com/junior-branch.php' },
+    { name:'ICSK Amman', district:'Salmiya', governorate:'Hawalli',
+      address:'Salmiya, close to the Senior and Junior branches',
+      basis:'directory', source:'https://www.icsk-kw.com/amman-branch.php' },
+    { name:'ICSK Khaitan', district:'Khaitan', governorate:'Farwaniya',
+      address:'Street 23, Block 9, Abraq Khaitan, opposite Main Jamiah',
+      basis:'directory', source:'https://www.icsk-kw.com/khaitan-branch.php' }
+  ],
+  campusNote:'Four branches. Only the Senior address is published on the school’s own site.',
   locationBasis:'school',
   locationSource:'https://www.icsk-kw.com/contact.php',
   locationNote:'Several branches (Senior, Junior, Khaitan, Amman); the Senior campus address is the one published. Corrected from Khaitan.',
@@ -779,6 +814,21 @@ const SCHOOLS = [
   lat:null, lng:null, website:'https://www.englishplaygroup.com', ig:'englishplaygroup',
   from:'Nursery', to:'KG2', ages:'2 – 6 years',
   languages:['English','Arabic'], accreditation:['EYFS (England)'],
+  campuses:[
+    { name:'Salwa School', district:'Salwa', governorate:'Hawalli',
+      address:'Block 7, Street 2, Salwa',
+      basis:'school', source:'https://epg.edu.kw/aboutus/' },
+    { name:'Salmiya School', district:'Salmiya', governorate:'Hawalli',
+      address:'Block 12, Abo Thar Al Ghafari Street, Salmiya',
+      basis:'school', source:'https://epg.edu.kw/aboutus/' },
+    { name:'Sabah Al Salem School', district:'Sabah Al-Salem', governorate:'Mubarak',
+      address:'Block 1, Street 109, Sabah Al-Salem',
+      basis:'school', source:'https://epg.edu.kw/aboutus/' },
+    { name:'Fahaheel School', district:'Fahaheel', governorate:'Ahmadi',
+      address:'Block 7, Street 109, Fahaheel',
+      basis:'school', source:'https://epg.edu.kw/aboutus/' }
+  ],
+  campusNote:'Four school campuses are listed with addresses; the group also runs a network of early-years locations it does not enumerate publicly.',
   locationBasis:'unverified',
   transport:true, theme:['#be185d','#fbcfe8'],
   blurb:'Kuwait’s largest early-years group — EYFS across a dozen branches, 2 to 6 years.',
@@ -955,6 +1005,20 @@ function feeRange(s){
 /* has this school's fee data been confirmed against a real source? */
 function feesConfirmed(s){ return s.feeBasis === 'school' || s.feeBasis === 'directory'; }
 
+/* Every site a school teaches at, as a uniform list — so the rest of the code
+   never has to branch on whether a school happens to have one campus or four. */
+function campusesOf(s){
+  if(s.campuses && s.campuses.length) return s.campuses;
+  return [{
+    name:'', district:s.district, governorate:s.governorate, address:s.address,
+    basis:s.locationBasis === 'school' ? 'school' : '', source:s.locationSource || '',
+    lat:s.lat, lng:s.lng
+  }];
+}
+/* A school in four districts should be findable in all four. */
+function districtsOf(s){ return Array.from(new Set(campusesOf(s).map(c => c.district))); }
+function governoratesOf(s){ return Array.from(new Set(campusesOf(s).map(c => c.governorate))); }
+
 function gradeIndex(g){ return GRADE_LADDER.indexOf(g); }
 
 /* does the school teach anywhere inside the group's grade span? */
@@ -968,8 +1032,10 @@ function coversGroup(s, group){
 const CURRICULUM_BY_ID = CURRICULA.reduce((m,c)=>{ m[c.id]=c; return m; },{});
 const GOV_BY_ID        = GOVERNORATES.reduce((m,g)=>{ m[g.id]=g; return m; },{});
 
-/* districts, de-duplicated, for the location filter */
-const DISTRICTS = Array.from(new Set(SCHOOLS.map(s=>s.district))).sort();
+/* every district any campus sits in, de-duplicated, for the location filter */
+const DISTRICTS = Array.from(new Set(
+  SCHOOLS.reduce((acc,s)=> acc.concat(districtsOf(s)), [])
+)).sort();
 
 /* the widest published fee in the catalogue, for the slider bounds */
 const FEE_CEILING = SCHOOLS.reduce((n,s)=>{

@@ -123,6 +123,28 @@ On the directory and section pages the grid also **filters live as you type** (d
 nothing needs the Search button. Only the results repaint, not the filter rail, so the input
 keeps focus — and the query lands in the URL, so a search stays shareable.
 
+### Campuses
+
+A school group is not one dot on a map. Where a school teaches at more than one site, every
+campus is listed under its name — on the card, in the profile, and in the comparison — each with
+its own address, its own provenance badge and its own map link:
+
+| School | Campuses | Areas |
+|---|---|---|
+| The English Playgroup (EPG) | 4 school campuses | Salwa · Salmiya · Sabah Al-Salem · Fahaheel |
+| Indian Community School (ICSK) | 4 branches | Salmiya (Senior, Junior, Amman) · Khaitan |
+| American Creativity Academy | 2 campuses, boys and girls | Hawalli |
+
+This matters for finding a school, not just for describing it: **a school is matched by any of its
+campus districts.** Filtering to Fahaheel surfaces The English Playgroup because it has a campus
+there, and searching "khaitan" suggests ICSK because one branch is in Khaitan — neither of which
+worked when a school was reduced to a single district.
+
+The card de-duplicates areas (ICSK reads *"4 campuses: Salmiya · Khaitan"*, not Salmiya three
+times) because the count already says how many there are. Provenance is per campus, since a group
+typically publishes one address properly and the rest not at all — ICSK's Senior address comes
+from its own site and is badged accordingly, while the other three branches are not.
+
 ### Each school card shows
 
 Logo (generated monogram, no image requests) · name · curriculum badge · star rating and review
