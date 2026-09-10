@@ -98,6 +98,56 @@ Two website URLs in the seed data did not resolve at all (`fsis.edu.kw`, `faips.
 been cleared rather than left as dead links; `ais-kuwait.org` and `icsk.edu.kw` were redirected to
 their current domains.
 
+### Logos
+
+Every school card used to show a generated monogram — its initials on a two-colour gradient. That
+was honest but anonymous: parents recognise schools by their crest, not by three letters.
+
+**24 of the 34 schools now show their own logo**, taken from the school's own website and stored
+in `assets/img/logos/<id>.png`. Each record keeps the exact URL it came from in `logoSource`, so
+any of them can be re-checked or refreshed:
+
+| Where the file came from | Schools |
+|---|---|
+| The school's own site (header logo, crest, or its `apple-touch-icon`) | 23 |
+| Its operator's site — Bhavan's Kuwait publishes the mark for Bhavans SIS | 1 |
+| No logo: site unreachable, bot-walled, or publishes none legible | 10 |
+
+The ten without one are UAS and FSIS (both refuse automated requests), KIES (its site carries only
+a wide low-contrast banner), and FAIPS, UIS, IIS and the four small nurseries, which have no site
+this project could find. **Those keep the monogram**, which is why it was not deleted.
+
+How it renders:
+
+- Each file is trimmed of its blank margins, fitted inside 192 px and re-compressed — 24 logos
+  come to **144 KB in total**, so the grid stays fast.
+- `object-fit: contain` on a white tile. A crest and a wide wordmark both keep their proportions;
+  nothing is cropped or stretched to fill a square.
+- **The monogram is still rendered underneath.** If a logo file ever 404s, the `<img>` removes
+  itself and the initials show through, so a missing file degrades to the old look rather than to
+  an empty box. The logo suite tests exactly that.
+- The single-file build inlines all 24 as `data:` URIs (`KSG.LOGO_DATA`), because that bundle has
+  no sibling files. The same `logoHTML()` serves both builds.
+- Each school's logo is also published in its `School` structured data, so search results can
+  show it.
+
+Chasing the logos turned up **seven website fields that were wrong**, all now corrected:
+
+| School | Was | Now |
+|---|---|---|
+| The English Playgroup | `englishplaygroup.com` — a parked domain listed for sale | `epg.edu.kw` |
+| American Academy for Girls | *(blank)* | `aag.edu.kw` |
+| Kuwait American School | *(blank)* | `kas.edu.kw` |
+| Cambridge English School | *(blank)* | `ces.edu.kw` |
+| Kuwait Bilingual School | *(blank)* | `kuwaitbilingualschool.com` |
+| Kuwait International English School | *(blank)* | `kieskuwait.com` |
+| Indian Educational School | *(blank)* | `bhavanskuwait.com` |
+
+School logos are the schools' own trademarks, reproduced here at directory scale to identify each
+school — the same nominative use any school directory makes of them. Any school that would rather
+its mark were not shown can have it removed on request; clearing the `logo` field restores the
+monogram with no other change.
+
 Two deliberate choices remain:
 
 - **Phone numbers are not invented.** Only confirmed numbers are stored (ASK, NES, BSK so far);
@@ -182,7 +232,8 @@ from its own site and is badged accordingly, while the other three branches are 
 
 ### Each school card shows
 
-Logo (generated monogram, no image requests) · name · curriculum badge · star rating and review
+The school's own logo where it publishes one, a generated monogram where it does not · name ·
+curriculum badge · star rating and review
 count · years offered (e.g. `KG1 – Grade 12`) · ages accepted · district with a Google Maps pin ·
 annual tuition per grade band in KWD · Instagram · save · add-to-compare.
 
@@ -260,7 +311,8 @@ schools/
 ├── index.html directory.html american.html british.html kindergarten.html
 ├── school.html compare.html favorites.html login.html account.html about.html admin.html
 ├── assets/css/style.css     design system + every layout
-├── assets/js/data.js        41 schools (no seeded reviews), curricula, districts, grade ladder
+├── assets/img/logos/        24 school logos, PNG, from the schools' own sites
+├── assets/js/data.js        34 schools (no seeded reviews), curricula, districts, grade ladder
 ├── assets/js/app.js         i18n/RTL, auth, favourites, compare, cards, filter engine, chrome
 ├── assets/js/pages.js       one controller per public page + SEO/JSON-LD injection
 ├── assets/js/admin.js       dashboard: overview, schools CRUD, moderation, users, data
@@ -271,12 +323,12 @@ schools/
 
 ### Viewing it as a single file
 
-`bundle.py` packs all twelve pages, the stylesheet and the four scripts into one
+`bundle.py` packs all twelve pages, the stylesheet, the four scripts and all 24 logos into one
 self-contained HTML file that routes on the hash — useful for sharing, or for opening the guide
 where a folder of files is awkward:
 
 ```bash
-python3 bundle.py                      # → dist/kuwait-schools-guide.html (~262 KB)
+python3 bundle.py                      # → dist/kuwait-schools-guide.html (~479 KB, logos inlined)
 python3 bundle.py /tmp/preview.html    # or anywhere you like
 ```
 

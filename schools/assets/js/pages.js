@@ -1069,6 +1069,8 @@ function injectJSONLD(s,r){
     alternateName:s.nameAr || undefined,
     description:s.blurb,
     url:location.href,
+    /* the school's own mark, absolute — schema.org wants a resolvable URL */
+    logo:s.logo ? new URL(s.logo, location.href).href : undefined,
     sameAs:[s.website, s.ig ? 'https://www.instagram.com/' + s.ig + '/' : null].filter(Boolean),
     foundingDate:String(s.founded),
     address:{ '@type':'PostalAddress', streetAddress:s.address,

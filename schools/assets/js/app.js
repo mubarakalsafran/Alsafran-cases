@@ -20,6 +20,11 @@ const esc = s => String(s==null?'':s).replace(/[&<>"']/g, c => (
   {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]
 ));
 
+/* Logo overrides, keyed by school id. Empty on the multi-page site, where
+   the <img> loads assets/img/logos/<id>.png over HTTP. The single-file build
+   fills this with data: URIs, because that bundle has no sibling files. */
+const LOGO_DATA = {};
+
 const store = {
   get(k,d){ try{ const v = localStorage.getItem(k); return v==null ? d : JSON.parse(v); }catch(e){ return d; } },
   set(k,v){ try{ localStorage.setItem(k,JSON.stringify(v)); return true; }catch(e){ return false; } },
@@ -513,11 +518,20 @@ function initials(s){
   if(s.abbr) return s.abbr.slice(0,5);
   return s.name.split(/\s+/).filter(w=>w.length>2).slice(0,3).map(w=>w[0]).join('').toUpperCase();
 }
+/* The school's own logo when we have it, its initials when we don't.
+   The monogram is always rendered underneath: an <img> that 404s removes
+   itself and the initials show through, so a broken file degrades to the
+   old behaviour instead of an empty box. */
 function logoHTML(s,big){
-  const th = s.theme || ['#0B2545','#1B6CA8'];
-  return '<div class="logo' + (big?' logo-lg':'') + '" style="background:linear-gradient(135deg,' +
-    th[0] + ',' + th[1] + ')" role="img" aria-label="' + esc(s.name) + ' logo">' +
-    esc(initials(s)) + '</div>';
+  const th  = s.theme || ['#0B2545','#1B6CA8'];
+  const src = s.logo && (LOGO_DATA[s.id] || s.logo);
+  const mono = '<span class="logo-mono" style="background:linear-gradient(135deg,' +
+    th[0] + ',' + th[1] + ')">' + esc(initials(s)) + '</span>';
+  return '<div class="logo' + (big?' logo-lg':'') + (src?' logo-real':'') +
+    '" role="img" aria-label="' + esc(s.name) + ' logo">' + mono +
+    (src ? '<img src="' + esc(src) + '" alt="" loading="lazy" decoding="async"' +
+           ' onerror="this.parentNode.classList.remove(\'logo-real\');this.remove()">' : '') +
+    '</div>';
 }
 function curBadge(s){
   const c = CURRICULUM_BY_ID[s.curriculum];
@@ -1243,7 +1257,7 @@ global.KSG = {
   suggest:suggest, attachTypeahead:attachTypeahead,
   Query:Query, Route:Route, matches:matches, sortList:sortList, applyQuery:applyQuery,
   paintChrome:paintChrome, paintCompareBar:paintCompareBar, boot:boot,
-  ADMIN_SEED:ADMIN_SEED
+  ADMIN_SEED:ADMIN_SEED, LOGO_DATA:LOGO_DATA
 };
 
 if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded',boot);

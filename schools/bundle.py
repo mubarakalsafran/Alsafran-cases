@@ -8,7 +8,7 @@ be opened or published.
 
     python3 bundle.py [out.html]
 """
-import re, sys, pathlib, html
+import re, sys, pathlib, html, base64, json
 
 ROOT = pathlib.Path(__file__).parent
 OUT  = pathlib.Path(sys.argv[1]) if len(sys.argv) > 1 else ROOT / "dist" / "kuwait-schools-guide.html"
@@ -37,6 +37,18 @@ for pg in PAGES:
 
 def js_str(t):
     return ("`" + t.replace("\\", "\\\\").replace("`", "\\`").replace("${", "\\${") + "`")
+
+def logo_data_uris():
+    """Every school logo as a data: URI, keyed by school id.
+
+    The bundle is a single file with no sibling assets, so the <img> src has
+    to travel inside it. KSG.LOGO_DATA is consulted before the relative path,
+    which is why the same logoHTML() serves both builds.
+    """
+    out = {}
+    for f in sorted((ROOT / "assets/img/logos").glob("*.png")):
+        out[f.stem] = "data:image/png;base64," + base64.b64encode(f.read_bytes()).decode()
+    return out
 
 css   = read("assets/css/style.css")
 datajs= read("assets/js/data.js")
@@ -144,6 +156,10 @@ document.documentElement.setAttribute('data-spa','');
 %(app)s
 </script>
 <script>
+/* logos, inlined — see logo_data_uris() */
+Object.assign(KSG.LOGO_DATA, %(logos)s);
+</script>
+<script>
 %(pages)s
 </script>
 <script>
@@ -154,10 +170,12 @@ document.documentElement.setAttribute('data-spa','');
 </script>
 """ % dict(
     css=css, data=datajs, app=appjs, pages=pagesjs, admin=adminjs,
+    logos=json.dumps(logo_data_uris()),
     router=ROUTER % dict(shells=shell_js, inits=init_js),
 )
 
 OUT.parent.mkdir(parents=True, exist_ok=True)
 OUT.write_text(page_html, encoding="utf-8")
 kb = len(page_html.encode()) / 1024
-print("wrote %s (%.0f KB, %d pages bundled)" % (OUT, kb, len(PAGES)))
+print("wrote %s (%.0f KB, %d pages, %d logos inlined)"
+      % (OUT, kb, len(PAGES), len(logo_data_uris())))

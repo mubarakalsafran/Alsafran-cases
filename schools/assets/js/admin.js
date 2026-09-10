@@ -268,7 +268,8 @@ A.schoolForm = function(id){
     lat:'', lng:'', website:'', ig:'', from:'KG1', to:'Grade 12', ages:'',
     languages:['English','Arabic'], accreditation:[], transport:true, theme:['#0B2545','#1B6CA8'],
     blurb:'', about:'', facilities:[], fees:[], reviews:[], featured:false, verified:false,
-    feeBasis:'estimate', feeYear:'', feeSource:'', feeNote:'', feeRange:null
+    feeBasis:'estimate', feeYear:'', feeSource:'', feeNote:'', feeRange:null,
+    logo:'', logoSource:''
   };
 
   const gradeOpts = sel => GRADE_LADDER.map(g =>
@@ -306,6 +307,10 @@ A.schoolForm = function(id){
 
         f('website', t('website'), v.website) +
         f('ig', t('instagram') + ' (' + (Lang.isAr()?'المعرّف بدون @':'handle without @') + ')', v.ig) +
+
+        f('logo', (Lang.isAr()?'مسار الشعار':'Logo path') +
+          ' (e.g. assets/img/logos/ask.png)', v.logo, 'span2') +
+        f('logoSource', (Lang.isAr()?'رابط مصدر الشعار':'Logo source URL'), v.logoSource, 'span2') +
 
         f('founded', t('founded'), v.founded) +
         '<label class="field"><span>' + esc(t('transport')) + '</span>' +
@@ -412,6 +417,7 @@ A.schoolForm = function(id){
       district:get('district'), governorate:get('governorate'), address:get('address'),
       lat:Number(get('lat')) || null, lng:Number(get('lng')) || null,
       website:get('website'), ig:get('ig') ? get('ig').replace(/^@/,'') : null,
+      logo:get('logo') || null, logoSource:get('logoSource') || '',
       from:get('from'), to:get('to'), ages:get('ages'),
       languages:csv('languages'), accreditation:csv('accreditation'),
       extras:csv('extras'), facilities:csv('facilities'),

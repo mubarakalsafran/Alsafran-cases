@@ -45,28 +45,38 @@ async function resolveSha(){
 const SHA = await resolveSha();
 const raw = f => `https://raw.githubusercontent.com/${REPO}/${SHA}/${SUB}/${f}`;
 
-async function get(f){
+async function get(f, binary){
   const res = await fetch(raw(f));
   if(!res.ok) throw new Error(`${f} → HTTP ${res.status} from ${raw(f)}`);
-  return res.text();
+  return binary ? Buffer.from(await res.arrayBuffer()) : res.text();
 }
 
 const results = await Promise.all(FILES.map(async f => [f, await get(f)]));
+const byName = new Map(results);
+
+/* School logos are not listed above: they are whatever the catalogue points
+   at. Deriving the list from data.js keeps the two in step, and makes the
+   build fail if a record references a logo that was never committed. */
+const dataJs = byName.get('assets/js/data.js');
+const LOGOS = [...new Set([...dataJs.matchAll(/logo:'(assets\/img\/logos\/[^']+)'/g)].map(m => m[1]))];
+const logoResults = await Promise.all(LOGOS.map(async f => [f, await get(f, true)]));
 
 let bytes = 0;
-for(let [f, body] of results){
+for(let [f, body] of [...results, ...logoResults]){
   /* the checked-in files carry a placeholder origin; point them at this host */
   if(f === 'sitemap.xml' || f === 'robots.txt'){
     body = body.replace(/https:\/\/[a-z0-9.-]*(?:kuwaitschoolsguide\.example|kuwait-schools-guide\.vercel\.app)/g, ORIGIN);
   }
   const dest = join(OUT, f);
   await mkdir(dirname(dest), { recursive: true });
-  await writeFile(dest, body, 'utf8');
-  bytes += Buffer.byteLength(body);
+  await writeFile(dest, body, Buffer.isBuffer(body) ? undefined : 'utf8');
+  bytes += Buffer.isBuffer(body) ? body.length : Buffer.byteLength(body);
 }
 
 /* A silent partial build would publish a broken directory, so fail loudly. */
 if(results.length !== FILES.length) throw new Error('missing files in build');
+if(!LOGOS.length) throw new Error('no school logos found in data.js');
 
-console.log(`built ${results.length} files (${Math.round(bytes/1024)} KB) from ${REPO}@${SHA.slice(0,7)} (${REF})/${SUB}`);
+console.log(`built ${results.length} files + ${logoResults.length} logos ` +
+  `(${Math.round(bytes/1024)} KB) from ${REPO}@${SHA.slice(0,7)} (${REF})/${SUB}`);
 console.log(`absolute URLs point at ${ORIGIN}`);
