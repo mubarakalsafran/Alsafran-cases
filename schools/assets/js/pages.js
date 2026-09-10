@@ -496,8 +496,11 @@ Pages.school = function(){
           ? '<a class="btn btn-pri btn-sm" href="' + esc(s.website) +
             '" target="_blank" rel="noopener noreferrer">' + esc(t('website')) + '</a> '
           : '') +
-        (s.email
-          ? '<a class="btn btn-ghost btn-sm" href="mailto:' + esc(s.email) + '">' + esc(s.email) + '</a>'
+        /* a fee question goes to whoever answers fee questions — several
+           schools route those away from general admissions */
+        ((s.feeEmail || s.email)
+          ? '<a class="btn btn-ghost btn-sm" href="mailto:' + esc(s.feeEmail || s.email) + '">' +
+            esc(s.feeEmail || s.email) + '</a>'
           : '') +
       '</div>' + feeProv;
 

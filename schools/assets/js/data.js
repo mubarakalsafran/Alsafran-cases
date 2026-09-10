@@ -69,6 +69,8 @@ const REVIEW_TAGS = [
             to coordinates. Everywhere else they are null and the map link is
             built from the verified address, which Google geocodes correctly.
             District-centre coordinates were invented and have been removed.
+   feeEmail: the address that actually answers a fee question, where a school
+            routes those separately from admissions.
    locationBasis: 'school'      – address taken from the school's own website
                   'unverified'  – district only, not yet confirmed
    reviews: intentionally empty. Every review on this site is written by a
@@ -402,6 +404,7 @@ const SCHOOLS = [
   feeNote:'BSK does not publish fees. Its Accounts Team quotes per year group on request.',
   phone:'+965 1830456',
   email:'admissions@bsk.edu.kw',
+  feeEmail:'accounts@bie.com.kw',
   reviews:[]
 },
 {
