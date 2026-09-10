@@ -76,6 +76,10 @@ const T = {
   kwd:            ['KWD','د.ك'],
   free:           ['Free','مجاني'],
   map:            ['Open in Google Maps','افتح في خرائط جوجل'],
+  locVerified:    ['Address from the school’s website','العنوان من موقع المدرسة'],
+  locUnverified:  ['Area only — address not confirmed','المنطقة فقط — العنوان غير مؤكد'],
+  locAskSchool:   ['We list the district; confirm the exact address with the school.','نعرض المنطقة فقط؛ تأكد من العنوان الدقيق مع المدرسة.'],
+  locSource:      ['Source','المصدر'],
   instagram:      ['Instagram','إنستغرام'],
   website:        ['Website','الموقع الإلكتروني'],
   phone:          ['Phone','الهاتف'],
@@ -471,6 +475,13 @@ function feeHeadline(s){
   if(r.min === r.max) return kwd(r.min);
   return kwd(r.min) + ' – ' + kwd(r.max);
 }
+/* how well do we know where this school actually is? */
+function locBadge(s){
+  return s.locationBasis === 'school'
+    ? '<span class="badge badge-green">' + esc(t('locVerified')) + '</span>'
+    : '<span class="badge badge-pend">' + esc(t('locUnverified')) + '</span>';
+}
+
 /* the provenance chip shown on cards and profiles */
 function feeBadge(s){
   if(s.feeBasis === 'school')     return '<span class="badge badge-green">' + esc(t('verified')) + '</span>';
@@ -498,15 +509,24 @@ function curBadge(s){
   if(!c) return '';
   return '<span class="badge badge-cur" style="background:' + c.color + '">' + esc(lbl(c)) + '</span>';
 }
+/* The most precise thing we actually know, in order:
+     1. coordinates the school itself published
+     2. the address from the school's own website, which Google geocodes well
+     3. the school's name and district — a search, not a false pin
+   Inventing coordinates from a district centre would put the pin in the wrong
+   street, which is worse for a parent driving there than no pin at all. */
+function mapsQuery(s){
+  if(s.lat && s.lng) return s.lat + ',' + s.lng;
+  if(s.locationBasis === 'school' && s.address) return s.name + ', ' + s.address + ', Kuwait';
+  return s.name + ', ' + s.district + ', Kuwait';
+}
 function mapsUrl(s){
-  if(s.lat && s.lng) return 'https://www.google.com/maps/search/?api=1&query=' + s.lat + ',' + s.lng;
-  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(s.name + ', Kuwait');
+  return 'https://www.google.com/maps/search/?api=1&query=' + encodeURIComponent(mapsQuery(s));
 }
 function mapEmbed(s){
-  /* Google's keyless embed endpoint — no API key, no tracking script.
-     If it is blocked (offline, strict CSP) the static fallback shows instead. */
-  const q = (s.lat && s.lng) ? (s.lat + ',' + s.lng) : encodeURIComponent(s.name + ', Kuwait');
-  return 'https://maps.google.com/maps?q=' + q + '&z=15&output=embed';
+  /* Google's keyless embed endpoint — no API key, no tracking script. */
+  return 'https://maps.google.com/maps?q=' + encodeURIComponent(mapsQuery(s)) +
+         '&z=' + ((s.lat && s.lng) ? 16 : 14) + '&output=embed';
 }
 function igUrl(s){
   return s.ig
@@ -1174,7 +1194,7 @@ global.KSG = {
   t:t, lbl:lbl, Lang:Lang, schoolName:schoolName,
   I:I, starsHTML:starsHTML, logoHTML:logoHTML, curBadge:curBadge,
   kwd:kwd, feeHeadline:feeHeadline, feeBadge:feeBadge, fmtDate:fmtDate, initials:initials,
-  mapsUrl:mapsUrl, mapEmbed:mapEmbed, igUrl:igUrl,
+  mapsUrl:mapsUrl, mapsQuery:mapsQuery, mapEmbed:mapEmbed, igUrl:igUrl, locBadge:locBadge,
   Data:Data, Auth:Auth, Favs:Favs, Compare:Compare, hash:hash,
   toast:toast, cardHTML:cardHTML, renderCards:renderCards, bindCardActions:bindCardActions,
   suggest:suggest, attachTypeahead:attachTypeahead,

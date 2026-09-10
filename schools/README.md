@@ -33,6 +33,40 @@ badged differently.
 schools and Arabic-curriculum schools that do not publish fees online. Enter them from the admin
 dashboard, which records the source URL and academic year alongside each figure.
 
+### Locations
+
+Coordinates were the worst data in this directory: every school had a lat/lng I had invented from
+its district centre. A pin in the wrong street is worse for a parent driving there than no pin at
+all, so they are gone. Only **Dasman Bilingual School** carries coordinates, because it is the
+only school that publishes a Google Maps link of its own — and that link resolves 4.6 km from
+where the invented value sat, in a different governorate.
+
+Each school now carries a `locationBasis`:
+
+| `locationBasis` | Meaning | Count |
+|---|---|---|
+| `school` | Street address taken from the school's own website, with the source URL | 10 |
+| `unverified` | District only. The profile says so and asks you to confirm with the school | 31 |
+
+Map links are built from the most precise thing actually known — published coordinates, else the
+verified address (which Google geocodes correctly), else the school's name and district as a
+search rather than a false pin.
+
+Checking the websites also corrected **six districts that were simply wrong**:
+
+| School | Was | Actually |
+|---|---|---|
+| The English School | Shamiya, Capital | Salmiya, Hawalli |
+| Dasman Bilingual School | Hawalli | Kuwait City, Capital |
+| Gulf English School | Hawalli | Al Dimnah St, Block 4, Salmiya |
+| Indian Community School | Khaitan, Farwaniya | Salmiya (Senior campus) |
+| Bhavans SIS | Abbassiya | Jleeb Al Shuyoukh, Farwaniya |
+| Indian Educational School | Salmiya | Jleeb Al Shuyoukh, Farwaniya |
+
+Two website URLs in the seed data did not resolve at all (`fsis.edu.kw`, `faips.edu.kw`) and have
+been cleared rather than left as dead links; `ais-kuwait.org` and `icsk.edu.kw` were redirected to
+their current domains.
+
 Two deliberate choices remain:
 
 - **Phone numbers are not invented.** Only confirmed numbers are stored (ASK, NES, BSK so far);

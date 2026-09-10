@@ -8,7 +8,7 @@
 
 const {
   $, $$, esc, t, lbl, Lang, schoolName, I, starsHTML, logoHTML, curBadge,
-  kwd, feeHeadline, feeBadge, fmtDate, initials, mapsUrl, mapEmbed, igUrl,
+  kwd, feeHeadline, feeBadge, fmtDate, initials, mapsUrl, mapEmbed, igUrl, locBadge,
   Data, Auth, Favs, Compare, toast, renderCards, bindCardActions, attachTypeahead,
   Query, Route, applyQuery, paintChrome, store, K
 } = global.KSG;
@@ -20,9 +20,12 @@ const {
 function noticeHTML(){
   const all = Data.all();
   const confirmed = all.filter(s => feesConfirmed(s)).length;
+  const located = all.filter(s => s.locationBasis === 'school').length;
   const msg = Lang.isAr()
-    ? confirmed + ' من ' + all.length + ' مدرسة رسومها من مصدر منشور؛ الباقي تقديري في انتظار التأكيد. أكّد الرسوم مع المدرسة دائماً.'
-    : confirmed + ' of ' + all.length + ' schools have fees from a published source; the rest are estimates pending confirmation. Always confirm fees with the school.';
+    ? confirmed + ' من ' + all.length + ' مدرسة رسومها من مصدر منشور، و' + located +
+      ' عنوانها من موقع المدرسة. الباقي تقديري — أكّد الرسوم والعنوان مع المدرسة.'
+    : confirmed + ' of ' + all.length + ' schools have fees from a published source and ' + located +
+      ' have an address from the school’s own website. The rest are estimates — confirm fees and address with the school.';
   return '<div class="notice"><div class="wrap notice-in">' + I.info +
     '<span>' + esc(msg) + ' <a href="about.html#data" style="color:inherit;text-decoration:underline">' +
     esc(Lang.isAr()?'كيف نتحقق':'How we source this') + '</a></span></div></div>';
@@ -554,7 +557,10 @@ Pages.school = function(){
       esc(s.website.replace(/^https?:\/\//,'')) + '</a>'] : null,
     ['ig', t('instagram'), '<a href="' + igUrl(s) + '" target="_blank" rel="noopener noreferrer">' +
       (s.ig ? '@' + esc(s.ig) : esc(Lang.isAr()?'ابحث في إنستغرام':'Search on Instagram')) + '</a>'],
-    ['pin', t('location'), esc(s.address)],
+    ['pin', t('location'), s.locationBasis === 'school'
+      ? esc(s.address)
+      : esc(s.district) + ', ' + esc(Lang.isAr()?'الكويت':'Kuwait') +
+        ' <span style="color:var(--muted)">(' + esc(t('locUnverified')) + ')</span>'],
     /* Only ever show a number we actually confirmed — never a plausible
        placeholder, which could route a parent to a stranger. */
     ['phone', t('phone'), s.phone
@@ -571,13 +577,22 @@ Pages.school = function(){
       '<dl class="deftable">' + glance + '</dl></section>' +
 
     '<section class="panel"><h2>' + esc(t('location')) + '</h2>' +
+      '<p style="margin-bottom:var(--s-3)">' + locBadge(s) + '</p>' +
       '<div class="mapbox" id="mapBox">' +
         '<button type="button" class="map-fallback map-poster" id="mapPoster">' +
           '<span class="map-pin">' + I.pin + '</span>' +
-          '<b>' + esc(s.address) + '</b>' +
+          '<b>' + esc(s.locationBasis === 'school' ? s.address : s.district + ', Kuwait') + '</b>' +
           '<span>' + esc(Lang.isAr()?'اضغط لتحميل الخريطة التفاعلية':'Tap to load the interactive map') + '</span>' +
         '</button>' +
       '</div>' +
+      (s.locationBasis === 'school'
+        ? (s.locationSource
+            ? '<p class="photo-note">' + esc(t('locSource')) + ': <a href="' + esc(s.locationSource) +
+              '" target="_blank" rel="noopener noreferrer">' +
+              esc(s.locationSource.replace(/^https?:\/\/(www\.)?/,'').split('/')[0]) + '</a>' +
+              (s.locationNote ? ' · ' + esc(s.locationNote) : '') + '</p>'
+            : '')
+        : '<p class="photo-note">' + esc(t('locAskSchool')) + '</p>') +
       '<p style="margin:var(--s-3) 0 0"><a class="btn btn-ghost btn-block btn-sm" href="' + mapsUrl(s) +
         '" target="_blank" rel="noopener noreferrer">' + I.pin + esc(t('map')) + '</a></p>' +
     '</section>' +
