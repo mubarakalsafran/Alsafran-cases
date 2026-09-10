@@ -96,8 +96,8 @@ Pages.home = function(){
     '<div class="hero"><div class="wrap hero-in">' +
       '<span class="eyebrow" style="color:var(--sky)">' + esc(t('brandSub')) + '</span>' +
       '<h1>' + esc(Lang.isAr()
-        ? 'كل مدارس الكويت في مكان واحد — المناهج والرسوم والتقييمات'
-        : 'Every school in Kuwait — curricula, fees and honest parent reviews') + '</h1>' +
+        ? 'كل مدارس الكويت الخاصة في مكان واحد — المناهج والرسوم والتقييمات'
+        : 'Every private school in Kuwait — curricula, fees and honest parent reviews') + '</h1>' +
       '<p class="hero-sub">' + esc(Lang.isAr()
         ? 'ابحث بالاسم أو المنطقة أو المنهج أو الرسوم، وقارن بين المدارس قبل أن تقرر.'
         : 'Search by name, area, curriculum or fee range. Compare side by side before you decide.') + '</p>' +

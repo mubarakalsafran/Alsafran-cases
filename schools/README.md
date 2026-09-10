@@ -22,15 +22,15 @@ carries a `feeBasis` and a badge in the UI saying how good its numbers are:
 | `school` | Fees from the school's website | Taken from the school's own official site, with the source URL and academic year | 4 |
 | `directory` | Published fee data | From the International Schools Database, cross-checked against schools' own figures | 15 |
 | `on-request` | Fees on request | The school publishes no fees; the profile says so and gives the contact route | 3 |
-| `estimate` | Estimate — not confirmed | No source found. **The figure is a guess and must not be relied on.** | 19 |
+| `estimate` | Estimate — not confirmed | No source found. **The figure is a guess and must not be relied on.** | 18 |
 
 The cross-check matters: for the American School of Kuwait (3,314–5,191 KWD) and Al-Bayan
 Bilingual School (2,434–4,505 KWD) the directory matches the schools' own published figures
 exactly, which is why the `directory` tier is trusted — but it is still not the school, so it is
 badged differently.
 
-**The 19 `estimate` schools still need real numbers.** They are mostly nurseries, Indian-curriculum
-schools and Arabic-curriculum schools that do not publish fees online. Enter them from the admin
+**The remaining `estimate` schools still need real numbers.** They are mostly nurseries and
+Indian-curriculum schools that do not publish fees online. Enter them from the admin
 dashboard, which records the source URL and academic year alongside each figure.
 
 ### Locations

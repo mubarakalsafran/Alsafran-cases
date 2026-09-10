@@ -161,7 +161,7 @@ const T = {
   lowestFee:      ['Lowest fees','أقل رسوم'],
   highestRated:   ['Highest rated','أعلى تقييم'],
   dataNotice:     [DATA_NOTICE.en, DATA_NOTICE.ar],
-  footerAbout:    ['An independent directory of schools in Kuwait — curricula, fees, locations and honest parent reviews, in one place.','دليل مستقل لمدارس الكويت — المناهج والرسوم والمواقع وتقييمات أولياء الأمور في مكان واحد.'],
+  footerAbout:    ['An independent directory of private schools in Kuwait — curricula, fees, locations and honest parent reviews, in one place.','دليل مستقل للمدارس الخاصة في الكويت — المناهج والرسوم والمواقع وتقييمات أولياء الأمور في مكان واحد.'],
   browse:         ['Browse','تصفح'],
   account2:       ['Account','الحساب'],
   info:           ['Information','معلومات'],

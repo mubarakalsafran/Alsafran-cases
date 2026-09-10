@@ -24,7 +24,6 @@ const CURRICULA = [
   { id:'British',   en:'British',         ar:'بريطاني', color:'#7c3aed' },
   { id:'IB',        en:'IB',              ar:'دولي IB', color:'#0d9488' },
   { id:'Indian',    en:'Indian',          ar:'هندي',    color:'#ea580c' },
-  { id:'Arabic',    en:'Arabic / Public', ar:'عربي / حكومي', color:'#0369a1' },
   { id:'Early',     en:'Early Years',     ar:'الطفولة المبكرة', color:'#db2777' }
 ];
 
@@ -764,101 +763,6 @@ const SCHOOLS = [
     { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:620 },
     { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:730 },
     { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:940 }
-  ],
-  feeBasis:'estimate',
-  feeYear:'',
-  feeSource:'',
-  feeNote:'Not published online — these figures are unconfirmed estimates.',
-  reviews:[]
-},
-
-/* ===== ARABIC / PUBLIC ===== */
-{
-  id:'moe-public', name:'Ministry of Education Public Schools', nameAr:'المدارس الحكومية — وزارة التربية', abbr:'MOE',
-  curriculum:'Arabic', extras:['Government','Free for citizens'], gender:'Separate from Grade 5', founded:1936, verified:false, featured:false,
-  district:'All governorates', governorate:'Capital', address:'Ministry of Education, Al Asimah',
-  lat:null, lng:null, website:'https://www.moe.edu.kw', ig:null,
-  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
-  languages:['Arabic','English'], accreditation:['Ministry of Education, Kuwait'],
-  locationBasis:'unverified',
-  transport:false, theme:['#0369a1','#7dd3fc'],
-  blurb:'The national Arabic-curriculum school system — free for Kuwaiti citizens, organised by governorate.',
-  about:'Kuwait’s public schools follow the national Arabic curriculum set by the Ministry of Education, from kindergarten through Grade 12, with boys and girls separated from the intermediate stage. Tuition is free for Kuwaiti citizens; enrolment is by residential catchment. Non-citizens are admitted only in limited circumstances.',
-  facilities:['Governorate-wide network','Sports halls','Science labs','Libraries','Prayer halls','Free textbooks'],
-  fees:[
-    { band:'KG1 – Grade 12 (Kuwaiti citizens)', from:'KG1', to:'Grade 12', amount:0 }
-  ],
-  feeBasis:'estimate',
-  feeYear:'',
-  feeSource:'',
-  feeNote:'Not published online — these figures are unconfirmed estimates.',
-  reviews:[]
-},
-{
-  id:'najat', name:'Al-Najat Bilingual School', nameAr:'مدرسة النجاة ثنائية اللغة', abbr:'Najat',
-  curriculum:'Arabic', extras:['Bilingual','Islamic Studies'], gender:'Separate campuses', founded:1994, verified:false, featured:false,
-  district:'Hawalli', governorate:'Hawalli', address:'Block 9, Hawalli',
-  lat:null, lng:null, website:'', ig:null,
-  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
-  languages:['Arabic','English'], accreditation:['Ministry of Education, Kuwait'],
-  locationBasis:'unverified',
-  transport:true, theme:['#14532d','#86efac'],
-  blurb:'Arabic-curriculum bilingual school with a strong Quran and Islamic studies programme.',
-  about:'Al-Najat teaches the Kuwaiti national curriculum with substantially strengthened English, and runs separate boys’ and girls’ sections in the upper grades. Quran memorisation is a formal part of the programme.',
-  facilities:['Prayer halls','Quran memorisation centre','Sports halls','Science labs','Libraries','Bus fleet'],
-  fees:[
-    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:900 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:1150 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:1300 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1500 }
-  ],
-  feeBasis:'estimate',
-  feeYear:'',
-  feeSource:'',
-  feeNote:'Not published online — these figures are unconfirmed estimates.',
-  reviews:[]
-},
-{
-  id:'maali', name:'Al-Maali Bilingual School', nameAr:'مدرسة المعالي ثنائية اللغة', abbr:'Maali',
-  curriculum:'Arabic', extras:['Bilingual'], gender:'Separate campuses', founded:2002, verified:false, featured:false,
-  district:'Qurtuba', governorate:'Capital', address:'Block 3, Qurtuba',
-  lat:null, lng:null, website:'', ig:null,
-  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
-  languages:['Arabic','English'], accreditation:['Ministry of Education, Kuwait'],
-  locationBasis:'unverified',
-  transport:true, theme:['#0e7490','#a5f3fc'],
-  blurb:'Bilingual Arabic-curriculum school in Qurtuba serving Capital governorate families.',
-  about:'Al-Maali follows the Kuwaiti national curriculum with an enhanced English stream, aimed at Kuwaiti families in the Capital suburbs who want bilingual competence without moving to an international curriculum.',
-  facilities:['Sports halls','Science labs','Prayer halls','Libraries','Computer labs','Bus service'],
-  fees:[
-    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:1000 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:1250 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:1400 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1650 }
-  ],
-  feeBasis:'estimate',
-  feeYear:'',
-  feeSource:'',
-  feeNote:'Not published online — these figures are unconfirmed estimates.',
-  reviews:[]
-},
-{
-  id:'rawdat', name:'Rawdat Al-Uloom Bilingual School', nameAr:'مدرسة روضة العلوم ثنائية اللغة', abbr:'RUS',
-  curriculum:'Arabic', extras:['Bilingual','Islamic Studies'], gender:'Separate campuses', founded:1999, verified:false, featured:false,
-  district:'Jabriya', governorate:'Hawalli', address:'Block 7, Jabriya',
-  lat:null, lng:null, website:'', ig:null,
-  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
-  languages:['Arabic','English'], accreditation:['Ministry of Education, Kuwait'],
-  locationBasis:'unverified',
-  transport:true, theme:['#78350f','#fcd34d'],
-  blurb:'National-curriculum school in Jabriya with bilingual streams and Quran programmes.',
-  about:'Rawdat Al-Uloom teaches the Kuwaiti national curriculum with strengthened English and Quran study, with separate sections for boys and girls in the intermediate and secondary stages.',
-  facilities:['Quran centre','Prayer halls','Sports halls','Science labs','Libraries','Bus fleet'],
-  fees:[
-    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:850 },
-    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:1080 },
-    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:1220 },
-    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1420 }
   ],
   feeBasis:'estimate',
   feeYear:'',
