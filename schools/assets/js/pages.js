@@ -20,12 +20,12 @@ const {
 function noticeHTML(){
   const all = Data.all();
   const confirmed = all.filter(s => feesConfirmed(s)).length;
-  const located = all.filter(s => s.locationBasis === 'school').length;
+  const located = all.filter(s => s.locationBasis === 'school' || s.locationBasis === 'directory').length;
   const msg = Lang.isAr()
     ? confirmed + ' من ' + all.length + ' مدرسة رسومها من مصدر منشور، و' + located +
-      ' عنوانها من موقع المدرسة. الباقي تقديري — أكّد الرسوم والعنوان مع المدرسة.'
+      ' لها عنوان من مصدر منشور. الباقي تقديري — أكّد الرسوم والعنوان مع المدرسة.'
     : confirmed + ' of ' + all.length + ' schools have fees from a published source and ' + located +
-      ' have an address from the school’s own website. The rest are estimates — confirm fees and address with the school.';
+      ' have a street address from a published source. The rest are estimates — confirm fees and address with the school.';
   return '<div class="notice"><div class="wrap notice-in">' + I.info +
     '<span>' + esc(msg) + ' <a href="about.html#data" style="color:inherit;text-decoration:underline">' +
     esc(Lang.isAr()?'كيف نتحقق':'How we source this') + '</a></span></div></div>';
@@ -567,7 +567,7 @@ Pages.school = function(){
     ['pin', t('location'), campusesOf(s).length > 1
       ? esc(districtsOf(s).join(' · ')) +
         ' <span style="color:var(--muted)">(' + campusesOf(s).length + ' ' + esc(t('campusesCount')) + ')</span>'
-      : (s.locationBasis === 'school'
+      : ((s.locationBasis === 'school' || s.locationBasis === 'directory')
           ? esc(s.address)
           : esc(s.district) + ', ' + esc(Lang.isAr()?'الكويت':'Kuwait') +
             ' <span style="color:var(--muted)">(' + esc(t('locUnverified')) + ')</span>')],
@@ -607,11 +607,12 @@ Pages.school = function(){
       '<div class="mapbox" id="mapBox">' +
         '<button type="button" class="map-fallback map-poster" id="mapPoster">' +
           '<span class="map-pin">' + I.pin + '</span>' +
-          '<b>' + esc(s.locationBasis === 'school' ? s.address : s.district + ', Kuwait') + '</b>' +
+          '<b>' + esc((s.locationBasis === 'school' || s.locationBasis === 'directory')
+            ? s.address : s.district + ', Kuwait') + '</b>' +
           '<span>' + esc(Lang.isAr()?'اضغط لتحميل الخريطة التفاعلية':'Tap to load the interactive map') + '</span>' +
         '</button>' +
       '</div>' +
-      (s.locationBasis === 'school'
+      (s.locationBasis === 'school' || s.locationBasis === 'directory'
         ? (s.locationSource
             ? '<p class="photo-note">' + esc(t('locSource')) + ': <a href="' + esc(s.locationSource) +
               '" target="_blank" rel="noopener noreferrer">' +

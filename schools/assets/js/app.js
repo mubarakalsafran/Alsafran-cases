@@ -78,6 +78,7 @@ const T = {
   map:            ['Open in Google Maps','افتح في خرائط جوجل'],
   locVerified:    ['Address from the school’s website','العنوان من موقع المدرسة'],
   locUnverified:  ['Area only — address not confirmed','المنطقة فقط — العنوان غير مؤكد'],
+  locDirectory:   ['Address from a published listing','العنوان من دليل منشور'],
   locAskSchool:   ['We list the district; confirm the exact address with the school.','نعرض المنطقة فقط؛ تأكد من العنوان الدقيق مع المدرسة.'],
   locSource:      ['Source','المصدر'],
   campuses:       ['Campuses','الفروع'],
@@ -483,9 +484,14 @@ function feeHeadline(s){
 }
 /* how well do we know where this school actually is? */
 function locBadge(s){
-  return s.locationBasis === 'school'
-    ? '<span class="badge badge-green">' + esc(t('locVerified')) + '</span>'
-    : '<span class="badge badge-pend">' + esc(t('locUnverified')) + '</span>';
+  /* Three states, not two: an address from the school itself, one from a
+     published listing that names a street, and a bare district. Collapsing
+     the middle one into "not confirmed" would understate what we know. */
+  if(s.locationBasis === 'school')
+    return '<span class="badge badge-green">' + esc(t('locVerified')) + '</span>';
+  if(s.locationBasis === 'directory')
+    return '<span class="badge badge-soft">' + esc(t('locDirectory')) + '</span>';
+  return '<span class="badge badge-pend">' + esc(t('locUnverified')) + '</span>';
 }
 
 /* the provenance chip shown on cards and profiles */
@@ -526,7 +532,8 @@ function curBadge(s){
    street, which is worse for a parent driving there than no pin at all. */
 function mapsQuery(s){
   if(s.lat && s.lng) return s.lat + ',' + s.lng;
-  if(s.locationBasis === 'school' && s.address) return s.name + ', ' + s.address + ', Kuwait';
+  if((s.locationBasis === 'school' || s.locationBasis === 'directory') && s.address)
+    return s.name + ', ' + s.address + ', Kuwait';
   return s.name + ', ' + s.district + ', Kuwait';
 }
 function mapsUrl(s){

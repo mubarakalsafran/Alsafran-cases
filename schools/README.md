@@ -76,7 +76,8 @@ Each school now carries a `locationBasis`:
 | `locationBasis` | Meaning | Count |
 |---|---|---|
 | `school` | Street address taken from the school's own website, with the source URL | 10 |
-| `unverified` | District only. The profile says so and asks you to confirm with the school | 31 |
+| `directory` | Street address from a published listing, cross-checked where possible | 8 |
+| `unverified` | District only. The profile says so and asks you to confirm with the school | 16 |
 
 Map links are built from the most precise thing actually known — published coordinates, else the
 verified address (which Google geocodes correctly), else the school's name and district as a
