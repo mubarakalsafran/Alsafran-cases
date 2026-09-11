@@ -1,0 +1,992 @@
+/* ============================================================
+   KUWAIT SCHOOLS GUIDE — data layer
+   دليل مدارس الكويت
+
+   Dependency-free. This file is the seed catalogue that ships with
+   the platform; the admin dashboard writes its edits to localStorage
+   and those overrides win at render time (see Store.schools()).
+
+   ⚠ DATA STATUS
+   Every record below is SEED data. School names, districts and
+   curricula are real; fee figures, phone numbers and some Instagram
+   handles are INDICATIVE and must be confirmed with each school
+   before this directory is published. Records carry verified:false
+   until an administrator confirms them in the dashboard.
+   ============================================================ */
+
+const DATA_NOTICE = {
+  en: 'Fees and contact details are indicative seed data pending confirmation from each school.',
+  ar: 'الرسوم وبيانات التواصل بيانات أولية إرشادية في انتظار تأكيدها من كل مدرسة.'
+};
+
+const CURRICULA = [
+  { id:'American',  en:'American',        ar:'أمريكي',  color:'#2563eb' },
+  { id:'British',   en:'British',         ar:'بريطاني', color:'#7c3aed' },
+  { id:'IB',        en:'IB',              ar:'دولي IB', color:'#0d9488' },
+  { id:'Indian',    en:'Indian',          ar:'هندي',    color:'#ea580c' },
+  { id:'Early',     en:'Early Years',     ar:'الطفولة المبكرة', color:'#db2777' }
+];
+
+const GOVERNORATES = [
+  { id:'Capital',   en:'Al Asimah (Capital)', ar:'العاصمة' },
+  { id:'Hawalli',   en:'Hawalli',             ar:'حولي' },
+  { id:'Farwaniya', en:'Al Farwaniya',        ar:'الفروانية' },
+  { id:'Mubarak',   en:'Mubarak Al-Kabeer',   ar:'مبارك الكبير' },
+  { id:'Ahmadi',    en:'Al Ahmadi',           ar:'الأحمدي' },
+  { id:'Jahra',     en:'Al Jahra',            ar:'الجهراء' }
+];
+
+/* Grade ladder — used for the "grades offered" filter and for sorting
+   fee bands. Index order matters. */
+const GRADE_LADDER = [
+  'Nursery','Pre-KG','KG1','KG2',
+  'Grade 1','Grade 2','Grade 3','Grade 4','Grade 5',
+  'Grade 6','Grade 7','Grade 8','Grade 9',
+  'Grade 10','Grade 11','Grade 12'
+];
+
+const GRADE_GROUPS = [
+  { id:'early',   en:'Pre-K & Kindergarten', ar:'حضانة ورياض أطفال', from:'Nursery',  to:'KG2' },
+  { id:'primary', en:'Primary (G1–G5)',      ar:'ابتدائي',            from:'Grade 1',  to:'Grade 5' },
+  { id:'middle',  en:'Middle (G6–G8)',       ar:'متوسط',              from:'Grade 6',  to:'Grade 8' },
+  { id:'high',    en:'High (G9–G12)',        ar:'ثانوي',              from:'Grade 9',  to:'Grade 12' }
+];
+
+const REVIEW_TAGS = [
+  { id:'teaching',      en:'Teaching quality', ar:'جودة التعليم' },
+  { id:'facilities',    en:'Facilities',       ar:'المرافق' },
+  { id:'safety',        en:'Safety',           ar:'الأمان' },
+  { id:'communication', en:'Communication',    ar:'التواصل مع الأهل' },
+  { id:'value',         en:'Value for fees',   ar:'مقابل الرسوم' }
+];
+
+/* ---------------- the catalogue ---------------- */
+/* fees[] : { band, from, to, amount }  — amount is KWD per academic year
+   ig     : Instagram handle when known, otherwise null → the UI falls back
+            to an Instagram keyword search so we never link a wrong account.
+   lat/lng: present ONLY where the school published a map link that resolves
+            to coordinates. Everywhere else they are null and the map link is
+            built from the verified address, which Google geocodes correctly.
+            District-centre coordinates were invented and have been removed.
+   feeEmail: the address that actually answers a fee question, where a school
+            routes those separately from admissions.
+   campuses: every site a school teaches at. Present only where a school has
+            more than one, or where the campus is named; a single-site school
+            is described by its own district/address fields. Each campus
+            carries its own basis and source, because a group often publishes
+            one address properly and the rest not at all.
+   locationBasis: 'school'      – address taken from the school's own website
+                  'unverified'  – district only, not yet confirmed
+   reviews: intentionally empty. Every review on this site is written by a
+            signed-in parent through the profile page and published only after
+            moderation — nothing is seeded, so a school's star rating is only
+            ever what real parents gave it. */
+
+const SCHOOLS = [
+/* ===== AMERICAN ===== */
+{
+  id:'ask', name:'American School of Kuwait', nameAr:'المدرسة الأمريكية بالكويت', abbr:'ASK',
+  curriculum:'American', extras:['AP'], gender:'Mixed', founded:1964, verified:true, featured:true,
+  district:'Hawalli', governorate:'Hawalli', address:'Al Muthanna Street, Hawally (P.O. Box 6735, Hawalli 32042)',
+  lat:null, lng:null, website:'https://www.ask.edu.kw', ig:'americanschoolofkuwait',
+  logo:'assets/img/logos/ask.png', logoSource:'https://www.ask.edu.kw/wp-content/themes/lms/images/apple-touch-icon-144x144.png',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Arabic','French'], accreditation:['NEASC','CIS','College Board (AP)'],
+  locationBasis:'school',
+  locationSource:'https://www.ask.edu.kw/about/contact-us/',
+  transport:true, theme:['#1e3a8a','#3b82f6'],
+  blurb:'One of the oldest American-curriculum schools in Kuwait, with a full AP programme and a large Hawalli campus.',
+  about:'Founded in 1964, ASK follows a US college-preparatory programme from kindergarten through Grade 12, with Advanced Placement courses in the upper school. The campus sits in Hawalli and serves a broad international community alongside Kuwaiti families.',
+  facilities:['Two swimming pools','Full-size gymnasium','Auditorium (600 seats)','Science and robotics labs','Library and media centre','Outdoor athletics track'],
+  fees:[
+    { band:'KG1 – KG2', from:'KG1', to:'KG2', amount:3314 },
+    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5', amount:4306 },
+    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8', amount:4636 },
+    { band:'Grade 9 – Grade 12', from:'Grade 9', to:'Grade 12', amount:5191 }
+  ],
+  feeBasis:'school',
+  feeYear:'2026/27',
+  feeSource:'https://www.ask.edu.kw/admissions/tuition-fees/',
+  feeNote:'Enrolment deposit KD 100. Extended day care KD 250.',
+  phone:'+965 2266 4341',
+  email:'ask@ask.edu.kw',
+  reviews:[]
+},
+{
+  id:'ais', name:'American International School', nameAr:'المدرسة الأمريكية العالمية', abbr:'AIS',
+  curriculum:'American', extras:['AP'], gender:'Mixed', founded:1994, verified:true, featured:true,
+  district:'Maidan Hawalli', governorate:'Hawalli', address:'Hamood Al-Naser Street, Maidan Hawalli (P.O. Box 3267, Salmiya 22033)',
+  lat:null, lng:null, website:'https://ais.edu.kw', ig:'aiskuwait',
+  logo:'assets/img/logos/ais.png', logoSource:'https://ais.edu.kw/wp-content/uploads/2026/02/AIS-LOGO-HD.png',
+  from:'Pre-KG', to:'Grade 12', ages:'3 – 18 years',
+  languages:['English','Arabic'], accreditation:['NEASC','College Board (AP)'],
+  locationBasis:'school',
+  locationSource:'https://ais.edu.kw/about/contact-us',
+  transport:true, theme:['#0f766e','#14b8a6'],
+  blurb:'Large American-curriculum school with an early-years division and a well-established AP track.',
+  about:'AIS delivers a US standards-based curriculum from Pre-KG to Grade 12 across a purpose-built campus in Maidan Hawalli. The school is known for a wide activities programme and a sizeable secondary school.',
+  facilities:['Indoor swimming pool','Two gymnasiums','Theatre','Design and technology workshop','Cafeteria','Dedicated early-years playground'],
+  fees:[
+    { band:'KG1', from:'KG1', to:'KG1', amount:2650 },
+    { band:'KG2', from:'KG2', to:'KG2', amount:2871 },
+    { band:'Grade 1 – Grade 4', from:'Grade 1', to:'Grade 4', amount:3917 },
+    { band:'Grade 5 – Grade 8', from:'Grade 5', to:'Grade 8', amount:4136 },
+    { band:'Grade 9 – Grade 12', from:'Grade 9', to:'Grade 12', amount:4581 }
+  ],
+  feeBasis:'school',
+  feeYear:'2026/27',
+  feeSource:'https://ais.edu.kw/admissions/tuition-fees',
+  feeNote:'Registration KD 100. Optional book fee KD 50 (Grades 1–12). Bus KD 200–375.',
+  reviews:[]
+},
+{
+  id:'uas', name:'Universal American School', nameAr:'المدرسة الأمريكية العالمية الجامعة', abbr:'UAS',
+  curriculum:'IB', extras:['American','IB PYP','IB MYP','IB DP'], gender:'Mixed', founded:1976, verified:false, featured:true,
+  district:'Bayan', governorate:'Hawalli', address:'Block 12, Bayan',
+  lat:null, lng:null, website:'https://www.uas.edu.kw', ig:'uaskuwait',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Arabic','French'], accreditation:['IB World School','NEASC','CIS'],
+  locationBasis:'unverified',
+  transport:true, theme:['#0d9488','#2dd4bf'],
+  blurb:'An IB World School running PYP, MYP and the Diploma Programme alongside a US high-school diploma.',
+  about:'UAS is one of the longest-standing IB World Schools in Kuwait, offering the Primary Years, Middle Years and Diploma Programmes on a Bayan campus. Students graduate with both an American high-school diploma and, optionally, the IB Diploma.',
+  facilities:['Two swimming pools','Sports hall and fitness centre','Black-box theatre','Maker space','IB resource library','Cafeteria'],
+  fees:[
+    { band:'KG1 – KG2', from:'KG1', to:'KG2', amount:2265 },
+    { band:'KG3 / Pre-Grade 1', from:'Pre-KG', to:'Pre-KG', amount:2636 },
+    { band:'Grade 1 – Grade 4', from:'Grade 1', to:'Grade 4', amount:3527 },
+    { band:'Grade 5 – Grade 8', from:'Grade 5', to:'Grade 8', amount:3738 },
+    { band:'Grade 9 – Grade 12', from:'Grade 9', to:'Grade 12', amount:3954 }
+  ],
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait/the-universal-american-school-kuwait-city/fees',
+  feeNote:'One-time application fee KD 65. Seat deposit KD 350.',
+  reviews:[]
+},
+{
+  id:'bbs', name:'Al-Bayan Bilingual School', nameAr:'مدرسة البيان ثنائية اللغة', abbr:'BBS',
+  curriculum:'IB', extras:['American','IB DP','Bilingual'], gender:'Mixed', founded:1977, verified:true, featured:true,
+  district:'Hawalli', governorate:'Hawalli', address:'Block 5, Hawalli',
+  lat:null, lng:null, website:'https://www.bbs.edu.kw', ig:'bbskuwait',
+  logo:'assets/img/logos/bbs.png', logoSource:'https://www.bbs.edu.kw/images/Al-Bayan-Bilingual-School.png',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Arabic'], accreditation:['IB World School','NEASC','CIS'],
+  campuses:[
+    { name:'Hawalli Campus', district:'Hawalli', governorate:'Hawalli',
+      address:'Block 5, Hawalli',
+      basis:'school', source:'https://www.bbs.edu.kw/page.gallery.php?id=61&menu=1' }
+  ],
+  campusNote:'The school refers to two campuses but names only the Hawalli one.',
+  locationBasis:'unverified',
+  transport:true, theme:['#166534','#22c55e'],
+  blurb:'A genuinely bilingual American/IB school with a strong Arabic programme and an IB Diploma in the high school.',
+  about:'BBS was established to give Kuwaiti students a rigorous English-medium education without giving up Arabic and Islamic studies. Instruction is bilingual through the elementary years, and the high school offers the IB Diploma Programme.',
+  facilities:['Swimming pool','Two sports halls','Arabic library','Science research labs','Theatre','Art studios'],
+  fees:[
+    { band:'KG1', from:'KG1', to:'KG1', amount:2434 },
+    { band:'KG2', from:'KG2', to:'KG2', amount:2650 },
+    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5', amount:4086 },
+    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8', amount:4306 },
+    { band:'Grade 9 – Grade 12', from:'Grade 9', to:'Grade 12', amount:4505 }
+  ],
+  feeBasis:'school',
+  feeYear:'2026/27',
+  feeSource:'https://www.bbs.edu.kw/page.dropdown.php?id=237&menu=2',
+  feeNote:'Registration deposit KD 100. Paid in three instalments (40/30/30).',
+  reviews:[]
+},
+{
+  id:'aca', name:'American Creativity Academy', nameAr:'أكاديمية الإبداع الأمريكية', abbr:'ACA',
+  curriculum:'American', extras:['AP','Islamic Studies'], gender:'Separate campuses', founded:1997, verified:false, featured:false,
+  district:'Hawalli', governorate:'Hawalli', address:'Hawalli and Salmiya campuses',
+  lat:null, lng:null, website:'https://www.aca.edu.kw', ig:'aca_kuwait',
+  logo:'assets/img/logos/aca.png', logoSource:'https://www.aca.edu.kw/Frontend/ACA/images/logo.png',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Arabic'], accreditation:['NEASC','College Board (AP)'],
+  campuses:[
+    { name:'Hawally Boys Campus', district:'Hawalli', governorate:'Hawalli',
+      address:'Hawally, near the Fourth Ring Road and Fahaheel Expressway junction — KG (co-ed) to Grade 12',
+      basis:'directory', source:'https://aca.edu.kw/ExploreACA/Campuses' },
+    { name:'Salmiya Girls Campus', district:'Salmiya', governorate:'Hawalli',
+      address:'Al Muthana Street, Salmiya — Grades 1 to 12, girls; the original ACA campus',
+      basis:'directory', source:'https://www.doris.school/schools/kuwait/american-creativity-academy-salmiya-girls-campus' },
+    { name:'Hawally Kindergarten', district:'Hawalli', governorate:'Hawalli',
+      address:'Hawally — co-educational kindergarten',
+      basis:'directory', source:'https://aca.edu.kw/ExploreACA/Campuses' }
+  ],
+  campusNote:'Three campuses: two in Hawally and one in Salmiya. Kindergarten is co-educational; elementary and above are single-gender.',
+  locationBasis:'unverified',
+  transport:true, theme:['#1d4ed8','#60a5fa'],
+  blurb:'American curriculum with an Islamic ethos, running separate boys’ and girls’ campuses from Grade 5 upward.',
+  about:'ACA combines a US standards-based curriculum with Arabic and Islamic studies, and separates boys and girls from the upper elementary years. It is one of the larger private school groups in Kuwait by enrolment.',
+  facilities:['Sports halls on both campuses','Swimming pool','Prayer halls','Computer and science labs','Libraries','Bus fleet'],
+  fees:[],
+  feeRange:{ min:2427, max:4516 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  feeNote:'Registration KD 100. Staff children receive tuition discounts.',
+  reviews:[]
+},
+{
+  id:'aus', name:'American United School', nameAr:'المدرسة الأمريكية المتحدة', abbr:'AUS',
+  curriculum:'American', extras:['AP','STEAM'], gender:'Mixed', founded:2007, verified:false, featured:false,
+  district:'Sabah Al-Salem', governorate:'Mubarak', address:'Block 1, Street 101, Sabah Al-Salem',
+  lat:null, lng:null, website:'https://www.aus.edu.kw', ig:'auskuwait',
+  logo:'assets/img/logos/aus.png', logoSource:'https://resources.finalsite.net/images/v1654672269/kuwait/j7k0cbibhnwjy3jfjtyz/AUS-logo-11.png',
+  from:'Pre-KG', to:'Grade 12', ages:'3 – 18 years',
+  languages:['English','Arabic','French'], accreditation:['NEASC','College Board (AP)'],
+  phone:'+965 2553 0100',
+  email:'info@aus.edu.kw',
+  locationBasis:'directory',
+  locationSource:'https://www.waze.com/live-map/directions/american-united-school-of-kuwait-block-1,-sabah-al-salem',
+  locationNote:'Corrected from Salmiya.',
+  transport:true, theme:['#b91c1c','#f87171'],
+  blurb:'Modern purpose-built Salmiya campus with a STEAM focus and a growing AP programme.',
+  about:'AUS opened in 2007 on a new campus in Salmiya and has grown quickly. The school leans into STEAM, with dedicated engineering and design spaces, alongside a conventional US college-preparatory pathway.',
+  facilities:['Indoor pool','Engineering and robotics labs','Rooftop play areas','Auditorium','Art and music suites','Cafeteria'],
+  fees:[
+    { band:'KG2', from:'KG2', to:'KG2', amount:4700 },
+    { band:'Pre-Grade 1', from:'Pre-KG', to:'Pre-KG', amount:5000 },
+    { band:'Grade 1 – Grade 3', from:'Grade 1', to:'Grade 3', amount:5650 },
+    { band:'Grade 4 – Grade 5', from:'Grade 4', to:'Grade 5', amount:6000 },
+    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8', amount:6750 },
+    { band:'Grade 9 – Grade 10', from:'Grade 9', to:'Grade 10', amount:7850 },
+    { band:'Grade 11 – Grade 12', from:'Grade 11', to:'Grade 12', amount:7950 }
+  ],
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait/american-united-school-kuwait-city/fees',
+  feeNote:'One-time assessment fee KD 125.',
+  reviews:[]
+},
+{
+  id:'fsis', name:'Fawzia Sultan International School', nameAr:'مدرسة فوزية السلطان العالمية', abbr:'FSIS',
+  curriculum:'American', extras:['Learning support','Small classes'], gender:'Mixed', founded:2010, verified:false, featured:false,
+  district:'Rumaithiya', governorate:'Hawalli', address:'Block 11, Rumaithiya',
+  lat:null, lng:null, website:'https://www.fsis.org', ig:'fsiskuwait',
+  from:'Pre-KG', to:'Grade 12', ages:'3 – 18 years',
+  languages:['English','Arabic'], accreditation:['NEASC'],
+  locationBasis:'directory',
+  locationSource:'https://www.fsis.org',
+  locationNote:'Website corrected; fsis.edu.kw does not resolve.',
+  transport:true, theme:['#7c2d12','#fb923c'],
+  blurb:'Small-by-design American school known for inclusion and structured learning support.',
+  about:'FSIS runs deliberately small classes and an integrated learning-support model, making it one of the few schools in Kuwait equipped to serve students with mild to moderate learning differences alongside mainstream peers.',
+  facilities:['Learning support centre','Occupational therapy room','Small-group classrooms','Sports hall','Library','Sensory room'],
+  fees:[
+    { band:'Pre-KG – KG2',      from:'Pre-KG',  to:'KG2',      amount:3100 },
+    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:3900 },
+    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:4300 },
+    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:4800 }
+  ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
+  reviews:[]
+},
+{
+  id:'dbs', name:'Dasman Bilingual School', nameAr:'مدرسة دسمان ثنائية اللغة', abbr:'DBS',
+  curriculum:'American', extras:['Bilingual','AP'], gender:'Mixed', founded:1996, verified:false, featured:false,
+  district:'Kuwait City', governorate:'Capital', address:'Bin Misbah Street, Kuwait City',
+  lat:29.3877836, lng:47.9914584, website:'https://www.dbs.edu.kw', ig:null,
+  logo:'assets/img/logos/dbs.png', logoSource:'https://www.dbs.edu.kw/wp-content/uploads/sites/20/2024/12/cropped-Screenshot-2024-12-16-at-5.07.11 PM.png?w=180',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Arabic'], accreditation:['NEASC'],
+  phone:'+965 2227 7377',
+  email:'info@dasmanschool.com.kw',
+  locationBasis:'school',
+  locationSource:'https://www.dbs.edu.kw/contact-us/',
+  locationNote:'Coordinates from the school’s own Google Maps link. Corrected from Hawalli.',
+  transport:true, theme:['#155e75','#22d3ee'],
+  blurb:'Bilingual American school with a strong Arabic stream and a compact, well-run campus.',
+  about:'Dasman Bilingual School teaches a US curriculum in English while maintaining a full Arabic and Islamic studies programme, aimed primarily at Kuwaiti families who want both without compromise.',
+  facilities:['Sports hall','Swimming pool','Science labs','Arabic and English libraries','Music room','Prayer hall'],
+  fees:[],
+  feeRange:{ min:1786, max:3101 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  reviews:[]
+},
+{
+  id:'kbs', name:'Kuwait Bilingual School', nameAr:'المدرسة الكويتية ثنائية اللغة', abbr:'KBS',
+  curriculum:'American', extras:['Bilingual'], gender:'Mixed', founded:2003, verified:false, featured:false,
+  district:'Mishref', governorate:'Hawalli', address:'Block 4, Mishref',
+  lat:null, lng:null, website:'https://www.kuwaitbilingualschool.com', ig:null,
+  logo:'assets/img/logos/kbs.png', logoSource:'https://kbs2.edu.kw/wp-content/uploads/2025/03/kuwait-bilingual-school-logo.png',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Arabic'], accreditation:['NEASC (candidate)'],
+  locationBasis:'unverified',
+  transport:true, theme:['#3730a3','#818cf8'],
+  blurb:'Mid-market bilingual American school serving Mishref and the surrounding suburbs.',
+  about:'KBS offers an English-medium American curriculum with Arabic and Islamic studies, positioned as an affordable bilingual option for families in the southern Hawalli suburbs.',
+  facilities:['Sports courts','Computer labs','Library','Science labs','Cafeteria','Bus service'],
+  fees:[],
+  feeRange:{ min:3760, max:5665 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  reviews:[]
+},
+
+{
+  id:'aag', name:'American Academy for Girls', nameAr:'الأكاديمية الأمريكية للبنات', abbr:'AAG',
+  curriculum:'American', extras:['Girls only','AP'], gender:'Girls', founded:2000, verified:false, featured:false,
+  district:'Hawalli', governorate:'Hawalli', address:'Block 4, Hawalli',
+  lat:null, lng:null, website:'https://aag.edu.kw', ig:null,
+  logo:'assets/img/logos/aag.png', logoSource:'https://aag.edu.kw/wp-content/uploads/2021/10/cropped-favicon-192x192.png',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Arabic'], accreditation:['NEASC'],
+  locationBasis:'unverified',
+  transport:true, theme:['#9d174d','#f472b6'],
+  blurb:'All-girls American curriculum school from kindergarten through Grade 12.',
+  about:'AAG serves girls only across all grades, pairing a US curriculum with Arabic and Islamic studies. It appeals to families who want a single-sex environment through the secondary years.',
+  facilities:['Girls-only sports hall','Swimming pool','Science labs','Library','Art studio','Prayer hall'],
+  fees:[],
+  feeRange:{ min:1648, max:4200 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  reviews:[]
+},
+{
+  id:'kas', name:'Kuwait American School', nameAr:'المدرسة الكويتية الأمريكية', abbr:'KAS',
+  curriculum:'American', extras:['AP'], gender:'Mixed', founded:1998, verified:false, featured:false,
+  district:'Salmiya', governorate:'Hawalli', address:'Block 10, Salmiya',
+  lat:null, lng:null, website:'https://www.kas.edu.kw', ig:null,
+  logo:'assets/img/logos/kas.png', logoSource:'https://www.kas.edu.kw/images/logo.png',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Arabic'], accreditation:['NEASC'],
+  locationBasis:'unverified',
+  transport:true, theme:['#0f172a','#64748b'],
+  blurb:'Established American-curriculum school in the heart of Salmiya.',
+  about:'Kuwait American School delivers a US curriculum from KG1 to Grade 12 on a central Salmiya site, with a long-standing local reputation and a mixed international intake.',
+  facilities:['Multi-purpose hall','Science labs','Computer suites','Library','Rooftop courts','Cafeteria'],
+  fees:[],
+  feeRange:{ min:1756, max:3488 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  reviews:[]
+},
+
+/* ===== BRITISH ===== */
+{
+  id:'bsk', name:'The British School of Kuwait', nameAr:'المدرسة البريطانية بالكويت', abbr:'BSK',
+  curriculum:'British', extras:['IGCSE','A-Level','EYFS'], gender:'Mixed', founded:1978, verified:false, featured:true,
+  district:'Salwa', governorate:'Hawalli', address:'Street 1, Area 1, Salwa — visible from the Fahaheel Expressway (Road 30)',
+  lat:null, lng:null, website:'https://www.bsk.edu.kw', ig:'bskkuwait',
+  logo:'assets/img/logos/bsk.png', logoSource:'https://www.bsk.edu.kw/-/media/bsk-favicon.png?h=74&w=80&rev=098fca164c0943e2a3f5cc6aa6644a74&hash=F3C0C8E94089D3D3CDB35CC9D9E3463B',
+  from:'Nursery', to:'Grade 12', ages:'3 – 18 years',
+  languages:['English','Arabic','French'], accreditation:['BSO','COBIS','Cambridge International','Edexcel'],
+  locationBasis:'school',
+  locationSource:'https://www.bsk.edu.kw/contact-us',
+  transport:true, theme:['#581c87','#a855f7'],
+  blurb:'The best-known British school in Kuwait — EYFS through IGCSE and A-Level on a large Salwa campus.',
+  about:'BSK follows the National Curriculum for England from Early Years to Year 13, leading to IGCSEs and A-Levels. It is a British Schools Overseas inspected school and a member of COBIS, with a substantial expatriate and Kuwaiti intake.',
+  facilities:['Two swimming pools','Sports fields and courts','Theatre','Sixth-form centre','Design technology suite','Libraries in each school'],
+  fees:[],
+  feeBasis:'on-request',
+  feeYear:'2026/27',
+  feeSource:'https://www.bsk.edu.kw/admissions/tuition-fees',
+  feeNote:'BSK does not publish fees. Its Accounts Team quotes per year group on request.',
+  phone:'+965 1830456',
+  email:'admissions@bsk.edu.kw',
+  feeEmail:'accounts@bie.com.kw',
+  reviews:[]
+},
+{
+  id:'kes', name:'Kuwait English School', nameAr:'المدرسة الإنجليزية الكويتية', abbr:'KES',
+  curriculum:'British', extras:['IGCSE','A-Level'], gender:'Mixed', founded:1978, verified:false, featured:true,
+  district:'Salwa', governorate:'Hawalli', address:'Area 11, Street 9, Salwa (P.O. Box 8640, Salmiya 22057)',
+  lat:null, lng:null, website:'https://www.kes.edu.kw', ig:'keskuwait',
+  logo:'assets/img/logos/kes.png', logoSource:'https://www.kes.edu.kw/wp-content/uploads/2021/01/cropped-logo-fav-192x192.png',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Arabic','French'], accreditation:['BSO','COBIS','Cambridge International'],
+  locationBasis:'directory',
+  locationSource:'https://en.wikipedia.org/wiki/Kuwait_English_School',
+  transport:true, theme:['#1e40af','#93c5fd'],
+  blurb:'Long-established British school in Salwa with a strong IGCSE and A-Level record.',
+  about:'KES teaches the English National Curriculum through to A-Level, with a reputation built on academic results and a stable, largely British teaching staff.',
+  facilities:['Swimming pool','Sports hall','Astroturf pitch','Science labs','Sixth-form study centre','Auditorium'],
+  fees:[],
+  feeRange:{ min:1778, max:4800 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  feeNote:'Registration / re-enrolment KD 100, set under Ministry of Education rules.',
+  reviews:[]
+},
+{
+  id:'tes', name:'The English School Kuwait', nameAr:'المدرسة الإنجليزية بالكويت', abbr:'TES',
+  curriculum:'British', extras:['IGCSE','EYFS'], gender:'Mixed', founded:1953, verified:false, featured:false,
+  district:'Salmiya', governorate:'Hawalli', address:'Mousaed Al-Azmi Street, Block 12, Salmiya',
+  lat:null, lng:null, website:'https://tes.edu.kw', ig:null,
+  logo:'assets/img/logos/tes.png', logoSource:'https://tes.edu.kw/wp-content/uploads/2024/05/TES-logo.png',
+  from:'Nursery', to:'Grade 11', ages:'3 – 16 years',
+  languages:['English','Arabic','French'], accreditation:['BSO','COBIS'],
+  locationBasis:'school',
+  locationSource:'https://tes.edu.kw/contact-us/',
+  locationNote:'Corrected from Shamiya / Capital.',
+  transport:true, theme:['#7f1d1d','#ef4444'],
+  blurb:'The oldest English-medium school in Kuwait, running from Nursery to IGCSE in Shamiya.',
+  about:'Founded in 1953, The English School is the longest-established British school in Kuwait. It runs the English National Curriculum from Early Years to Year 11, finishing with IGCSEs.',
+  facilities:['Swimming pool','Playing fields','Library','Science labs','Music and drama rooms','Early Years garden'],
+  fees:[],
+  feeRange:{ min:1841, max:3535 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  reviews:[]
+},
+{
+  id:'nes', name:'The New English School', nameAr:'المدرسة الإنجليزية الجديدة', abbr:'NES',
+  curriculum:'British', extras:['IGCSE','A-Level'], gender:'Mixed', founded:1969, verified:true, featured:true,
+  district:'Jabriya', governorate:'Hawalli', address:'Block 12, Jabriya (P.O. Box 6156, Hawalli 32036)',
+  lat:null, lng:null, website:'https://www.neskt.com', ig:'nes_kuwait',
+  logo:'assets/img/logos/nes.png', logoSource:'https://resources.finalsite.net/images/f_auto,q_auto/v1780406450/nesktcom/ktsyrmub2qj75k2ajwla/nesktcom.webp',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Arabic','French'], accreditation:['BSO','COBIS','Cambridge International'],
+  locationBasis:'school',
+  locationSource:'https://www.neskt.com',
+  transport:true, theme:['#065f46','#34d399'],
+  blurb:'Large, academically selective British school in Jabriya with a well-known A-Level programme.',
+  about:'NES has run the English National Curriculum in Jabriya since 1969, with entry assessments and a strong record at IGCSE and A-Level. It is one of the largest British schools in the country by enrolment.',
+  facilities:['Two swimming pools','Sports halls','Auditorium','Sixth-form block','Science and IT labs','Libraries'],
+  fees:[
+    { band:'Kindergarten', from:'KG1', to:'KG2', amount:1733 },
+    { band:'Reception – Year 2', from:'Grade 1', to:'Grade 2', amount:2678 },
+    { band:'Years 3 – 6', from:'Grade 3', to:'Grade 6', amount:2977 },
+    { band:'Years 7 – 9', from:'Grade 7', to:'Grade 9', amount:3510 },
+    { band:'Years 10 – 11', from:'Grade 10', to:'Grade 11', amount:3510 },
+    { band:'Years 12 – 13 (A Level)', from:'Grade 12', to:'Grade 12', amount:4430 }
+  ],
+  feeBasis:'school',
+  feeYear:'2024/25',
+  feeSource:'https://www.neskt.com',
+  feeNote:'Resources & technology fee KD 25–180 by year group. No sibling discount.',
+  phone:'+965 2531 8060',
+  email:'admin@neskt.org',
+  reviews:[]
+},
+{
+  id:'ges', name:'Gulf English School', nameAr:'مدرسة الخليج الإنجليزية', abbr:'GES',
+  curriculum:'British', extras:['IGCSE','A-Level'], gender:'Mixed', founded:1978, verified:false, featured:false,
+  district:'Salmiya', governorate:'Hawalli', address:'Al Dimnah Street, Block 4, Salmiya (P.O. Box 33106)',
+  lat:null, lng:null, website:'https://www.ges.edu.kw', ig:null,
+  logo:'assets/img/logos/ges.png', logoSource:'https://static.wixstatic.com/media/a6b024_bd42b26652294faebf287b473c25bc2a%7Emv2.jpg/v1/fill/w_192%2Ch_192%2Clg_1%2Cusm_0.66_1.00_0.01/a6b024_bd42b26652294faebf287b473c25bc2a%7Emv2.jpg',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Arabic'], accreditation:['BSO','Cambridge International'],
+  phone:'+965 2575 7022',
+  email:'info@ges.edu.kw',
+  locationBasis:'school',
+  locationSource:'https://www.ges.edu.kw/contact-us/',
+  locationNote:'Corrected from Hawalli.',
+  transport:true, theme:['#134e4a','#5eead4'],
+  blurb:'British curriculum school in Hawalli covering KG1 to A-Level.',
+  about:'Gulf English School follows the English National Curriculum with IGCSE and A-Level examinations, serving a mixed Kuwaiti and expatriate community in central Hawalli.',
+  facilities:['Sports hall','Swimming pool','Science labs','Library','ICT suites','Cafeteria'],
+  fees:[],
+  feeRange:{ min:1692, max:3893 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  reviews:[]
+},
+{
+  id:'knes', name:'Kuwait National English School', nameAr:'المدرسة الوطنية الإنجليزية', abbr:'KNES',
+  curriculum:'British', extras:['IGCSE','A-Level'], gender:'Mixed', founded:1996, verified:false, featured:false,
+  district:'Hawalli', governorate:'Hawalli', address:'Block 2, Mousa Bin Nussair Street, Hawally (P.O. Box 44273, Hawally 32057)',
+  lat:null, lng:null, website:'https://www.knes.edu.kw', ig:null,
+  logo:'assets/img/logos/knes.png', logoSource:'https://www.knes.edu.kw/images/logo.png',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Arabic','French'], accreditation:['BSO','Cambridge International'],
+  locationBasis:'directory',
+  locationSource:'https://knes.edu.kw/contact.php',
+  transport:true, theme:['#312e81','#a5b4fc'],
+  blurb:'British curriculum with a strong languages offer and a compact Hawalli campus.',
+  about:'KNES teaches the English National Curriculum to A-Level, with French from the primary years and a well-regarded music programme.',
+  facilities:['Sports hall','Music suite','Science labs','Library','Language rooms','Rooftop play area'],
+  fees:[
+    { band:'KG1', from:'KG1', to:'KG1', amount:1494 },
+    { band:'KG2', from:'KG2', to:'KG2', amount:2289 },
+    { band:'Grade 1 – Grade 4', from:'Grade 1', to:'Grade 4', amount:2765 },
+    { band:'Grade 5 – Grade 10', from:'Grade 5', to:'Grade 10', amount:2926 },
+    { band:'Grade 11', from:'Grade 11', to:'Grade 11', amount:4630 },
+    { band:'Grade 12', from:'Grade 12', to:'Grade 12', amount:4862 }
+  ],
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait/kuwait-national-english-school/fees',
+  reviews:[]
+},
+{
+  id:'ces', name:'Cambridge English School', nameAr:'مدرسة كامبريدج الإنجليزية', abbr:'CES',
+  curriculum:'British', extras:['IGCSE'], gender:'Mixed', founded:1997, verified:false, featured:false,
+  district:'Mangaf', governorate:'Ahmadi', address:'Block 4, Mangaf',
+  lat:null, lng:null, website:'https://www.ces.edu.kw', ig:null,
+  logo:'assets/img/logos/ces.png', logoSource:'https://cdn.prod.website-files.com/6813b3f83dfb20dfc37a8674/68149045acc8af6f55bd97ba_Untitled%20design%20(38)%201%20(1).png',
+  from:'KG1', to:'Grade 11', ages:'4 – 16 years',
+  languages:['English','Arabic'], accreditation:['Cambridge International'],
+  campuses:[
+    { name:'Mangaf Campus', district:'Mangaf', governorate:'Ahmadi',
+      address:'Block 3, Street 100, Mangaf — primary (KS1 and KS2)',
+      basis:'directory', source:'https://www.doris.school/schools/kuwait/cambridge-english-school' },
+    { name:'Hawally Campus', district:'Hawalli', governorate:'Hawalli',
+      address:'Block 76, Al Yarmouk Street, Hawally — secondary, IGCSE and A Level',
+      basis:'directory', source:'https://www.doris.school/schools/kuwait/cambridge-english-school' }
+  ],
+  campusNote:'Two campuses — primary in Mangaf, secondary in Hawally — so the school spans ages 3 to 18 across both.',
+  locationBasis:'unverified',
+  transport:true, theme:['#164e63','#67e8f9'],
+  blurb:'British curriculum school serving Mangaf, Fahaheel and the Ahmadi governorate.',
+  about:'Cambridge English School delivers the English National Curriculum through to IGCSE in the south of Kuwait, where British options are thinner on the ground.',
+  facilities:['Sports courts','Science labs','Library','ICT lab','Cafeteria','Bus fleet'],
+  fees:[],
+  feeBasis:'on-request',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  feeNote:'Cambridge English School does not publish its fees.',
+  reviews:[]
+},
+{
+  id:'kies', name:'Kuwait International English School', nameAr:'المدرسة الإنجليزية الدولية الكويتية', abbr:'KIES',
+  curriculum:'British', extras:['IGCSE'], gender:'Mixed', founded:2001, verified:false, featured:false,
+  district:'Hawalli', governorate:'Hawalli', address:'Block 2, Hawalli',
+  lat:null, lng:null, website:'https://kieskuwait.com', ig:null,
+  from:'KG1', to:'Grade 11', ages:'4 – 16 years',
+  languages:['English','Arabic'], accreditation:['Cambridge International'],
+  locationBasis:'unverified',
+  transport:true, theme:['#4c1d95','#c4b5fd'],
+  blurb:'Affordable British curriculum school in Hawalli through to IGCSE.',
+  about:'KIES offers the English National Curriculum at accessible fees, with a mixed intake drawn largely from Hawalli and Salmiya.',
+  facilities:['Multi-purpose hall','Science labs','Library','Computer lab','Prayer room','Cafeteria'],
+  fees:[],
+  feeRange:{ min:1389, max:3689 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  reviews:[]
+},
+
+/* ===== INDIAN ===== */
+{
+  id:'icsk', name:'Indian Community School Kuwait', nameAr:'المدرسة الهندية الكويتية', abbr:'ICSK',
+  curriculum:'Indian', extras:['CBSE','Multiple branches'], gender:'Mixed', founded:1964, verified:false, featured:true,
+  district:'Salmiya', governorate:'Hawalli', address:'ICSK Senior: Essa Al Qatami Street, Jiddha-8, Block 10, Salmiya',
+  lat:null, lng:null, website:'https://www.icsk-kw.com', ig:'icsk_official',
+  logo:'assets/img/logos/icsk.png', logoSource:'https://icsk-kw.com/storage/fileUpload/FullSized/logo1709647585.png',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Hindi','Arabic','Malayalam'], accreditation:['CBSE (New Delhi)'],
+  phone:'+965 2562 9583',
+  email:'icsksenior@icsk-kw.com',
+  campuses:[
+    { name:'ICSK Senior', district:'Salmiya', governorate:'Hawalli',
+      address:'Essa Al Qatami Street, Jiddha-8, Block 10, Salmiya',
+      basis:'school', source:'https://www.icsk-kw.com/contact.php' },
+    { name:'ICSK Junior', district:'Salmiya', governorate:'Hawalli',
+      address:'Salmiya',
+      basis:'directory', source:'https://www.icsk-kw.com/junior-branch.php' },
+    { name:'ICSK Amman', district:'Salmiya', governorate:'Hawalli',
+      address:'Salmiya, close to the Senior and Junior branches',
+      basis:'directory', source:'https://www.icsk-kw.com/amman-branch.php' },
+    { name:'ICSK Khaitan', district:'Khaitan', governorate:'Farwaniya',
+      address:'Street 23, Block 9, Abraq Khaitan, opposite Main Jamiah',
+      basis:'directory', source:'https://www.icsk-kw.com/khaitan-branch.php' }
+  ],
+  campusNote:'Four branches. Only the Senior address is published on the school’s own site.',
+  locationBasis:'school',
+  locationSource:'https://www.icsk-kw.com/contact.php',
+  locationNote:'Several branches (Senior, Junior, Khaitan, Amman); the Senior campus address is the one published. Corrected from Khaitan.',
+  transport:true, theme:['#c2410c','#fdba74'],
+  blurb:'The largest Indian school group in Kuwait, CBSE affiliated, across several branches.',
+  about:'ICSK has served the Indian community in Kuwait since 1964 and now operates multiple branches under CBSE affiliation, offering Science, Commerce and Humanities streams in the senior secondary years.',
+  facilities:['Auditoriums','Sports grounds','Science and computer labs','Libraries','Medical rooms','Large bus fleet'],
+  fees:[],
+  feeRange:{ min:378, max:561 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  feeNote:'Varies by branch. One-time admission fee KD 10; three instalments.',
+  reviews:[]
+},
+{
+  id:'faips', name:'FAIPS – DPS Kuwait', nameAr:'مدرسة الفحيحيل الوطنية الهندية', abbr:'FAIPS',
+  curriculum:'Indian', extras:['CBSE'], gender:'Mixed', founded:1996, verified:false, featured:false,
+  district:'Ahmadi', governorate:'Ahmadi', address:'Block 9, 49 South Street, Ahmadi',
+  lat:null, lng:null, website:'', ig:null,
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Hindi','Arabic'], accreditation:['CBSE (New Delhi)'],
+  locationBasis:'directory',
+  locationSource:'https://en.wikipedia.org/wiki/Fahaheel_Al-Watanieh_Indian_Private_School',
+  locationNote:'Corrected from Fahaheel; the school is in Ahmadi despite its name.',
+  transport:true, theme:['#9a3412','#fb923c'],
+  blurb:'Delhi Public School affiliated CBSE school serving Fahaheel and the south.',
+  about:'FAIPS operates under the Delhi Public School Society banner, offering CBSE education from kindergarten to Grade 12 with Science and Commerce streams at senior level.',
+  facilities:['Auditorium','Sports ground','Science labs','Computer labs','Library','Bus service'],
+  fees:[
+    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:580 },
+    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:720 },
+    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:850 },
+    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1090 }
+  ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
+  reviews:[]
+},
+{
+  id:'bhavans', name:'Bhavans SIS – Smart Indian School', nameAr:'مدرسة بهافانز الهندية', abbr:'Bhavans',
+  curriculum:'Indian', extras:['CBSE'], gender:'Mixed', founded:2003, verified:false, featured:false,
+  district:'Jleeb Al Shuyoukh', governorate:'Farwaniya', address:'Street 22, Abdulla Mubarak, Jleeb Al Shuyoukh (P.O. Box 417)',
+  lat:null, lng:null, website:'https://www.bhavanskuwait.com', ig:null,
+  logo:'assets/img/logos/bhavans.png', logoSource:'https://www.bhavanskuwait.com/wp-content/uploads/2022/09/BVB-LOGO-02.png',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Hindi','Arabic','Malayalam'], accreditation:['CBSE (New Delhi)'],
+  phone:'+965 2434 2388',
+  locationBasis:'school',
+  locationSource:'https://www.bhavanskuwait.com/contact-us',
+  locationNote:'Corrected from Abbassiya.',
+  transport:true, theme:['#a16207','#fde047'],
+  blurb:'Bharatiya Vidya Bhavan affiliated CBSE school in Abbassiya.',
+  about:'Bhavans SIS follows the CBSE curriculum with a strong emphasis on Indian cultural programmes, music and classical dance alongside academics.',
+  facilities:['Auditorium','Music and dance studios','Science labs','Library','Sports courts','Bus fleet'],
+  fees:[
+    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:600 },
+    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:740 },
+    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:870 },
+    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:1120 }
+  ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
+  reviews:[]
+},
+{
+  id:'uis', name:'United Indian School', nameAr:'المدرسة الهندية المتحدة', abbr:'UIS',
+  curriculum:'Indian', extras:['CBSE'], gender:'Mixed', founded:1994, verified:false, featured:false,
+  district:'Abbassiya', governorate:'Farwaniya', address:'Block 4, Street 6, Building 15175, Abbassiya / Jleeb Al Shuyoukh',
+  lat:null, lng:null, website:'', ig:null,
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Hindi','Arabic'], accreditation:['CBSE (New Delhi)'],
+  locationBasis:'directory',
+  locationSource:'https://www.edarabia.com/united-indian-school-jleeb-al-shuyoukh-kuwait/',
+  transport:true, theme:['#7c2d12','#fdba74'],
+  blurb:'Established CBSE school in Abbassiya with low fees and a large student body.',
+  about:'United Indian School offers CBSE education from kindergarten to Grade 12 at some of the most accessible fees in Kuwait, serving the working Indian expatriate community.',
+  facilities:['Assembly hall','Science labs','Computer lab','Library','Playground','Bus service'],
+  fees:[
+    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:470 },
+    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:580 },
+    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:690 },
+    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:880 }
+  ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
+  reviews:[]
+},
+{
+  id:'iis', name:'Integrated Indian School', nameAr:'المدرسة الهندية المتكاملة', abbr:'IIS',
+  curriculum:'Indian', extras:['CBSE'], gender:'Mixed', founded:1996, verified:false, featured:false,
+  district:'Abbassiya', governorate:'Farwaniya', address:'Block 8, Abbassiya',
+  lat:null, lng:null, website:'', ig:null,
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Hindi','Arabic','Malayalam'], accreditation:['CBSE (New Delhi)'],
+  locationBasis:'unverified',
+  transport:true, theme:['#065f46','#6ee7b7'],
+  blurb:'CBSE school in Abbassiya known for consistent Grade 10 and 12 board results.',
+  about:'Integrated Indian School runs the CBSE curriculum with Science and Commerce streams, and a track record of solid board examination performance relative to its fee level.',
+  facilities:['Science labs','Computer labs','Library','Assembly hall','Sports courts','Bus fleet'],
+  fees:[],
+  feeRange:{ min:340, max:488 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  reviews:[]
+},
+{
+  id:'carmel', name:'Carmel School Kuwait', nameAr:'مدرسة الكرمل', abbr:'Carmel',
+  curriculum:'Indian', extras:['CBSE'], gender:'Mixed', founded:1994, verified:false, featured:false,
+  district:'Khaitan', governorate:'Farwaniya', address:'Block 2, Area 10, Street 96, New Khaitan (P.O. Box 596, Safat 13006)',
+  lat:null, lng:null, website:'http://www.carmelschoolkwt.com', ig:null,
+  logo:'assets/img/logos/carmel.png', logoSource:'https://www.carmelschoolkwt.com/assets/images/csklogo.png',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Hindi','Arabic','Malayalam'], accreditation:['CBSE (New Delhi)'],
+  phone:'+965 2472 7226',
+  locationBasis:'directory',
+  locationSource:'http://www.carmelschoolkwt.com',
+  transport:true, theme:['#155e75','#a5f3fc'],
+  blurb:'CBSE school in Khaitan with a strong pastoral reputation.',
+  about:'Carmel School offers CBSE education from KG1 to Grade 12, with a values-led pastoral programme and a long-standing presence in Khaitan.',
+  facilities:['Assembly hall','Science labs','Library','Computer lab','Playground','Bus service'],
+  fees:[],
+  feeBasis:'on-request',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  feeNote:'Carmel School does not publish its fees.',
+  reviews:[]
+},
+{
+  id:'ies', name:'Indian Educational School', nameAr:'المدرسة الهندية التعليمية', abbr:'IES',
+  curriculum:'Indian', extras:['CBSE'], gender:'Mixed', founded:1998, verified:false, featured:false,
+  district:'Jleeb Al Shuyoukh', governorate:'Farwaniya', address:'School Street, Jleeb Al Shuyoukh, opposite the old fire station',
+  lat:null, lng:null, website:'https://www.bhavanskuwait.com', ig:null,
+  logo:'assets/img/logos/ies.png', logoSource:'https://www.bhavanskuwait.com/wp-content/uploads/2022/09/IESK-LOGO-250.png',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Hindi','Arabic'], accreditation:['CBSE (New Delhi)'],
+  phone:'+965 2434 0882',
+  locationBasis:'school',
+  locationSource:'https://www.bhavanskuwait.com/contact-us',
+  locationNote:'Corrected from Salmiya.',
+  transport:true, theme:['#3f6212','#bef264'],
+  blurb:'CBSE school with a Salmiya location convenient for Hawalli families.',
+  about:'Indian Educational School serves the Indian community in Salmiya and Hawalli with a CBSE curriculum and a shorter commute than the Abbassiya cluster.',
+  facilities:['Science labs','Computer lab','Library','Indoor hall','Rooftop play area','Bus service'],
+  fees:[],
+  feeRange:{ min:715, max:1320 },
+  feeBasis:'directory',
+  feeYear:'2026/27',
+  feeSource:'https://www.international-schools-database.com/in/kuwait',
+  reviews:[]
+},
+{
+  id:'gis', name:'Gulf Indian School', nameAr:'مدرسة الخليج الهندية', abbr:'GIS',
+  curriculum:'Indian', extras:['CBSE'], gender:'Mixed', founded:2001, verified:false, featured:false,
+  district:'Fahaheel', governorate:'Ahmadi', address:'Block 1, Farwaniya',
+  lat:null, lng:null, website:'https://www.giskuwait.com', ig:null,
+  logo:'assets/img/logos/gis.png', logoSource:'https://www.giskuwait.com/assets/img/favicon.png',
+  from:'KG1', to:'Grade 12', ages:'4 – 18 years',
+  languages:['English','Hindi','Arabic','Malayalam'], accreditation:['CBSE (New Delhi)'],
+  locationBasis:'directory',
+  locationSource:'https://www.giskuwait.com/about-us',
+  locationNote:'Corrected from Farwaniya.',
+  transport:true, theme:['#701a75','#f0abfc'],
+  blurb:'CBSE school in Farwaniya with a broad Indian-community intake.',
+  about:'Gulf Indian School provides CBSE education across all grades with Science and Commerce streams at senior secondary level.',
+  facilities:['Assembly hall','Science labs','Computer labs','Library','Sports courts','Bus fleet'],
+  fees:[
+    { band:'KG1 – KG2',         from:'KG1',     to:'KG2',      amount:500 },
+    { band:'Grade 1 – Grade 5', from:'Grade 1', to:'Grade 5',  amount:620 },
+    { band:'Grade 6 – Grade 8', from:'Grade 6', to:'Grade 8',  amount:730 },
+    { band:'Grade 9 – Grade 12',from:'Grade 9', to:'Grade 12', amount:940 }
+  ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
+  reviews:[]
+},
+
+/* ===== PRE-K & KINDERGARTEN / NURSERIES ===== */
+{
+  id:'english-playgroup', name:'The English Playgroup', nameAr:'الروضة الإنجليزية', abbr:'TEP',
+  curriculum:'Early', extras:['EYFS','Multiple branches'], gender:'Mixed', founded:1978, verified:false, featured:true,
+  district:'Multiple branches', governorate:'Hawalli', address:'Branches across Salmiya, Hawalli, Jabriya, Mishref and Fahaheel',
+  lat:null, lng:null, website:'https://www.epg.edu.kw', ig:'englishplaygroup',
+  logo:'assets/img/logos/english-playgroup.png', logoSource:'https://epgs3cdn.epg.edu.kw/wp-content/uploads/20250311115341/cropped-EPG-Logo-colored-192x192.png',
+  from:'Nursery', to:'KG2', ages:'2 – 6 years',
+  languages:['English','Arabic'], accreditation:['EYFS (England)'],
+  campuses:[
+    { name:'Salwa School', district:'Salwa', governorate:'Hawalli',
+      address:'Block 7, Street 2, Salwa',
+      basis:'school', source:'https://epg.edu.kw/aboutus/' },
+    { name:'Salmiya School', district:'Salmiya', governorate:'Hawalli',
+      address:'Block 12, Abo Thar Al Ghafari Street, Salmiya',
+      basis:'school', source:'https://epg.edu.kw/aboutus/' },
+    { name:'Sabah Al Salem School', district:'Sabah Al-Salem', governorate:'Mubarak',
+      address:'Block 1, Street 109, Sabah Al-Salem',
+      basis:'school', source:'https://epg.edu.kw/aboutus/' },
+    { name:'Fahaheel School', district:'Fahaheel', governorate:'Ahmadi',
+      address:'Block 7, Street 109, Fahaheel',
+      basis:'school', source:'https://epg.edu.kw/aboutus/' }
+  ],
+  campusNote:'Four school campuses are listed with addresses; the group also runs a network of early-years locations it does not enumerate publicly.',
+  locationBasis:'unverified',
+  transport:true, theme:['#be185d','#fbcfe8'],
+  blurb:'Kuwait’s largest early-years group — EYFS across a dozen branches, 2 to 6 years.',
+  about:'The English Playgroup has been running early-years education in Kuwait since 1978 and now operates branches across most residential areas. It follows the English Early Years Foundation Stage, and feeds into the main British and American primary schools.',
+  facilities:['Indoor soft-play halls','Shaded outdoor gardens','Water-play areas','Music rooms','Nap rooms','Nurse on site'],
+  fees:[
+    { band:'Nursery (2 – 3 yrs)', from:'Nursery', to:'Nursery', amount:1450 },
+    { band:'Pre-KG (3 – 4 yrs)',  from:'Pre-KG',  to:'Pre-KG',  amount:1650 },
+    { band:'KG1 – KG2 (4 – 6 yrs)',from:'KG1',    to:'KG2',     amount:1900 }
+  ],
+  feeBasis:'estimate',
+  feeYear:'',
+  feeSource:'',
+  feeNote:'Not published online — these figures are unconfirmed estimates.',
+  reviews:[]
+},
+{
+  id:'sunshine-kg', name:'The Sunshine Kindergarten', nameAr:'روضة صن شاين', abbr:'TSK',
+  curriculum:'Early', extras:['Early years'], gender:'Mixed', founded:0, verified:false, featured:false,
+  district:'Kuwait City', governorate:'Capital', address:'Kuwait City, Kuwait',
+  lat:null, lng:null, website:'https://www.tsk.edu.kw', ig:null,
+  logo:'assets/img/logos/sunshine-kg.png', logoSource:'https://www.tsk.edu.kw/-/media/tsk/homepage/tsk-logo-stacked-234x55.png?h=55&iar=0&w=234&rev=a3c614f84e50482199dd8e10ca0e59a1&hash=25D6E271A4975419127768DCFD5069E7',
+  from:'Nursery', to:'Pre-KG', ages:'1 – 4 years',
+  languages:['English','Arabic'], accreditation:[],
+  transport:false, theme:['#ca8a04','#fde047'],
+  blurb:'Early-years nursery for ages one to four, with its own campus and website.',
+  about:'Early-years nursery for ages one to four, with its own campus and website. Listed from a published Kuwait nursery directory; details still need confirming with the nursery.',
+  facilities:[],
+  fees:[],
+  feeBasis:'unknown', feeYear:'', feeSource:'',
+  feeNote:'We have not found published fees for this nursery — ask them directly.',
+  locationBasis:'unverified', locationSource:'https://www.tsk.edu.kw',
+  reviews:[]
+},
+{
+  id:'little-me', name:'Little Me Preschool', nameAr:'روضة ليتل مي', abbr:'LMP',
+  curriculum:'Early', extras:['Early years'], gender:'Mixed', founded:0, verified:false, featured:false,
+  district:'Jabriya', governorate:'Hawalli', address:'Block 10, Street 6, House 7, Jabriya',
+  lat:null, lng:null, website:'', ig:null,
+  phone:'+965 2534 0304',
+  from:'Nursery', to:'Pre-KG', ages:'2 – 4 years',
+  languages:['English','Arabic'], accreditation:[],
+  transport:false, theme:['#0d9488','#99f6e4'],
+  blurb:'Preschool in Jabriya taking children from around two years old.',
+  about:'Preschool in Jabriya taking children from around two years old. Listed from a published Kuwait nursery directory; details still need confirming with the nursery.',
+  facilities:[],
+  fees:[],
+  feeBasis:'unknown', feeYear:'', feeSource:'',
+  feeNote:'We have not found published fees for this nursery — ask them directly.',
+  locationBasis:'unverified', locationSource:'https://kuwaitmomsguide.wordpress.com/preschools-daycares-in-kuwait/',
+  reviews:[]
+},
+{
+  id:'busy-bodies', name:'Busy Bodies Montessori Nursery', nameAr:'حضانة بيزي بوديز مونتيسوري', abbr:'BBM',
+  curriculum:'Early', extras:['Early years'], gender:'Mixed', founded:0, verified:false, featured:false,
+  district:'Jabriya', governorate:'Hawalli', address:'Villa 28, Street 109, Block 8, Jabriya',
+  lat:null, lng:null, website:'', ig:null,
+  phone:'+965 2531 1513',
+  from:'Nursery', to:'Pre-KG', ages:'2 – 4 years',
+  languages:['English','Arabic'], accreditation:[],
+  transport:false, theme:['#c026d3','#f5d0fe'],
+  blurb:'Montessori nursery in Jabriya.',
+  about:'Montessori nursery in Jabriya. Listed from a published Kuwait nursery directory; details still need confirming with the nursery.',
+  facilities:[],
+  fees:[],
+  feeBasis:'unknown', feeYear:'', feeSource:'',
+  feeNote:'We have not found published fees for this nursery — ask them directly.',
+  locationBasis:'unverified', locationSource:'https://kuwaitmomsguide.wordpress.com/preschools-daycares-in-kuwait/',
+  reviews:[]
+},
+{
+  id:'bubbles', name:'Bubbles Montessori Nursery', nameAr:'حضانة بابلز مونتيسوري', abbr:'BMN',
+  curriculum:'Early', extras:['Early years'], gender:'Mixed', founded:0, verified:false, featured:false,
+  district:'Mishref', governorate:'Hawalli', address:'Block 5, Street 12, House 5, Mishref',
+  lat:null, lng:null, website:'', ig:null,
+  from:'Nursery', to:'Pre-KG', ages:'2 – 4 years',
+  languages:['English','Arabic'], accreditation:[],
+  transport:false, theme:['#4338ca','#c7d2fe'],
+  blurb:'Montessori nursery in Mishref.',
+  about:'Montessori nursery in Mishref. Listed from a published Kuwait nursery directory; details still need confirming with the nursery.',
+  facilities:[],
+  fees:[],
+  feeBasis:'unknown', feeYear:'', feeSource:'',
+  feeNote:'We have not found published fees for this nursery — ask them directly.',
+  locationBasis:'unverified', locationSource:'https://kuwaitmomsguide.wordpress.com/preschools-daycares-in-kuwait/',
+  reviews:[]
+},
+{
+  id:'lollipops', name:'Lollipops English Nursery', nameAr:'حضانة لوليبوبس الإنجليزية', abbr:'LEN',
+  curriculum:'Early', extras:['Early years'], gender:'Mixed', founded:0, verified:false, featured:false,
+  district:'Mishref', governorate:'Hawalli', address:'Mishref pedestrian walkway',
+  lat:null, lng:null, website:'', ig:null,
+  from:'Nursery', to:'KG1', ages:'2 – 5 years',
+  languages:['English','Arabic'], accreditation:[],
+  transport:false, theme:['#be185d','#fbcfe8'],
+  blurb:'English-medium nursery in Mishref.',
+  about:'English-medium nursery in Mishref. Listed from a published Kuwait nursery directory; details still need confirming with the nursery.',
+  facilities:[],
+  fees:[],
+  feeBasis:'unknown', feeYear:'', feeSource:'',
+  feeNote:'We have not found published fees for this nursery — ask them directly.',
+  locationBasis:'unverified', locationSource:'https://kuwaitmomsguide.wordpress.com/preschools-daycares-in-kuwait/',
+  reviews:[]
+},
+{
+  id:'js-preschool', name:'J’s Preschool', nameAr:'روضة جيز', abbr:'JPS',
+  curriculum:'Early', extras:['Early years'], gender:'Mixed', founded:0, verified:false, featured:false,
+  district:'Multiple branches', governorate:'Hawalli', address:'Multiple branches, Kuwait',
+  lat:null, lng:null, website:'https://jspreschool.com', ig:null,
+  logo:'assets/img/logos/js-preschool.png', logoSource:'https://www.jspreschool.com/wp-content/uploads/2025/11/cropped-Js_Preshool_logo_primary_rgb-192x192.png',
+  from:'Nursery', to:'Pre-KG', ages:'1.5 – 4 years',
+  languages:['English','Arabic'], accreditation:[],
+  transport:false, theme:['#ea580c','#fed7aa'],
+  blurb:'Learn-and-play preschool group with branches across Kuwait.',
+  about:'Learn-and-play preschool group with branches across Kuwait. Listed from a published Kuwait nursery directory; details still need confirming with the nursery.',
+  facilities:[],
+  fees:[],
+  feeBasis:'unknown', feeYear:'', feeSource:'',
+  feeNote:'We have not found published fees for this nursery — ask them directly.',
+  locationBasis:'unverified', locationSource:'https://jspreschool.com',
+  reviews:[]
+}
+];
+
+/* ---------------- derived helpers ---------------- */
+
+/* Fee floor / ceiling in KWD per academic year.
+   Three shapes exist, so callers must check `known`:
+     - per-band fees[]        → min/max across the bands
+     - feeRange only          → the school publishes a range, not a breakdown
+     - neither ('on-request') → the school publishes nothing at all */
+function feeRange(s){
+  const amounts = (s.fees || []).map(f => f.amount);
+  if(amounts.length){
+    return { min:Math.min.apply(null, amounts), max:Math.max.apply(null, amounts), known:true, banded:true };
+  }
+  if(s.feeRange){
+    return { min:s.feeRange.min, max:s.feeRange.max, known:true, banded:false };
+  }
+  return { min:0, max:0, known:false, banded:false };
+}
+
+/* has this school's fee data been confirmed against a real source? */
+function feesConfirmed(s){ return s.feeBasis === 'school' || s.feeBasis === 'directory'; }
+
+/* Every site a school teaches at, as a uniform list — so the rest of the code
+   never has to branch on whether a school happens to have one campus or four. */
+function campusesOf(s){
+  if(s.campuses && s.campuses.length) return s.campuses;
+  return [{
+    name:'', district:s.district, governorate:s.governorate, address:s.address,
+    basis:s.locationBasis === 'school' ? 'school' : '', source:s.locationSource || '',
+    lat:s.lat, lng:s.lng
+  }];
+}
+/* A school in four districts should be findable in all four. */
+function districtsOf(s){ return Array.from(new Set(campusesOf(s).map(c => c.district))); }
+function governoratesOf(s){ return Array.from(new Set(campusesOf(s).map(c => c.governorate))); }
+
+function gradeIndex(g){ return GRADE_LADDER.indexOf(g); }
+
+/* does the school teach anywhere inside the group's grade span? */
+function coversGroup(s, group){
+  const gFrom = gradeIndex(group.from), gTo = gradeIndex(group.to);
+  const sFrom = gradeIndex(s.from),     sTo = gradeIndex(s.to);
+  if([gFrom,gTo,sFrom,sTo].some(i => i < 0)) return false;
+  return sFrom <= gTo && sTo >= gFrom;
+}
+
+const CURRICULUM_BY_ID = CURRICULA.reduce((m,c)=>{ m[c.id]=c; return m; },{});
+const GOV_BY_ID        = GOVERNORATES.reduce((m,g)=>{ m[g.id]=g; return m; },{});
+
+/* every district any campus sits in, de-duplicated, for the location filter */
+const DISTRICTS = Array.from(new Set(
+  SCHOOLS.reduce((acc,s)=> acc.concat(districtsOf(s)), [])
+)).sort();
+
+/* the widest published fee in the catalogue, for the slider bounds */
+const FEE_CEILING = SCHOOLS.reduce((n,s)=>{
+  const r = feeRange(s);
+  return r.known ? Math.max(n, r.max) : n;
+}, 0);
