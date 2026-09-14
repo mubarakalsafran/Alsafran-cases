@@ -195,3 +195,79 @@ Now open a private window on the same URL — it must ask for the code.
 sales, but the blueprint in `docs/` is the whole competitive position: margins, supplier
 costs, the launch calendar and the moat. Availability and integrity can be rebuilt; a
 competitor reading the pricing model before launch cannot be undone.
+
+---
+
+## Blast radius of the worst finding (#1 + #2)
+
+The hole is one fact: **the repo is public, and it contains both the plaintext blueprint and
+the key to the encrypted copy.** Following the arrows outward:
+
+```
+PUBLIC REPO  mubarakalsafran/Alsafran-cases
+  │
+  ├─ docs/*.md — 11 sections, 24,090 words, in the clear, no code needed
+  ├─ brandbook/content.enc — the same book, encrypted
+  └─ README.md:37 + brandbook/README.md:12 + build.py:25 — the code that opens it
+        │
+        ▼
+  THE WHOLE BLUEPRINT IS READABLE BY ANYONE
+        │
+        ├─ 05-pricing.md — unit economics, margins, tier pricing in KWD
+        │     ├─ a competitor prices just under you, deliberately, before you launch
+        │     └─ a supplier sees your cost model *before* you negotiate
+        │           └─ every future BOM quote you get is worse — permanently
+        │
+        ├─ 06-packaging-unboxing.md — the box, costed to the fils
+        │     └─ same loss of negotiating position with the printer
+        │
+        ├─ 08-launch-strategy.md + 09-first-collection.md — the 14-stage calendar,
+        │   DROP 01 contents, named content ideas
+        │     ├─ someone runs your launch beats before you do
+        │     └─ "numbered drop, never restocked" stops being a surprise
+        │
+        ├─ 01-brand-identity.md — name, slogan, logo direction, social handles
+        │     ├─ handles registered before you register them
+        │     └─ domain squatted on a name you have not filed yet
+        │
+        ├─ 03-usp.md — the five differentiators, ranked by how hard they are to copy
+        │     └─ hands a copier the shopping list *and* tells them which items are cheap
+        │
+        └─ 04 + 10 — GCC expansion sequence, 5-year category roadmap
+              └─ your second and third moves, to anyone who wants to be there first
+
+  AND SEPARATELY, THE GATE ITSELF
+        │
+        ├─ anyone who ever read the README holds the code — you cannot know who
+        ├─ anyone who downloaded content.enc keeps the plaintext FOREVER,
+        │   whatever you change today
+        ├─ git history at 0afd33f keeps the old ciphertext AND the old code:
+        │   rotating a code does not un-publish a commit
+        └─ the watermark that would name a leaker is unverified (finding #6)
+              └─ so even after a leak, you cannot tell who did it,
+                 and therefore cannot stop the second one
+
+  WHERE IT STOPS BEING ABOUT THIS PROJECT
+        └─ if "goldroute" is a code you reuse anywhere else, it is now
+           a public word attached to your name on GitHub
+```
+
+**The part that does not reverse.** Making the repo private closes the front door, but it does
+not reach forks, clones, search-engine caches, or anyone's local copy. Rotating the access
+code locks out future readers, not past ones. That asymmetry is the whole lesson: confidentiality
+is the one property you cannot restore after it breaks, which is exactly why it is the answer to
+the C/I/A question above.
+
+**So the order of operations tonight is:** make the repo private *first* (it stops the bleeding),
+rebuild `content.enc` with a long code of your own *second*, and treat everything in `docs/`
+as already seen when you plan the launch — because you cannot prove it wasn't.
+
+---
+
+## On the 🌶️ extra — auditing the Day 5 Locker
+
+I did not run it. This session can reach exactly one repository —
+`mubarakalsafran/Alsafran-cases` — and the Locker is not in it or beside it. Producing a
+findings table for a codebase I cannot open would be the precise failure this whole exercise
+is built to teach, so it is not here. Point a session at that repo and the Stage 1 prompt
+works unchanged.
