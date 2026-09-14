@@ -1,3 +1,8 @@
 # python
 __pycache__/
 *.pyc
+
+# the encrypted book — rebuild locally with your own ALSAFRAN_CODE.
+# never commit it: this repo is public, so the ciphertext would sit one click
+# away from any code that ever gets written down beside it.
+brandbook/content.enc

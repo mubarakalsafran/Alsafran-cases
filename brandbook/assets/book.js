@@ -42,6 +42,9 @@ async function decryptBook(code){
 const store = {
   get(k){ try{ return sessionStorage.getItem(k) ?? localStorage.getItem(k); }catch(e){ return null; } },
   set(k,v,persist){ try{ (persist?localStorage:sessionStorage).setItem(k,v); }catch(e){} },
+  // the access code is the decryption key for the whole book, so it is held in
+  // sessionStorage only: it dies with the tab and never survives on the device.
+  setCode(v){ try{ localStorage.removeItem(KEY_SESSION); sessionStorage.setItem(KEY_SESSION,v); }catch(e){} },
   clear(k){ try{ sessionStorage.removeItem(k); localStorage.removeItem(k); }catch(e){} },
   read(){ try{ return JSON.parse(localStorage.getItem(KEY_READ)||'[]'); }catch(e){ return []; } },
   markRead(id){
@@ -65,7 +68,7 @@ function esc(s){
 /* ---------------- the gate ---------------- */
 function initGate(){
   const form = $('#gateForm'), btn = $('#gateBtn'), err = $('#gateErr');
-  const emailEl = $('#gateEmail'), codeEl = $('#gateCode'), keepEl = $('#gateKeep');
+  const emailEl = $('#gateEmail'), codeEl = $('#gateCode');
 
   const saved = store.get(KEY_VIEWER);
   if (saved) emailEl.value = saved;
@@ -81,7 +84,7 @@ function initGate(){
     try{
       const book = await open(code);
       store.set(KEY_VIEWER, email, true);
-      store.set(KEY_SESSION, code, keepEl.checked);
+      store.setCode(code);
       enter(book, email);
     }catch(ex){
       const wrong = /operation-specific reason|decrypt|OperationError/i.test(ex.name+' '+ex.message)
@@ -370,6 +373,8 @@ function step(d){
 
 /* ---------------- boot ---------------- */
 document.addEventListener('DOMContentLoaded', async ()=>{
+  // earlier versions kept the code in localStorage forever — clear that on sight
+  try{ localStorage.removeItem(KEY_SESSION); }catch(e){}
   if (!(window.crypto && crypto.subtle)){
     $('#gateErr').textContent = 'This browser cannot decrypt the book (Web Crypto unavailable). Use a current browser over https:// or localhost.';
     $('#gateErr').hidden = false;

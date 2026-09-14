@@ -7,8 +7,10 @@ anyone could read the content in "view source". Instead this script ENCRYPTS the
 whole book with AES-256-GCM using a key derived from the access code, and the
 login page decrypts it in the browser. Without the code, content.enc is noise.
 
-    python3 brandbook/build.py                      # uses the default code
     ALSAFRAN_CODE="your-code" python3 brandbook/build.py
+
+There is deliberately NO default code. The access code IS the decryption key, so a
+default baked into this file would be a key published next to its own ciphertext.
 
 Outputs brandbook/content.enc (base64 of salt | iv | ciphertext).
 """
@@ -22,7 +24,7 @@ ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
 OUT = ROOT / "brandbook" / "content.enc"
 
-DEFAULT_CODE = "goldroute"
+MIN_CODE_LEN = 12          # content.enc can be downloaded and attacked offline forever
 PBKDF2_ITERS = 310_000
 
 # section id, source file, short nav label, one-line summary for the contents page
@@ -88,7 +90,18 @@ def h2s(html, sec_id):
 
 
 def main():
-    code = os.environ.get("ALSAFRAN_CODE", DEFAULT_CODE)
+    code = os.environ.get("ALSAFRAN_CODE", "")
+    if not code:
+        sys.exit(
+            "ALSAFRAN_CODE is not set.\n"
+            "The access code is the decryption key, so this script will not invent one.\n"
+            '  ALSAFRAN_CODE="your-code" python3 brandbook/build.py\n'
+            "Pick something long and not guessable, and never commit it."
+        )
+    if len(code) < MIN_CODE_LEN:
+        sys.exit(f"ALSAFRAN_CODE is too short ({len(code)} chars). "
+                 f"Use at least {MIN_CODE_LEN} — anyone can download content.enc "
+                 "and grind guesses against it offline, with no login page to stop them.")
     sections, total_words = [], 0
     for sec_id, fname, label, summary in SECTIONS:
         path = DOCS / fname
@@ -125,7 +138,7 @@ def main():
 
     print(f"built {len(sections)} sections · {total_words:,} words · {payload.__len__()/1024:.0f} KB plain "
           f"-> {OUT.stat().st_size/1024:.0f} KB encrypted")
-    print(f"access code: {code!r}" + ("  (default — set ALSAFRAN_CODE to change it)" if code == DEFAULT_CODE else ""))
+    print("encrypted with the code in ALSAFRAN_CODE (not printed here, and not stored anywhere)")
 
 
 if __name__ == "__main__":

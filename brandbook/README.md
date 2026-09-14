@@ -5,11 +5,14 @@ a login page, then a reader with contents, search, per-section progress, a confi
 watermark, and a print-to-PDF escape hatch.
 
 ```bash
+ALSAFRAN_CODE="your-code" python3 brandbook/build.py   # writes content.enc
 python3 -m http.server 8080          # from the REPO ROOT, not this folder
 # open http://localhost:8080/brandbook/
 ```
 
-**Default access code: `goldroute`** — change it before you share anything (below).
+**There is no default access code, by design.** You set one at build time; it is never
+stored in this repository. `content.enc` is gitignored for the same reason — a public repo
+must not carry the ciphertext next to anything that could name its key.
 
 > Web Crypto only runs in a secure context, so open the site over `https://` or on
 > `localhost`. Opening `index.html` as a `file://` path will not decrypt.
@@ -43,7 +46,7 @@ host-level gate in front of the whole folder and keep the encryption as a second
 | **Netlify** | Site → Access control → Password protection, or role-based with Identity |
 | **Any Nginx/Apache host** | HTTP basic auth over TLS (`htpasswd`) — crude but effective |
 
-## Changing the access code
+## Choosing and changing the access code
 
 ```bash
 ALSAFRAN_CODE="your-new-code" python3 brandbook/build.py
@@ -52,6 +55,15 @@ ALSAFRAN_CODE="your-new-code" python3 brandbook/build.py
 That re-encrypts `content.enc` with a fresh random salt and IV. Anyone holding the old code
 is locked out immediately. Rebuild after every edit to `docs/*.md` too — the site reads only
 `content.enc`, never the markdown.
+
+Rules for the code, because there is no server to stop guessing:
+
+- **At least 12 characters** — the build refuses anything shorter. Anyone who downloads
+  `content.enc` can grind guesses against it offline, as fast as their hardware allows, with
+  no login page and no rate limit in the way.
+- **Never commit it, and never put it in a README.** Write it down where you keep passwords
+  and send it to people separately from the link.
+- Rotate it whenever someone who had it should no longer have it.
 
 Requirements: `pip install markdown pycryptodome`.
 

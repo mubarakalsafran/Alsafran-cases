@@ -32,10 +32,11 @@ page is real protection rather than a hidden `<div>` — see
 [`brandbook/README.md`](brandbook/README.md).
 
 ```bash
-python3 -m http.server 8080   # from the repo root, then open /brandbook/
+ALSAFRAN_CODE="your-code" python3 brandbook/build.py   # build content.enc first
+python3 -m http.server 8080                            # then open /brandbook/
 ```
-Default access code **`goldroute`** — change it with
-`ALSAFRAN_CODE="…" python3 brandbook/build.py` before sharing.
+There is no default access code and `content.enc` is not committed — you choose the code
+at build time, and it is never written into this repo. See [`brandbook/README.md`](brandbook/README.md).
 
 ### `site/` — a working storefront prototype
 A mobile-first, dependency-free static prototype of the full store: 11 pages, live cart,

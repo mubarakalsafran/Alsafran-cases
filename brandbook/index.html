@@ -46,10 +46,6 @@
         <input id="gateCode" type="password" placeholder="••••••••"
                autocomplete="current-password" required>
       </div>
-      <label class="row" for="gateKeep">
-        <input type="checkbox" id="gateKeep" checked>
-        Keep me signed in on this device
-      </label>
       <button type="submit" id="gateBtn">Open the brand book</button>
     </form>
 
@@ -57,6 +53,7 @@
       <b>How this is protected:</b> the book is encrypted with AES-256-GCM and your code
       derives the key in your browser. Without the right code there is nothing readable in
       this page or on the server — a wrong code simply fails to decrypt.
+      The code is never saved to this device: close the tab and it is gone.
       Your email is stored only on this device, to watermark your copy.
     </p>
   </div>
