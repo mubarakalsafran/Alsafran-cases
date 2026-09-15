@@ -2216,11 +2216,25 @@ function renderDashboard(){
   observeOnce($('#dashboard'), fill);
 }
 
+/* Reveal helper. The rule here is that the page must be CORRECT at rest: a
+   ring or a bar may animate into place, but it must never sit at zero because
+   an observer did not fire. Embeds, thumbnail capture and odd viewport
+   geometry all break scroll observers, so the observer is only allowed to make
+   the reveal prettier — a frame-based fallback always runs it. */
 function observeOnce(el, fn){
   if (!el) return;
-  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { fn(); return; }
-  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { fn(); io.disconnect(); } }), { threshold:.25 });
+  let done = false;
+  const run = () => { if (done) return; done = true; fn(); };
+
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    requestAnimationFrame(run);
+    return;
+  }
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { run(); io.disconnect(); } }), { threshold:.25 });
   io.observe(el);
+  // paint once at the start value so the transition has something to run from,
+  // then commit the real value whether or not the observer ever fired
+  requestAnimationFrame(() => requestAnimationFrame(run));
 }
 
 /* =========================================================================
@@ -2803,7 +2817,7 @@ function initTableToggles(){
 function redrawCharts(){ /* charts read colours from CSS vars, so a theme flip needs no redraw */ }
 
 /* ------------------------------------------------------------------ boot - */
-document.addEventListener('DOMContentLoaded', () => {
+function boot(){
   initTheme();
   initJumpNav();
   renderGlance();
@@ -2818,6 +2832,16 @@ document.addEventListener('DOMContentLoaded', () => {
   renderProjection();
   renderSources();
   initTableToggles();
-});
+}
+
+/* DOMContentLoaded only fires once. When this page is embedded — an artifact
+   host, an iframe, anything that injects the markup into a document that has
+   already loaded — that event is long gone and a listener never runs, leaving
+   every JS-rendered section blank. Check the state instead of assuming. */
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', boot);
+} else {
+  boot();
+}
 
 </script>
