@@ -57,6 +57,27 @@ No build step, no dependencies, no framework. Three files do the work.
 
 ---
 
+## Live, public URL (no sign-in)
+
+**<https://kuwait-recycling-goals.vercel.app>**
+
+Deployed to Vercel. Note which URL to share: Vercel's default protection gates the
+*deployment-specific* hostnames (`…-<hash>-<scope>.vercel.app`) behind a Vercel login, but the
+project domain above is public. Share the project domain.
+
+The deployed `index.html` is self-contained markup that pulls `goals.css`, `data.js` and
+`app.js` from jsDelivr, pinned to an exact commit of this repository:
+
+```
+https://cdn.jsdelivr.net/gh/mubarakalsafran/Alsafran-cases@<commit-sha>/kuwait-goals/assets/…
+```
+
+Pinning to a SHA rather than a branch means the live page can never shift under you — but it
+also means **pushing new commits does not update the live page**. To publish changes, redeploy
+`index.html` with the new SHA in those three URLs. This arrangement depends on the repository
+staying public; if it is made private, jsDelivr stops serving the assets and the page loses its
+styles and content.
+
 ## Published as a live Artifact
 
 <https://claude.ai/artifact/96rtELu65dunonb6yhKmSb>
