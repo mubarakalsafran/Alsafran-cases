@@ -14,6 +14,118 @@ const srcLink = id => `<a href="${src(id).url}" target="_blank" rel="noopener">$
 
 const SERIES_VAR = { recycling:'--series-recycling', recovery:'--series-recovery', disposal:'--series-disposal' };
 
+/* =========================================================================
+   0. ILLUSTRATION SET
+   Inline SVG rather than emoji or photographs. Emoji render differently on
+   every platform and carry no stroke weight; stock photography would mean
+   hotlinking assets this page cannot licence or guarantee. These scale, they
+   inherit currentColor, and they read the same everywhere.
+   ======================================================================= */
+const ART = {
+  recycle:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="M24 7l6.5 11.3"/><path d="M30.5 18.3l4.6-2"/><path d="M35.1 16.3l-1.2 4.9"/>
+    <path d="M38.6 25.6L32.1 37"/><path d="M32.1 37l.5-5"/><path d="M32.6 32l4.7 1.8"/>
+    <path d="M15.9 37H9.4"/><path d="M9.4 37l4-3"/><path d="M13.4 34l-3.6-3.5"/>
+    <path d="M24 7l-6.5 11.3M9.4 25.6L15.9 37M38.6 25.6H24"/></svg>`,
+  bottle:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="M20 5h8v5h-8z"/><path d="M20 10c0 3-4 4-4 9v20a4 4 0 004 4h8a4 4 0 004-4V19c0-5-4-6-4-9"/>
+    <path d="M16 24h16"/><path d="M16 30h16"/></svg>`,
+  bin:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="M9 13h30"/><path d="M19 13V8h10v5"/><path d="M12 13l2.5 28h19L36 13"/>
+    <path d="M20 21v13M28 21v13"/></svg>`,
+  sprout:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="M24 42V22"/><path d="M24 26c0-7-5-11-12-11 0 7 5 11 12 11z"/>
+    <path d="M24 22c0-7 5-11 12-11 0 7-5 11-12 11z"/><path d="M14 42h20"/></svg>`,
+  crane:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="M10 42V10h4v32"/><path d="M6 42h12"/><path d="M12 12h26"/><path d="M12 12l10 8"/>
+    <path d="M32 12v10"/><path d="M28 22h8v7h-8z"/></svg>`,
+  plug:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="M18 6v10M30 6v10"/><path d="M13 16h22v7a11 11 0 01-11 11 11 11 0 01-11-11z"/>
+    <path d="M24 34v8"/></svg>`,
+  towers:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="M26 44V10"/><ellipse cx="26" cy="15" rx="9" ry="4.5"/><ellipse cx="26" cy="26" rx="5" ry="2.6"/>
+    <path d="M15 44V22"/><ellipse cx="15" cy="24" rx="6" ry="3"/>
+    <path d="M37 44V31"/><circle cx="37" cy="32" r="2.6"/><path d="M8 44h34"/></svg>`
+};
+const STREAM_ART = { msw:'bin', cd:'crane', weee:'plug', sludge:'sprout' };
+
+/* =========================================================================
+   0b. AT A GLANCE — the whole argument before any paragraph
+   ======================================================================= */
+function renderGlance(){
+  const R = 34, C = 2 * Math.PI * R;
+  $('#glanceRings').innerHTML = TARGETS.map(t => `
+    <div class="gring">
+      <svg viewBox="0 0 88 88" aria-hidden="true">
+        <circle class="ring__track" cx="44" cy="44" r="${R}" stroke-width="6"></circle>
+        <circle class="ring__bar" cx="44" cy="44" r="${R}" stroke-width="6" transform="rotate(-90 44 44)"
+                stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"
+                data-circ="${C.toFixed(1)}" data-target="${t.headline}"></circle>
+      </svg>
+      <span class="gring__art">${ART[STREAM_ART[t.id]]}</span>
+      <b class="gring__n">${t.headline}%</b>
+      <span class="gring__l">${esc(t.short)}</span>
+      <span class="gring__k">${esc(t.headlineLabel.replace(' target',''))} by ${t.deadline}</span>
+    </div>`).join('');
+  observeOnce($('#glanceRings'), () => $$('#glanceRings .ring__bar').forEach(r => {
+    const c = parseFloat(r.dataset.circ), pct = parseFloat(r.dataset.target);
+    r.style.strokeDashoffset = (c - c * pct / 100).toFixed(1);
+  }));
+
+  const now = [
+    { n:'0.76%', l:'of all solid waste recycled', y:'2021 · Kuwait CSB', bad:true },
+    { n:'11%',   l:'overall recycling rate',      y:'2018 · Kuwait EPA', bad:true },
+    { n:'47%',   l:'sent to municipal landfills', y:'2018 · Kuwait EPA', bad:true },
+    { n:'10%',   l:'of landfill area rehabilitated', y:'2020 · Kuwait EPA', bad:true }
+  ];
+  $('#glanceNow').innerHTML = now.map(x => `
+    <div class="gnow">
+      <b class="gnow__n">${x.n}</b>
+      <span class="gnow__l">${esc(x.l)}</span>
+      <span class="gnow__y">${esc(x.y)}</span>
+    </div>`).join('');
+
+  const keys = [
+    { art:'recycle', t:'The targets are real and dated',
+      d:'25 targets, a named authority for each, and a 2040 horizon — published, not aspirational.' },
+    { art:'bottle', t:'The trend is going the wrong way',
+      d:'The one indicator Kuwait publishes over time fell from 2.94% in 2015 to 0.76% in 2021.' },
+    { art:'towers', t:'Most targets have no baseline yet',
+      d:'Kuwait has committed to publish national waste data by 31 December 2026. Until then, progress on most targets cannot be checked.' }
+  ];
+  $('#glanceKeys').innerHTML = keys.map(k => `
+    <li class="gkey">
+      <span class="gkey__art">${ART[k.art]}</span>
+      <div><b>${esc(k.t)}</b><span>${esc(k.d)}</span></div>
+    </li>`).join('');
+}
+
+/* =========================================================================
+   0c. JUMP NAV — appears past the hero, marks the section you are in
+   ======================================================================= */
+function initJumpNav(){
+  const nav = $('#jump'), hero = $('.hero');
+  const links = $$('#jump a');
+  const targets = links.map(a => $(a.getAttribute('href'))).filter(Boolean);
+
+  if ('IntersectionObserver' in window) {
+    // show the bar only once the hero has scrolled away
+    new IntersectionObserver(([e]) => nav.classList.toggle('is-on', !e.isIntersecting),
+      { rootMargin:'-60px 0px 0px 0px' }).observe(hero);
+
+    // mark the section currently occupying the upper third of the viewport
+    const spy = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        links.forEach(a => a.classList.toggle('is-here', a.getAttribute('href') === '#' + e.target.id));
+      });
+    }, { rootMargin:'-15% 0px -70% 0px' });
+    targets.forEach(t => spy.observe(t));
+  } else {
+    nav.classList.add('is-on');
+  }
+}
+
 /* -------------------------------------------------------------- theme ---- */
 function initTheme(){
   const btn = $('#themeBtn');
@@ -119,7 +231,7 @@ function renderDashboard(){
     <article class="tcard">
       <div class="tcard__top">
         <div>
-          <span class="tcard__icon">${t.icon}</span>
+          <span class="tcard__art">${ART[STREAM_ART[t.id]] || ''}</span>
           <p class="tcard__big">${t.headline}<sup>%</sup></p>
           <p class="tcard__label">${esc(t.headlineLabel)}</p>
         </div>
@@ -740,6 +852,8 @@ function redrawCharts(){ /* charts read colours from CSS vars, so a theme flip n
 /* ------------------------------------------------------------------ boot - */
 document.addEventListener('DOMContentLoaded', () => {
   initTheme();
+  initJumpNav();
+  renderGlance();
   renderStrategy();
   renderDashboard();
   renderStackedChart();

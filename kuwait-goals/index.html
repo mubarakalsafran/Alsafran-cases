@@ -63,6 +63,58 @@
 </header>
 
 <main>
+<nav class="jump" id="jump" aria-label="Jump to a section">
+  <div class="wrap jump__in">
+    <span class="jump__brand">♻️ Kuwait&rsquo;s Recycling Goals</span>
+    <ul class="jump__list">
+      <li><a href="#glance">At a glance</a></li>
+      <li><a href="#strategy">Strategy</a></li>
+      <li><a href="#targets">2040 targets</a></li>
+      <li><a href="#sdg12">SDG 12</a></li>
+      <li><a href="#indicator">The data</a></li>
+      <li><a href="#reality">Goals vs reality</a></li>
+      <li><a href="#companies">Companies</a></li>
+      <li><a href="#projection">Projection</a></li>
+      <li><a href="#verdict">Can Kuwait do it?</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ================================================== AT A GLANCE ====== -->
+<section class="section--tight glance" id="glance">
+  <div class="wrap">
+    <p class="eyebrow" style="text-align:center">The whole section in one screen</p>
+    <h2 class="glance__h">Kuwait&rsquo;s recycling goals, at a glance</h2>
+    <p class="glance__sub">Four official targets for 2040. One measured starting point. One direction of travel.</p>
+
+    <div class="glance__flow">
+      <div class="glance__col glance__col--goal">
+        <h3 class="glance__lab">🎯 Where Kuwait says it is going</h3>
+        <div class="glance__rings" id="glanceRings"></div>
+        <p class="glance__note">Set by the Environment Public Authority in the National Waste Management Strategy 2040.</p>
+      </div>
+
+      <div class="glance__arrow" aria-hidden="true">
+        <svg viewBox="0 0 120 40" role="presentation">
+          <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/></marker></defs>
+          <line x1="4" y1="20" x2="104" y2="20" stroke="currentColor" stroke-width="2"
+                stroke-dasharray="6 5" marker-end="url(#ah)"/>
+        </svg>
+        <span>16 years</span>
+      </div>
+
+      <div class="glance__col glance__col--now">
+        <h3 class="glance__lab">📍 Where Kuwait actually is</h3>
+        <div class="glance__now" id="glanceNow"></div>
+        <p class="glance__note">Latest published figures. The national recycling rate has fallen in five of its six recorded year-on-year changes.</p>
+      </div>
+    </div>
+
+    <ul class="glance__keys" id="glanceKeys"></ul>
+  </div>
+</section>
+
 
 <!-- ============================================ OFFICIAL WASTE STRATEGY = -->
 <section class="section" id="strategy">
@@ -106,7 +158,7 @@
 </section>
 
 <!-- ================================================= 2040 DASHBOARD ===== -->
-<section class="section" id="dashboard-section" style="background:var(--surface-2)">
+<section class="section" id="targets" style="background:var(--surface-2)">
   <div class="wrap">
     <div class="sec-head">
       <p class="eyebrow">📊 Kuwait 2040 targets</p>
@@ -120,7 +172,7 @@
 </section>
 
 <!-- ===================================================== STACKED CHART == -->
-<section class="section">
+<section class="section" id="chart">
   <div class="wrap">
     <div class="sec-head">
       <p class="eyebrow">📈 Targets in proportion</p>
@@ -155,7 +207,7 @@
 </section>
 
 <!-- ====================================================== E-WASTE etc === -->
-<section class="section--tight">
+<section class="section--tight" id="separation">
   <div class="wrap">
     <div class="grid grid--2">
       <div class="card">
@@ -177,7 +229,7 @@
 </section>
 
 <!-- ========================================================= SDG 12 ===== -->
-<section class="section" style="background:var(--surface-2)">
+<section class="section" id="sdg12" style="background:var(--surface-2)">
   <div class="wrap">
     <div class="sec-head">
       <p class="eyebrow">🌍 United Nations</p>
@@ -207,7 +259,7 @@
 </section>
 
 <!-- ================================================== LINE CHART ======== -->
-<section class="section">
+<section class="section" id="indicator">
   <div class="wrap">
     <div class="sec-head">
       <p class="eyebrow">📉 Real data over time</p>
@@ -233,7 +285,7 @@
 </section>
 
 <!-- ============================================== GOALS VS REALITY ====== -->
-<section class="section" style="background:var(--surface-2)">
+<section class="section" id="reality" style="background:var(--surface-2)">
   <div class="wrap">
     <div class="sec-head">
       <p class="eyebrow">⚖️ The honest comparison</p>
@@ -271,7 +323,7 @@
 </section>
 
 <!-- =================================================== COMPANIES ======== -->
-<section class="section">
+<section class="section" id="companies">
   <div class="wrap">
     <div class="sec-head">
       <p class="eyebrow">🏢 The private sector</p>
@@ -356,7 +408,7 @@
 </section>
 
 <!-- ==================================================== TIMELINE ======== -->
-<section class="section" style="background:var(--surface-2)">
+<section class="section" id="timeline-section" style="background:var(--surface-2)">
   <div class="wrap">
     <div class="sec-head">
       <p class="eyebrow">🕰️ Milestones</p>
@@ -374,7 +426,7 @@
 </section>
 
 <!-- ===================================================== VERDICT ======== -->
-<section class="section">
+<section class="section" id="verdict">
   <div class="wrap">
     <div class="verdict">
       <p class="eyebrow" style="color:var(--gold)">The question this section exists to answer</p>

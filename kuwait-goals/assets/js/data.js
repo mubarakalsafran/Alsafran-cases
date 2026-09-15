@@ -112,6 +112,7 @@ const KNWMS = {
 const TARGETS = [
   {
     id:'msw',
+    short:'Municipal Solid Waste',
     icon:'🗑️',
     stream:'Municipal Solid Waste',
     headline:30,
@@ -129,6 +130,7 @@ const TARGETS = [
   },
   {
     id:'cd',
+    short:'Construction & Demolition',
     icon:'🏗️',
     stream:'Construction & Demolition Waste',
     headline:15,
@@ -146,6 +148,7 @@ const TARGETS = [
   },
   {
     id:'weee',
+    short:'E-waste (WEEE)',
     icon:'🔌',
     stream:'Electronic Waste (WEEE)',
     headline:50,
@@ -164,6 +167,7 @@ const TARGETS = [
   },
   {
     id:'sludge',
+    short:'Sewage Sludge',
     icon:'🌱',
     stream:'Sewage Sludge',
     headline:80,

@@ -17,6 +17,7 @@ No build step, no dependencies, no framework. Three files do the work.
 
 | Part | What it shows |
 |---|---|
+| **At a glance** | The whole argument in one screen — four target rings against four measured figures, before a single paragraph |
 | **Official Kuwait waste strategy** | The KNWMS 2040 — its vision in full, the five-step waste hierarchy, the 5 objectives and all 25 targets with the authority responsible for each |
 | **Kuwait 2040 targets dashboard** | The four headline commitments — 30% MSW recycling, 15% C&D recycling, 50% WEEE collection, 80% sludge to soil — each with target, category, deadline and source |
 | **Kuwait's Waste Management Targets** | A 100% stacked bar of the 2040 treatment split for every stream, with a table twin |
@@ -55,6 +56,16 @@ No build step, no dependencies, no framework. Three files do the work.
    in 2023 — the page says so and forecasts nothing.
 
 ---
+
+## Navigating it
+
+A sticky jump bar appears once the hero scrolls away and marks the section you are in.
+The page also carries a print stylesheet: printing expands every collapsed table, drops the
+nav and hover cards, and prints link URLs after their text, so a paper copy keeps its sources.
+
+Illustrations are inline SVG rather than emoji or photography — emoji render differently on
+every platform and carry no stroke weight, and stock photographs would mean hotlinking assets
+this page cannot licence or guarantee.
 
 ## Files
 
