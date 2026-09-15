@@ -410,3 +410,53 @@ p{margin:0 0 var(--sp-4)}
 @media (prefers-reduced-motion:reduce){
   *,*::before,*::after{animation:none !important;transition:none !important}
 }
+
+/* ==========================================================================
+   PROJECTIONS — visually fenced off from the published figures above.
+   Modelled numbers get a distinct, cooler treatment and a standing banner so
+   a reader skimming the page cannot mistake them for official data.
+   ========================================================================== */
+.projzone{position:relative;border-top:3px solid var(--series-recovery)}
+.projbanner{
+  display:flex;align-items:center;gap:var(--sp-3);flex-wrap:wrap;
+  background:var(--series-recovery);color:#fff;border-radius:var(--r-md);
+  padding:var(--sp-3) var(--sp-4);font-size:var(--step--1);font-weight:600;
+  margin-bottom:var(--sp-5)
+}
+.projbanner b{font-size:var(--step-0)}
+.formula{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:var(--step--1);background:var(--surface-2);border:1px solid var(--line-soft);
+  border-radius:var(--r-sm);padding:var(--sp-3) var(--sp-4);overflow-x:auto;color:var(--ink)
+}
+
+/* back-test panel */
+.bt{display:grid;gap:var(--sp-3);grid-template-columns:1fr;margin:var(--sp-4) 0}
+@media (min-width:700px){.bt{grid-template-columns:repeat(3,1fr)}}
+.bt__cell{background:var(--surface-2);border:1px solid var(--line-soft);border-radius:var(--r-md);padding:var(--sp-4);text-align:center}
+.bt__cell--err{border-color:var(--series-disposal)}
+.bt__n{display:block;font-family:var(--f-display);font-weight:700;font-size:var(--step-3);line-height:1}
+.bt__cell--err .bt__n{color:var(--series-disposal)}
+.bt__l{display:block;font-size:var(--step--1);color:var(--ink-2);margin-top:var(--sp-2);line-height:1.35}
+
+/* scenario controls */
+.ctl{margin-bottom:var(--sp-4)}
+.ctl__lab{display:block;font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:var(--sp-2);font-weight:600}
+.ctl__row{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+.chip{
+  font:inherit;font-size:var(--step--1);cursor:pointer;
+  background:var(--surface-1);color:var(--ink-2);
+  border:1px solid var(--line);border-radius:var(--r-pill);padding:.45rem .9rem;
+  transition:border-color .15s var(--ease),color .15s var(--ease),background .15s var(--ease)
+}
+.chip:hover{border-color:var(--series-recovery);color:var(--ink)}
+.chip[aria-checked="true"]{background:var(--series-recovery);border-color:var(--series-recovery);color:#fff;font-weight:600}
+
+/* projection chart marks */
+.proj__band{fill:var(--series-recovery);opacity:.14}
+.proj__line{fill:none;stroke:var(--series-recovery);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:7 4}
+.proj__dot{fill:var(--series-recovery);stroke:var(--surface-1);stroke-width:2}
+.projnote{font-size:var(--step--1);color:var(--ink-2);margin:var(--sp-4) 0 0}
+
+#projLimits ul,#projNoRate ul{margin:0;padding-left:1.1rem;color:var(--ink-2);font-size:var(--step--1)}
+#projLimits li{margin-bottom:.45rem}

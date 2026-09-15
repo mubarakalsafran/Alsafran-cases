@@ -25,7 +25,8 @@ No build step, no dependencies, no framework. Three files do the work.
 | **Kuwait National Recycling Indicator Over Time** | Every year CSB publishes for indicator 12.5.1, unmodified, with an explainer on what it does and does not measure |
 | **Goals vs Reality** | Targets against latest measured data — with progress bars drawn *only* where the definitions match, and a list of the comparisons this page refuses to draw |
 | **Are Companies Helping?** | 14 researched Kuwaiti companies scored on seven practices, with a full evidence matrix |
-| **Kuwait's Road Toward Better Waste Management** | An interactive timeline, 2015 → 2040, sourced milestone by milestone |
+| **How Much Waste Will Kuwait Produce?** | The one projected section — municipal waste generation to 2040, with the model, its inputs, its measured back-test error and adjustable assumptions |
+| **Kuwait's Road Toward Better Waste Management** | An interactive timeline, 2015 → 2060, sourced milestone by milestone |
 | **Can Kuwait Reach Its Recycling Goals?** | The answer, assembled only from the evidence above |
 
 ---
@@ -46,6 +47,12 @@ No build step, no dependencies, no framework. Three files do the work.
    percentage to them, and the page does not either.
 5. **The company sample describes itself.** 14 firms chosen *because they publish*,
    so "100% publish a sustainability report" is a fact about the sample, not Kuwait.
+6. **Projections are fenced, tested and never dressed as data.** Exactly one section
+   contains modelled numbers. It sits behind a standing banner, states its formula, runs
+   the method against a year Kuwait has already published, and prints the resulting
+   **−6.8% error uncorrected**. Its assumptions are controls the reader can change. Where
+   the data cannot support a forecast — the recycling rate, whose trend line reaches zero
+   in 2023 — the page says so and forecasts nothing.
 
 ---
 

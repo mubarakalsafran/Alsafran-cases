@@ -715,5 +715,160 @@ const TIMELINE = [
     goal:'The KNWMS 2040 targets fall due',
     target:'MSW 30% recycling · C&D 15% · WEEE 50% collection · sludge 80% to soil',
     detail:'The full set of waste-stream targets, plus the landfill ban on high-organic-content waste and the rehabilitation of authorised landfills and harmful dumpsites.',
-    source:'S1' }
+    source:'S1' },
+  { year:2050, icon:'🛢️', kind:'goal',
+    goal:'Carbon neutrality for the oil sector',
+    target:'Announced by the State of Kuwait at COP27, 2022',
+    detail:'Kuwait announced at the twenty-seventh Conference of the Parties in Sharm El-Sheikh that it expects to reach carbon neutrality for the oil sector in 2050.',
+    source:'S7' },
+  { year:2060, icon:'🇰🇼', kind:'goal',
+    goal:'Carbon neutrality for all sectors',
+    target:'Announced at the same conference',
+    detail:'The State of Kuwait expects to reach carbon neutrality for all sectors of the country in 2060 — the furthest dated commitment found in the official record.',
+    source:'S7' }
 ];
+
+/* ===========================================================================
+   8. PROJECTIONS — THE ONLY MODELLED NUMBERS ON THIS PAGE
+   ---------------------------------------------------------------------------
+   Everything above this line is published by an official body. Nothing below
+   it is. These are arithmetic projections built from official inputs, and they
+   are labelled as projections everywhere they appear.
+
+   The model is deliberately the simplest one that can be checked by hand:
+
+       municipal solid waste in year Y  =  population(Y) × kg per person per day × 365
+
+   Inputs, both official, neither invented:
+     · population  — UN World Population Prospects 2024, medium variant
+     · 1.6 kg/person/day — Kuwait EPA, Waste Management Atlas (municipal solid
+       waste per capita, the figure the atlas prints for Kuwait)
+
+   It was back-tested against the one year where Kuwait publishes the real
+   number, and the error is reported rather than corrected away. No fudge
+   factor is applied anywhere.
+   ========================================================================= */
+
+SOURCES.S6 = {
+  id:'S6',
+  org:'United Nations, Department of Economic and Social Affairs — Population Division',
+  title:'World Population Prospects 2024, medium variant — Kuwait',
+  url:'https://population.un.org/wpp/',
+  note:'The UN’s official population estimates and projections. Retrieved as the UN WPP series republished by Our World in Data (ourworldindata.org/grapher/population-long-run-with-projections). This is a United Nations projection, not a Kuwaiti government one.'
+};
+
+SOURCES.S7 = {
+  id:'S7',
+  org:'State of Kuwait — Permanent National Steering Committee for Agenda 2030',
+  title:'VNR2 2023, p. 96 — carbon neutrality announcement at COP27',
+  url:'https://kuwait.un.org/sites/default/files/2023-09/VNR2_English_Final.pdf',
+  note:'"Kuwait announced at the twenty-seventh Conference of the Parties to the United Nations Framework Convention on Climate Change 2022 in Sharm El-Sheikh, that the State of Kuwait expects to reach carbon neutrality for the oil sector in 2050 and for all sectors of the country in 2060."'
+};
+
+const PROJECTION = {
+  /* UN WPP 2024, medium variant. Annual, unmodified. */
+  population:[
+    { year:2024, value:4934508 }, { year:2025, value:5026079 }, { year:2026, value:5102771 },
+    { year:2027, value:5168370 }, { year:2028, value:5224923 }, { year:2029, value:5276041 },
+    { year:2030, value:5324200 }, { year:2031, value:5371645 }, { year:2032, value:5419953 },
+    { year:2033, value:5469087 }, { year:2034, value:5519018 }, { year:2035, value:5569671 },
+    { year:2036, value:5620962 }, { year:2037, value:5672833 }, { year:2038, value:5725241 },
+    { year:2039, value:5778079 }, { year:2040, value:5831215 }
+  ],
+  popSource:'S6',
+
+  /* Kuwait's own statistical bureau reported a lower 2025 population than the
+     UN projects. Rather than pick a winner, the lower figure is offered as an
+     alternative path that rescales the UN curve to meet it. */
+  csbAnchor:{
+    year:2025, value:4881254,
+    label:'Kuwait CSB 2025 population estimate',
+    note:'Kuwait’s Central Statistical Bureau put the population at 4,881,254 at the start of 2025 (down 0.65% from 4,913,271 in 2024). That is about 2.9% below the UN projection for the same year. This figure is taken from press reporting of the CSB’s 2025 population estimates bulletin, not from a CSB page read directly, so it is offered as an alternative scenario rather than as the page’s primary input.',
+    url:'https://kuwaittimes.com/article/33166/kuwait/other-news/kuwait-population-declines-to-488m/'
+  },
+
+  perCapitaKgDay:1.6,
+  perCapitaSource:'S1',
+
+  scenarios:[
+    { key:'down', label:'Prevention works',   drift:-0.01, blurb:'Waste per person falls 1% a year — the direction SDG target 12.5 and the top of the waste hierarchy ask for.' },
+    { key:'flat', label:'No change',          drift:0,     blurb:'Waste per person stays at the 1.6 kg/day the EPA atlas records. The default.' },
+    { key:'up',   label:'Consumption grows',  drift:0.01,  blurb:'Waste per person rises 1% a year, as it has in many high-income economies.' }
+  ],
+
+  /* The back-test. Run the model on 2018, where Kuwait publishes the answer. */
+  backtest:{
+    year:2018,
+    population:4323389,
+    rateKgDay:0.85,
+    rateLabel:'household waste per resident',
+    modelled:1341331,
+    official:1439000,
+    officialLabel:'KEPA atlas, household waste 2018',
+    errorPct:-6.8,
+    verdict:'The model lands 6.8% under the published figure. That error is reported here and left uncorrected — no scaling factor is applied to make the projection look better than the method is.'
+  },
+
+  /* Why this page does NOT forecast the recycling rate. */
+  noRateForecast:{
+    fit:{ intercept:2.1304, slope:-0.2625, zeroYear:2023.1 },
+    headline:'There is no recycling-rate forecast on this page, and that is a finding.',
+    body:'Fit a straight line to the seven published years of indicator 12.5.1 and it falls 0.26 percentage points a year — reaching zero in 2023 and going negative after that. A recycling rate cannot be negative. The trend line is not a forecast that Kuwait will stop recycling; it is proof that seven volatile years are too short a record to extrapolate from. Publishing a 2040 recycling-rate prediction off this series would be inventing precision the data cannot carry, so this page does not do it.',
+    reinforce:'Waste generation is projected instead, because it is driven by population — a quantity the UN does publish projections for — rather than by policy outcomes nobody has measured yet.'
+  },
+
+  limits:[
+    'It assumes every resident keeps generating waste at the same rate. Economic cycles, expatriate population swings and changes in consumption are not modelled.',
+    'It assumes the EPA’s 1.6 kg/person/day still holds. That figure comes from a 2018 survey and Kuwait has published no update.',
+    'It models how much waste arrives, not what happens to it. Nothing here predicts whether the 2040 recycling targets will be met.',
+    'UN population projections carry their own uncertainty, and Kuwait’s own bureau currently reports a lower figure than the UN projects.',
+    'A single national per-capita rate hides real variation between governorates, seasons and sectors.'
+  ],
+
+  /* Kuwait's own forward-looking statements — official, not modelled here. */
+  officialFuture:[
+    { year:'2026', icon:'🗂️', title:'EPA publishes national waste data',
+      detail:'Objective 5 of the KNWMS 2040: set up and implement a data provision plan to distribute relevant waste data to other authorities and the public by 31 December 2026.', source:'S1' },
+    { year:'2030', icon:'🎯', title:'SDG target 12.5 falls due',
+      detail:'Reduce waste production through prevention, reduction, recycling and reuse by 2030. Also the middle column of the strategy’s own implementation timeline.', source:'S4' },
+    { year:'2035', icon:'🏭', title:'The strategy’s landfill scenario B',
+      detail:'The atlas models the global warming potential of Kuwait’s landfills under two futures — scenario A, immediate landfill closure, and scenario B, continued operation until 2035 — and states that emissions fall exponentially after closure, though closed landfills keep emitting for decades.', source:'S1' },
+    { year:'2040', icon:'♻️', title:'The KNWMS 2040 targets fall due',
+      detail:'30% municipal solid waste recycling, 15% construction and demolition recycling, a 50% WEEE collection rate and 80% of sewage sludge to soil application.', source:'S1' },
+    { year:'2050', icon:'🛢️', title:'Carbon neutrality for the oil sector',
+      detail:'Announced by the State of Kuwait at COP27 in Sharm El-Sheikh, 2022.', source:'S7' },
+    { year:'2060', icon:'🇰🇼', title:'Carbon neutrality for all sectors',
+      detail:'Announced at the same conference: Kuwait expects to reach carbon neutrality for all sectors of the country in 2060.', source:'S7' }
+  ],
+
+  /* What the 2040 targets mean once converted from per cent into tonnes. */
+  targetsInTonnes:{
+    note:'The strategy sets its targets as percentages. Multiplying them by the projected 2040 municipal waste stream turns them into the tonnage Kuwait would have to handle. These tonnages are projections, not official figures.',
+    compareLabel:'Paper, glass, plastic and cardboard recycled in Kuwait in 2018, from all sources combined',
+    compareValue:222000,
+    compareSource:'S1'
+  }
+};
+
+/* Kuwait's official record of hazardous waste treated, 2019–2022 (VNR2, Table 12).
+   Included here because it is the only multi-year waste series Kuwait publishes
+   besides indicator 12.5.1 — and it is flat, not falling. */
+SOURCES.S8 = {
+  id:'S8',
+  org:'State of Kuwait / Environment Public Authority',
+  title:'VNR2 2023, Table 12 — Waste Generation per Year in Kuwait (hazardous waste treated)',
+  url:'https://kuwait.un.org/sites/default/files/2023-09/VNR2_English_Final.pdf',
+  note:'Presented in the VNR as the amount of hazardous waste treated between 2019 and 2022. The medical-waste row is corroborated by the report’s own text, which notes medical waste peaking "in 2020 at 10,693 tons".'
+};
+
+const HAZARDOUS_TREATED = {
+  source:'S8',
+  years:[2019, 2020, 2021, 2022],
+  rows:[
+    { label:'Domestic waste',  unit:'kg',     values:[1857840, 1759844, 1982769, 1823949] },
+    { label:'Medical waste',   unit:'kg',     values:[6625095, 10692729, 10751381, 10578549] },
+    { label:'Fluid waste',     unit:'gallon', values:[413333500, 486109200, 459469250, 395029000] },
+    { label:'Industrial waste',unit:'tonne',  values:[96712.0, 74509.245, 80625.65, 74147.0] }
+  ],
+  note:'These are quantities treated, not total national generation — the domestic figure is thousands of tonnes smaller than Kuwait’s household waste total, which confirms it covers only the hazardous fraction handled by the authority. The series is shown because it is short, flat and four years old: the clearest illustration of why the December 2026 data commitment matters.'
+};

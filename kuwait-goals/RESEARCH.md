@@ -14,6 +14,9 @@ left out. If a figure is not traceable to a row in this file, it is not on the p
 | S3 | State of Kuwait | The Second Voluntary National Review Report on the SDGs (VNR2), 2023 | <https://kuwait.un.org/sites/default/files/2023-09/VNR2_English_Final.pdf> |
 | S4 | Kuwait CSB | SDG portal — Goal 12 overview | <https://sdg.csb.gov.kw/g12_EN> |
 | S5 | Kuwait CSB | SDG portal — Goal 12, indicator 12.6.1 | <https://sdg.csb.gov.kw/G12_Idicator_EN?id=123> |
+| S6 | UN DESA, Population Division | World Population Prospects 2024, medium variant — Kuwait | <https://population.un.org/wpp/> |
+| S7 | State of Kuwait | VNR2 2023, p. 96 — carbon neutrality announced at COP27 | <https://kuwait.un.org/sites/default/files/2023-09/VNR2_English_Final.pdf> |
+| S8 | State of Kuwait / EPA | VNR2 2023, Table 12 — hazardous waste treated, 2019–2022 | <https://kuwait.un.org/sites/default/files/2023-09/VNR2_English_Final.pdf> |
 
 S1 was located through the Fraunhofer UMSICHT eMISKWaste project page, which
 names the atlas as the publication carrying the strategy's results. The strategy
@@ -158,9 +161,10 @@ changed rather than shipped:
   obtained. Secondary sources describe a "sustainable living environment" pillar and a
   "28 targets" figure that conflicts with the atlas's own "25 targets"; rather than pick
   one, the page cites the atlas directly and omits Vision 2035 numbers.
-- **A national carbon-neutrality year.** Reported by secondary sources as 2060, but not
-  confirmed from a Kuwaiti government publication during this research, so it is not on
-  the timeline.
+- ~~A national carbon-neutrality year.~~ **Resolved.** Initially excluded for want of a
+  Kuwaiti government source. Later found stated directly in Kuwait's VNR2 (p. 96): Kuwait
+  announced at COP27 that it "expects to reach carbon neutrality for the oil sector in 2050
+  and for all sectors of the country in 2060." Both are now on the timeline, sourced.
 - **Any municipal-solid-waste recycling rate for Kuwait today.** No official source
   publishes one. The page states the absence instead of estimating it from the
   material-by-material table.
@@ -183,3 +187,91 @@ Values were moved out of the bar segments and into colour-keyed chips beside eac
 because white-on-fill text failed contrast on the two lighter series, and ink-on-fill
 would have had to flip per theme. In the chips the numbers wear text tokens and the
 colour chip alone carries identity.
+
+
+---
+
+## The projection section
+
+This is the only part of the page carrying numbers no official body has published, and
+it is fenced off visually and in prose so it cannot be mistaken for the rest.
+
+### The model
+
+```
+municipal solid waste in year Y  =  population(Y) × kg per person per day × 365
+```
+
+Deliberately the simplest model that a reader can check by hand. Both inputs are official:
+
+- **Population** — UN World Population Prospects 2024, medium variant (S6), retrieved as
+  the UN WPP series republished by Our World in Data. The UN's own data-portal API returned
+  HTTP 401 without credentials. Annual values 2024–2040 are stored unmodified in `data.js`.
+- **Waste rate** — 1.6 kg per person per day, the municipal-solid-waste per-capita figure
+  printed in the KEPA atlas (S1).
+
+### The back-test, and its error
+
+The same arithmetic was run on 2018, the year Kuwait publishes real measured figures for,
+using the atlas's household rate of 0.85 kg/resident/day:
+
+| | |
+|---|---|
+| Modelled household waste, 2018 | 1,341,331 t |
+| Published (KEPA atlas), 2018 | 1,439,000 t |
+| **Error** | **−6.8%** |
+
+**No correction factor was applied.** The error is printed on the page beside the
+projection. A model tuned until it matches its own back-test is not a tested model.
+
+### Scenarios
+
+Three waste-per-person paths (−1%/yr, flat, +1%/yr from 2025) and two population paths
+(UN medium; the same curve rescaled by −2.9% to meet Kuwait CSB's own 2025 estimate of
+4,881,254). The reader selects both; the chart, the headline figures and the table all
+recompute in the browser from the stored inputs, so nothing on screen is a typed-in number.
+
+Central case (UN medium, flat rate): **3.41 Mt** of municipal solid waste in 2040, and
+**50.9 Mt** cumulatively over 2025–2040. Applying the official 30% target to the 2040
+volume gives **1.02 Mt/yr** to be recycled — about **4.6×** the 222 thousand tonnes of
+paper, glass, plastic and cardboard Kuwait recycled from all sources in 2018.
+
+The CSB 2025 population figure comes from press reporting of the CSB bulletin rather than
+a CSB page read directly (`e.gov.kw` returned HTTP 403). It is therefore offered as an
+alternative scenario, never as the primary input — which is the right weight for a figure
+at that provenance.
+
+### Why there is no recycling-rate forecast
+
+A least-squares fit to the seven published years of indicator 12.5.1 gives:
+
+```
+value = 2.1304 − 0.2625 × (year − 2015)     →  reaches 0% in 2023.1
+```
+
+A recycling rate cannot be negative. The fit is not a forecast that Kuwait will stop
+recycling; it is evidence that seven volatile years are too short a record to extrapolate.
+Publishing a 2040 recycling-rate prediction from this series would invent precision the
+data cannot carry, so the page shows the broken fit as a finding and forecasts only waste
+*generation* — which is driven by population, a quantity the UN does publish projections for.
+
+### Also added from the VNR
+
+- **Hazardous waste treated, 2019–2022** (S8, Table 12) — domestic, medical, fluid and
+  industrial. The medical row is corroborated by the VNR's own text ("peak in 2020 at
+  10,693 tons" against 10,692,729 kg in the table), which also confirms the year ordering.
+  The table is labelled as *waste treated*, not national generation: its domestic figure is
+  three orders of magnitude below Kuwait's household waste total, confirming it covers only
+  the hazardous fraction handled by the authority. One caveat is carried on trust: the VNR
+  text cites industrial hazardous waste at 60,316 t for 2020 while Table 12 shows 74,509 t
+  for the same year. The page reproduces the table and does not use the narrative figure.
+- **Carbon neutrality 2050 (oil sector) / 2060 (all sectors)** (S7), announced at COP27.
+
+### Chart
+
+One series plus a scenario band, so no legend is required. Colours are the already-validated
+slots 1 and 3 (`#2a78d6` / `#1baf7a` light, `#3987e5` / `#199e70` dark), re-run through the
+validator as a pair against both card surfaces — all checks pass, with the same light-mode
+contrast warning already relieved by direct labels and a table view. The projected line is
+dashed because it *is* a projection, and the y-axis is zero-baselined because the measure is
+a volume.

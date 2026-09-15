@@ -500,6 +500,216 @@ function renderTimeline(){
 }
 
 /* =========================================================================
+   8b. PROJECTIONS — the only modelled numbers on the page
+   Every figure produced here is computed in the browser from the official
+   inputs in data.js, so a reader can change an assumption and watch the
+   result move rather than take a single number on trust.
+   ======================================================================= */
+
+const PROJ_STATE = { popPath:'un', scenario:'flat' };
+
+/* population(year) under the selected path */
+function projPopulation(){
+  const base = PROJECTION.population;
+  if (PROJ_STATE.popPath === 'un') return base;
+  // CSB-anchored: rescale the whole UN curve so it meets Kuwait's own 2025 estimate
+  const un2025 = base.find(p => p.year === PROJECTION.csbAnchor.year).value;
+  const k = PROJECTION.csbAnchor.value / un2025;
+  return base.map(p => ({ year:p.year, value:Math.round(p.value * k) }));
+}
+
+/* municipal solid waste, tonnes per year, for one per-capita drift */
+function projSeries(drift){
+  const pop = projPopulation();
+  let rate = PROJECTION.perCapitaKgDay;
+  return pop.map((p, i) => {
+    if (i > 0) rate *= (1 + drift);
+    return { year:p.year, population:p.value, rate, tonnes: p.value * rate * 365 / 1000 };
+  });
+}
+
+const fmtT  = t => t >= 1e6 ? (t / 1e6).toFixed(2) + ' Mt' : Math.round(t).toLocaleString('en') + ' t';
+const fmtN  = n => Math.round(n).toLocaleString('en');
+
+function renderProjection(){
+  $('#projMethod').innerHTML = `
+    <h3>How these numbers are made — read this first</h3>
+    <p>Everything above this point on the page is a figure some official body has
+    published. <b>Nothing below it is.</b> This section is a projection, and it is the only
+    place on this page carrying numbers nobody has published.</p>
+    <p>The model is deliberately the simplest one that can be checked by hand:</p>
+    <p class="formula">municipal solid waste in year Y &nbsp;=&nbsp; population(Y) × kg per person per day × 365</p>
+    <p>Both inputs are official and neither is invented. Population comes from the
+    <b>UN World Population Prospects 2024, medium variant</b>. The waste rate is the
+    <b>1.6 kg per person per day</b> that Kuwait's own EPA atlas records for municipal
+    solid waste. Everything else is multiplication.</p>
+    <p class="tcard__note">Sources: ${srcLink('S6')} · ${srcLink('S1')}</p>`;
+
+  const bt = PROJECTION.backtest;
+  $('#projBacktest').innerHTML = `
+    <h3>Does the method work? Test it on a year Kuwait has already published</h3>
+    <p>A projection nobody has checked is a guess with a chart around it. So the same
+    arithmetic was run on <b>${bt.year}</b>, the year the EPA atlas reports real measured
+    figures for, using the atlas's own household rate of ${bt.rateKgDay} kg per resident per day.</p>
+    <div class="bt">
+      <div class="bt__cell"><span class="bt__n">${fmtT(bt.modelled)}</span><span class="bt__l">What the model predicts for ${bt.year}</span></div>
+      <div class="bt__cell"><span class="bt__n">${fmtT(bt.official)}</span><span class="bt__l">${esc(bt.officialLabel)}</span></div>
+      <div class="bt__cell bt__cell--err"><span class="bt__n">${bt.errorPct}%</span><span class="bt__l">Error, reported and left uncorrected</span></div>
+    </div>
+    <p class="tcard__note">${esc(bt.verdict)}</p>`;
+
+  // ---- controls -------------------------------------------------------
+  $('#projControls').innerHTML = `
+    <div class="ctl">
+      <span class="ctl__lab" id="popLab">Population path</span>
+      <div class="ctl__row" role="radiogroup" aria-labelledby="popLab">
+        <button type="button" class="chip" data-k="popPath" data-v="un" aria-checked="true" role="radio">UN medium variant</button>
+        <button type="button" class="chip" data-k="popPath" data-v="csb" aria-checked="false" role="radio">Kuwait CSB-anchored (−2.9%)</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="ctl__lab" id="scLab">Waste per person</span>
+      <div class="ctl__row" role="radiogroup" aria-labelledby="scLab">
+        ${PROJECTION.scenarios.map(sc => `
+          <button type="button" class="chip" data-k="scenario" data-v="${sc.key}"
+                  role="radio" aria-checked="${sc.key === 'flat'}">${esc(sc.label)}</button>`).join('')}
+      </div>
+    </div>`;
+
+  $$('#projControls .chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      PROJ_STATE[btn.dataset.k] = btn.dataset.v;
+      $$(`#projControls .chip[data-k="${btn.dataset.k}"]`).forEach(o =>
+        o.setAttribute('aria-checked', String(o === btn)));
+      drawProjection();
+    });
+  });
+  $$('#projControls .chip[aria-checked="true"]').forEach(b => b.classList.add('is-on'));
+
+  $('#projLimits').innerHTML = `
+    <h3>What this projection cannot tell you</h3>
+    <ul>${PROJECTION.limits.map(l => `<li>${esc(l)}</li>`).join('')}</ul>`;
+
+  const nf = PROJECTION.noRateForecast;
+  $('#projNoRate').innerHTML = `
+    <h3>${esc(nf.headline)}</h3>
+    <p>${esc(nf.body)}</p>
+    <p class="formula">least-squares fit, 2015–2021 &nbsp;→&nbsp; ${nf.fit.intercept} ${nf.fit.slope} × (year − 2015) &nbsp;→&nbsp; reaches 0% in ${nf.fit.zeroYear}</p>
+    <p class="tcard__note">${esc(nf.reinforce)}</p>`;
+
+  $('#projOfficial').innerHTML = PROJECTION.officialFuture.map(f => `
+    <li class="gvr__item">
+      <span class="gvr__n" style="color:var(--kw-green);font-size:var(--step-2)">${f.year}</span>
+      <p class="gvr__t"><b>${f.icon} ${esc(f.title)}</b>${esc(f.detail)}
+        <a href="${src(f.source).url}" target="_blank" rel="noopener" style="color:var(--kw-green)">Source ↗</a></p>
+    </li>`).join('');
+
+  const hz = HAZARDOUS_TREATED;
+  $('#projHazard').innerHTML = `
+    <caption>${esc(src(hz.source).title)}. ${esc(hz.note)}</caption>
+    <thead><tr><th>Waste type</th><th>Unit</th>${hz.years.map(y => `<th class="num">${y}</th>`).join('')}</tr></thead>
+    <tbody>${hz.rows.map(r => `
+      <tr><th scope="row">${esc(r.label)}</th><td style="color:var(--ink-3)">${esc(r.unit)}</td>
+      ${r.values.map(v => `<td class="num">${fmtN(v)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+
+  drawProjection();
+}
+
+/* ---- the projection chart ------------------------------------------- */
+function drawProjection(){
+  const all = PROJECTION.scenarios.map(sc => ({ sc, data: projSeries(sc.drift) }));
+  const sel = all.find(a => a.sc.key === PROJ_STATE.scenario);
+  const years = sel.data.map(d => d.year);
+  const lo = years.map((_, i) => Math.min(...all.map(a => a.data[i].tonnes)));
+  const hi = years.map((_, i) => Math.max(...all.map(a => a.data[i].tonnes)));
+
+  const W = 760, H = 340, P = { t:28, r:30, b:46, l:62 };
+  const maxY = 4.5e6, minY = 0;
+  const x = i => P.l + (W - P.l - P.r) * (i / (years.length - 1));
+  const y = v => P.t + (H - P.t - P.b) * (1 - (v - minY) / (maxY - minY));
+  const ticks = [0, 1e6, 2e6, 3e6, 4e6];
+
+  const line = arr => arr.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  const band = `${line(hi)} ` + lo.map((v, i) => `L${x(lo.length - 1 - i).toFixed(1)},${y(lo[lo.length - 1 - i]).toFixed(1)}`).join(' ') + ' Z';
+  const selV = sel.data.map(d => d.tonnes);
+  const last = selV.length - 1;
+
+  $('#projChart').innerHTML = `
+  <svg viewBox="0 0 ${W} ${H}" role="img"
+       aria-label="Projected municipal solid waste generated in Kuwait, ${years[0]} to ${years[last]}, rising from ${fmtT(selV[0])} to ${fmtT(selV[last])} per year under the selected scenario.">
+    ${ticks.map(t => `
+      <line class="line__grid" x1="${P.l}" x2="${W - P.r}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}"></line>
+      <text class="line__txt" x="${P.l - 10}" y="${(y(t) + 4).toFixed(1)}" text-anchor="end">${(t / 1e6).toFixed(1)}</text>`).join('')}
+    <text class="line__txt" x="${P.l - 10}" y="${P.t - 12}" text-anchor="end">Mt / yr</text>
+    <path class="proj__band" d="${band}"></path>
+    <path class="proj__line" d="${line(selV)}"></path>
+    ${years.map((yr, i) => (yr % 4 === 0 || i === last) ? `
+      <text class="line__txt" x="${x(i).toFixed(1)}" y="${H - P.b + 20}" text-anchor="middle">${yr}</text>` : '').join('')}
+    <circle class="proj__dot" cx="${x(last).toFixed(1)}" cy="${y(selV[last]).toFixed(1)}" r="5"></circle>
+    <text class="line__lab" x="${x(last).toFixed(1)}" y="${(y(selV[last]) - 15).toFixed(1)}" text-anchor="end">${fmtT(selV[last])}</text>
+    ${years.map((yr, i) => `
+      <rect class="line__hit" x="${(x(i) - 22).toFixed(1)}" y="${P.t}" width="44" height="${H - P.t - P.b}"
+            data-i="${i}" tabindex="0" role="button"
+            aria-label="${yr}: projected ${fmtT(selV[i])}"></rect>`).join('')}
+  </svg>`;
+
+  const host = $('#projChart');
+  if (!host._tip) host._tip = makeTip($('#projWrap'));
+  const tip = host._tip;
+  const at = i => {
+    const d = sel.data[i];
+    const box = host.getBoundingClientRect(), wrap = $('#projWrap').getBoundingClientRect();
+    tip.show(`<b>${fmtT(d.tonnes)}</b> projected municipal waste<br>${d.year} · population ${fmtN(d.population)} · ${d.rate.toFixed(2)} kg/person/day<br><span style="opacity:.75">range ${fmtT(lo[i])} – ${fmtT(hi[i])}</span>`,
+             box.left - wrap.left + (x(i) / W) * box.width,
+             box.top - wrap.top + (y(d.tonnes) / H) * box.height);
+  };
+  $$('.line__hit', host).forEach(r => {
+    r.addEventListener('mouseenter', () => at(+r.dataset.i));
+    r.addEventListener('focus',      () => at(+r.dataset.i));
+    r.addEventListener('mouseleave', tip.hide);
+    r.addEventListener('blur',       tip.hide);
+  });
+
+  // headline figures under the chart
+  const cum = sel.data.filter(d => d.year >= 2025).reduce((s, d) => s + d.tonnes, 0);
+  const t40 = selV[last];
+  const cmp = PROJECTION.targetsInTonnes;
+  $('#projHeadline').innerHTML = `
+    <div class="pcard"><span class="pcard__icon">🗑️</span>
+      <span class="pcard__pct">${(t40 / 1e6).toFixed(2)}</span>
+      <span class="pcard__n">Mt per year</span>
+      <span class="pcard__lab">Municipal solid waste Kuwait would generate in 2040 on this path</span></div>
+    <div class="pcard"><span class="pcard__icon">📦</span>
+      <span class="pcard__pct">${(cum / 1e6).toFixed(0)}</span>
+      <span class="pcard__n">Mt, 2025–2040</span>
+      <span class="pcard__lab">Cumulative municipal solid waste over the strategy's remaining run</span></div>
+    <div class="pcard"><span class="pcard__icon">♻️</span>
+      <span class="pcard__pct">${(t40 * 0.30 / 1e6).toFixed(2)}</span>
+      <span class="pcard__n">Mt per year</span>
+      <span class="pcard__lab">What the 30% recycling target means in tonnes at that volume</span></div>
+    <div class="pcard"><span class="pcard__icon">📈</span>
+      <span class="pcard__pct">${(t40 * 0.30 / cmp.compareValue).toFixed(1)}×</span>
+      <span class="pcard__n">multiple</span>
+      <span class="pcard__lab">That tonnage against the ${fmtN(cmp.compareValue / 1000)} thousand tonnes of paper, glass, plastic and cardboard Kuwait recycled from all sources in 2018</span></div>`;
+
+  $('#projScenarioNote').innerHTML = `
+    <b>${esc(sel.sc.label)}:</b> ${esc(sel.sc.blurb)}
+    ${PROJ_STATE.popPath === 'csb'
+      ? ` Population path rescaled to Kuwait CSB's own 2025 estimate — ${esc(PROJECTION.csbAnchor.note)}`
+      : ''}
+    The shaded band on the chart is the full range across all three waste-per-person scenarios.`;
+
+  $('#projTable').innerHTML = `
+    <caption>Projected municipal solid waste, ${years[0]}–${years[last]}, under the selected scenario.
+    <b>These are projections, not official figures.</b> Population is UN World Population Prospects 2024 medium variant${PROJ_STATE.popPath === 'csb' ? ', rescaled to Kuwait CSB’s 2025 estimate' : ''}; the waste rate starts at Kuwait EPA’s 1.6 kg per person per day.</caption>
+    <thead><tr><th>Year</th><th class="num">Population</th><th class="num">kg/person/day</th><th class="num">Projected MSW (tonnes/yr)</th><th class="num">Scenario range (tonnes/yr)</th></tr></thead>
+    <tbody>${sel.data.map((d, i) => `
+      <tr><th scope="row">${d.year}</th><td class="num">${fmtN(d.population)}</td>
+      <td class="num">${d.rate.toFixed(2)}</td><td class="num">${fmtN(d.tonnes)}</td>
+      <td class="num">${fmtN(lo[i])} – ${fmtN(hi[i])}</td></tr>`).join('')}</tbody>`;
+}
+
+/* =========================================================================
    9. SOURCES + table toggles
    ======================================================================= */
 function renderSources(){
@@ -538,6 +748,7 @@ document.addEventListener('DOMContentLoaded', () => {
   renderReality();
   renderCompanies();
   renderTimeline();
+  renderProjection();
   renderSources();
   initTableToggles();
 });

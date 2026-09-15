@@ -299,6 +299,62 @@
   </div>
 </section>
 
+<!-- ================================================== PROJECTIONS ======= -->
+<section class="section projzone" id="projection">
+  <div class="wrap">
+    <div class="projbanner">
+      <span>⚠️</span>
+      <b>Everything below this line is a projection, not an official figure.</b>
+      <span>No Kuwaiti government body has published these numbers. The method, its inputs and its measured error are all shown.</span>
+    </div>
+
+    <div class="sec-head">
+      <p class="eyebrow">🔮 Waste production, projected</p>
+      <h2>How Much Waste Will Kuwait Produce?</h2>
+      <p>SDG target 12.5 asks Kuwait to <b>reduce waste production</b> by 2030, and the
+      KNWMS 2040 sets its targets as shares of whatever Kuwait generates. Both depend on a
+      number nobody has published: how much waste is coming. This section projects it —
+      openly, with the assumptions exposed and adjustable.</p>
+    </div>
+
+    <div class="card" id="projMethod" style="margin-bottom:var(--sp-5)"></div>
+    <div class="card" id="projBacktest" style="margin-bottom:var(--sp-6)"></div>
+
+    <div class="chartcard" id="projWrap">
+      <h3>Projected Municipal Solid Waste Generated in Kuwait</h3>
+      <p class="chart__sub">Tonnes per year, 2024–2040 · change an assumption and the chart, the totals and the table all move with it</p>
+      <div id="projControls"></div>
+      <div class="linewrap" id="projChart"></div>
+      <p class="projnote" id="projScenarioNote"></p>
+      <button class="tabletoggle" type="button" data-target="projTable" aria-expanded="false"
+              data-show="Hide the table" data-hide="Show the projected series as a table">Show the projected series as a table</button>
+      <div class="scrollx" hidden><table class="dtable" id="projTable"></table></div>
+      <p class="srcline">
+        <b>Inputs:</b> <a href="https://population.un.org/wpp/" target="_blank" rel="noopener">UN World Population Prospects 2024, medium variant</a> ·
+        <a href="https://epa.gov.kw/Portals/0/PDF/Atlas_En.pdf" target="_blank" rel="noopener">Kuwait EPA, Waste Management Atlas — 1.6 kg per person per day</a><br>
+        <b>Output:</b> a projection by this page. Neither the UN nor the Kuwait EPA publishes these tonnages.
+      </p>
+    </div>
+
+    <div class="pgrid" id="projHeadline" style="margin-top:var(--sp-5)"></div>
+
+    <div class="grid grid--2" style="align-items:start;margin-top:var(--sp-6)">
+      <div class="warnbox" id="projNoRate"></div>
+      <div class="warnbox" id="projLimits"></div>
+    </div>
+
+    <h3 style="font-size:var(--step-2);margin:var(--sp-7) 0 var(--sp-3)">🇰🇼 What Kuwait itself has said about the future</h3>
+    <p class="muted" style="max-width:62ch;margin-bottom:var(--sp-5)">These are not projections by this
+    page. Each one is a dated commitment or scenario published by the State of Kuwait.</p>
+    <ul class="gvr__list" id="projOfficial"></ul>
+
+    <h3 style="font-size:var(--step-2);margin:var(--sp-7) 0 var(--sp-3)">📉 The other series Kuwait publishes — and why it argues for 2026</h3>
+    <div class="chartcard">
+      <div class="scrollx"><table class="dtable" id="projHazard"></table></div>
+    </div>
+  </div>
+</section>
+
 <!-- ==================================================== TIMELINE ======== -->
 <section class="section" style="background:var(--surface-2)">
   <div class="wrap">
