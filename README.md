@@ -52,6 +52,17 @@ It is a **design and UX reference**, not the production store — see
 [`07-online-store.md`](docs/07-online-store.md) for the recommended production stack
 (Shopify + custom theme) and how this prototype maps onto it.
 
+### `kuwait-goals/` — Kuwait's recycling goals, as a website section
+A standalone, dependency-free section on the State of Kuwait's official recycling and
+waste-management targets: the National Waste Management Strategy 2040, SDG 12, the national
+recycling indicator over time, and a researched look at whether companies are helping. Every
+figure is traceable to an official source, and where Kuwait publishes no number the section
+says so rather than estimating one — see [`kuwait-goals/RESEARCH.md`](kuwait-goals/RESEARCH.md).
+
+```bash
+cd kuwait-goals && python3 -m http.server 8080   # then open http://localhost:8080
+```
+
 ---
 
 ## Start here
