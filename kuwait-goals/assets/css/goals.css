@@ -465,7 +465,7 @@ p{margin:0 0 var(--sp-4)}
    JUMP NAV + AT A GLANCE
    ========================================================================== */
 .jump{
-  position:sticky;top:0;z-index:50;background:color-mix(in srgb,var(--surface-0) 88%,transparent);
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--surface-0) 88%,transparent);
   backdrop-filter:blur(10px);border-bottom:1px solid var(--line-soft);
   transform:translateY(-100%);opacity:0;pointer-events:none;
   transition:transform .28s var(--ease),opacity .28s var(--ease)
@@ -562,4 +562,9 @@ section[id]{scroll-margin-top:64px}
   .hero h1,.verdict h2{color:#000}
   a[href^="http"]::after{content:" (" attr(href) ")";font-size:9px;word-break:break-all}
   .tl__scroll,.scrollx{overflow:visible !important}
+}
+
+.hero__disc{
+  font-size:.75rem;line-height:1.5;color:#8F8E82;max-width:62ch;
+  border-left:2px solid rgba(242,241,230,.22);padding-left:var(--sp-3);margin-top:var(--sp-4)
 }

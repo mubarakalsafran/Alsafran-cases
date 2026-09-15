@@ -57,6 +57,23 @@ No build step, no dependencies, no framework. Three files do the work.
 
 ---
 
+## Published as a live Artifact
+
+<https://claude.ai/artifact/96rtELu65dunonb6yhKmSb>
+
+The four source files below stay the source of truth. `build-artifact.py` assembles them into
+one self-contained page under `artifact/`, because the Artifact platform supplies its own
+document skeleton, enforces a CSP that only admits Google Fonts as an external stylesheet, and
+owns the viewer's theme. The build therefore emits page content only — no `<!doctype>`, `<html>`,
+`<head>` or `<body>` — inlines the CSS and JS, and drops the theme toggle.
+
+```bash
+python3 build-artifact.py     # -> artifact/kuwait-recycling-goals.html
+```
+
+Edit the sources, re-run the build, and republish to the same URL. Don't hand-edit the file in
+`artifact/` — it is generated and will be overwritten.
+
 ## Navigating it
 
 A sticky jump bar appears once the hero scrolls away and marks the section you are in.
@@ -75,6 +92,8 @@ kuwait-goals/
 ├── assets/css/goals.css    design system; light and dark are both selected, not flipped
 ├── assets/js/data.js       every figure, each carrying its source — edit data here, not markup
 ├── assets/js/app.js        rendering, SVG charts, tooltips, table twins, timeline
+├── build-artifact.py       assembles the four files into one page for publishing
+├── artifact/               build output — generated, do not hand-edit
 ├── RESEARCH.md             source log: what was used, what was corrected, what was excluded
 └── README.md
 ```

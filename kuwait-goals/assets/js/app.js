@@ -129,6 +129,8 @@ function initJumpNav(){
 /* -------------------------------------------------------------- theme ---- */
 function initTheme(){
   const btn = $('#themeBtn');
+  // The artifact build ships without a toggle — the host controls the theme there.
+  if (!btn) return;
   const stored = (() => { try { return localStorage.getItem('kwg-theme'); } catch { return null; } })();
   if (stored) document.documentElement.setAttribute('data-theme', stored);
   const paint = () => {

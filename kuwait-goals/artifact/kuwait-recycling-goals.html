@@ -1,0 +1,2823 @@
+<title>Kuwait's Recycling Goals</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600;700&family=IBM+Plex+Sans+Arabic:wght@400;600;700&display=swap">
+<style>
+/* ==========================================================================
+   KUWAIT'S RECYCLING GOALS — section stylesheet
+   Mobile-first. No dependencies. Light and dark are both selected, not flipped.
+   ========================================================================== */
+
+:root{
+  /* --- surfaces & ink (light) --- */
+  --surface-0:#F1EFE6;      /* page */
+  --surface-1:#FFFFFF;      /* card / chart surface — palette validated here */
+  --surface-2:#F7F5EE;      /* inset */
+  --ink:#12130F;
+  --ink-2:#4B4E43;
+  --ink-3:#74776A;
+  --line:rgba(18,19,15,.14);
+  --line-soft:rgba(18,19,15,.08);
+
+  /* --- Kuwait identity (decorative only, never a data series) --- */
+  --kw-green:#007A3D;
+  --kw-red:#CE1126;
+  --kw-black:#12130F;
+  --gold:#C9922E;
+
+  /* --- data series: validated, see RESEARCH.md --- */
+  --series-recycling:#1baf7a;
+  --series-recovery:#2a78d6;
+  --series-disposal:#eb6834;
+  --grid:rgba(18,19,15,.10);
+
+  /* --- type --- */
+  --f-display:"Space Grotesk","Archivo",-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif;
+  --f-body:"Inter",-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,sans-serif;
+  --f-ar:"IBM Plex Sans Arabic","Noto Sans Arabic","Segoe UI",Tahoma,sans-serif;
+
+  --step--1:.75rem; --step-0:.9375rem; --step-1:1.0625rem;
+  --step-2:1.375rem; --step-3:1.875rem; --step-4:2.5rem; --step-5:3.25rem;
+
+  --sp-1:.25rem; --sp-2:.5rem; --sp-3:.75rem; --sp-4:1rem;
+  --sp-5:1.5rem; --sp-6:2rem; --sp-7:3rem; --sp-8:4.5rem;
+  --r-sm:8px; --r-md:14px; --r-lg:22px; --r-pill:999px;
+  --wrap:1180px;
+  --ease:cubic-bezier(.22,.61,.36,1);
+  color-scheme:light;
+}
+
+/* Dark mode: its own steps, validated against the dark surface.
+   Two scopes — OS preference, and an explicit theme stamp that must win. */
+@media (prefers-color-scheme:dark){
+  :root:where(:not([data-theme="light"])){
+    --surface-0:#0D0E08; --surface-1:#191B12; --surface-2:#131509;
+    --ink:#F2F1E6; --ink-2:#B6B8A8; --ink-3:#8B8E7E;
+    --line:rgba(242,241,230,.16); --line-soft:rgba(242,241,230,.09);
+    --kw-green:#2FA968; --kw-red:#E5525F; --gold:#E0B968;
+    --series-recycling:#199e70; --series-recovery:#3987e5; --series-disposal:#d95926;
+    --grid:rgba(242,241,230,.12);
+    color-scheme:dark;
+  }
+}
+:root[data-theme="dark"]{
+  --surface-0:#0D0E08; --surface-1:#191B12; --surface-2:#131509;
+  --ink:#F2F1E6; --ink-2:#B6B8A8; --ink-3:#8B8E7E;
+  --line:rgba(242,241,230,.16); --line-soft:rgba(242,241,230,.09);
+  --kw-green:#2FA968; --kw-red:#E5525F; --gold:#E0B968;
+  --series-recycling:#199e70; --series-recovery:#3987e5; --series-disposal:#d95926;
+  --grid:rgba(242,241,230,.12);
+  color-scheme:dark;
+}
+
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body{
+  margin:0;background:var(--surface-0);color:var(--ink);
+  font-family:var(--f-body);font-size:var(--step-0);line-height:1.62;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+img,svg{max-width:100%}
+a{color:inherit}
+h1,h2,h3,h4{font-family:var(--f-display);line-height:1.08;margin:0;letter-spacing:-.02em}
+p{margin:0 0 var(--sp-4)}
+.wrap{width:min(100% - 2rem,var(--wrap));margin-inline:auto}
+.section{padding:var(--sp-8) 0}
+.section--tight{padding:var(--sp-7) 0}
+.eyebrow{
+  font-size:var(--step--1);letter-spacing:.16em;text-transform:uppercase;
+  font-weight:600;color:var(--ink-3);margin:0 0 var(--sp-3)
+}
+.muted{color:var(--ink-2)}
+.ar{font-family:var(--f-ar);direction:rtl}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+:focus-visible{outline:2px solid var(--kw-green);outline-offset:3px;border-radius:4px}
+
+/* --------------------------------------------------------------- theme tgl */
+.themebtn{
+  position:fixed;top:var(--sp-4);right:var(--sp-4);z-index:60;
+  width:44px;height:44px;border-radius:var(--r-pill);cursor:pointer;
+  border:1px solid var(--line);background:var(--surface-1);color:var(--ink);
+  font-size:1.0625rem;display:grid;place-items:center;
+  box-shadow:0 6px 22px rgba(0,0,0,.14)
+}
+
+/* ------------------------------------------------------------------- hero */
+.hero{
+  position:relative;overflow:hidden;background:var(--kw-black);color:#F2F1E6;
+  padding:calc(var(--sp-8) + 1.5rem) 0 var(--sp-8);
+}
+.hero__sky{position:absolute;inset:0;pointer-events:none}
+.hero__sky svg{position:absolute;bottom:0;left:0;width:100%;height:auto;display:block}
+.hero__bar{
+  position:absolute;inset:0 auto 0 0;width:8px;
+  background:linear-gradient(var(--kw-green) 0 33.3%,#FFFFFF 33.3% 66.6%,var(--kw-red) 66.6% 100%);
+}
+.hero__in{position:relative;z-index:2}
+.hero h1{
+  font-size:clamp(2.5rem,10vw,5rem);margin:0 0 var(--sp-3);
+  text-wrap:balance
+}
+.hero h1 em{font-style:normal;color:var(--gold)}
+.hero__sub{
+  font-family:var(--f-display);font-size:clamp(1.0625rem,3.4vw,1.5rem);
+  font-weight:500;color:#D9D8CB;max-width:34ch;margin:0 0 var(--sp-5);line-height:1.3
+}
+.hero__ar{font-family:var(--f-ar);color:var(--gold);font-size:1.125rem;margin:0 0 var(--sp-5)}
+.hero__stats{display:grid;gap:var(--sp-4);grid-template-columns:repeat(auto-fit,minmax(150px,1fr));margin-top:var(--sp-6)}
+.hero__stat{border-top:2px solid rgba(242,241,230,.28);padding-top:var(--sp-3)}
+.hero__stat b{
+  display:block;font-family:var(--f-display);font-size:clamp(1.75rem,6vw,2.5rem);
+  line-height:1;font-weight:700
+}
+.hero__stat span{display:block;font-size:var(--step--1);color:#B9B8AB;margin-top:var(--sp-2);line-height:1.4}
+
+/* hero figure — the one lead number in the view */
+.leadfig{
+  font-family:var(--f-display);font-size:clamp(3.5rem,16vw,7rem);font-weight:700;
+  line-height:.9;letter-spacing:-.04em;color:var(--gold);display:block
+}
+
+/* ------------------------------------------------------------------ cards */
+.card{
+  background:var(--surface-1);border:1px solid var(--line-soft);
+  border-radius:var(--r-lg);padding:var(--sp-5)
+}
+.grid{display:grid;gap:var(--sp-4)}
+.grid--2{grid-template-columns:1fr}
+.grid--3{grid-template-columns:1fr}
+.grid--4{grid-template-columns:1fr}
+@media (min-width:640px){
+  .grid--2,.grid--4{grid-template-columns:repeat(2,1fr)}
+  .grid--3{grid-template-columns:repeat(2,1fr)}
+}
+@media (min-width:1000px){
+  .grid--3{grid-template-columns:repeat(3,1fr)}
+  .grid--4{grid-template-columns:repeat(4,1fr)}
+}
+
+.sec-head{margin-bottom:var(--sp-6);max-width:62ch}
+.sec-head h2{font-size:clamp(1.875rem,6vw,3rem);margin-bottom:var(--sp-3)}
+.sec-head p{color:var(--ink-2);margin:0}
+
+/* ------------------------------------------------- target dashboard cards */
+.tcard{
+  position:relative;background:var(--surface-1);border:1px solid var(--line-soft);
+  border-radius:var(--r-lg);padding:var(--sp-5);display:flex;flex-direction:column;gap:var(--sp-4);
+  overflow:hidden
+}
+.tcard::before{
+  content:"";position:absolute;inset:0 0 auto 0;height:4px;
+  background:var(--series-recycling)
+}
+.tcard__top{display:flex;align-items:flex-start;justify-content:space-between;gap:var(--sp-4)}
+.tcard__icon{font-size:1.75rem;line-height:1}
+.tcard__ring{flex:0 0 auto}
+.tcard__big{
+  font-family:var(--f-display);font-weight:700;font-size:clamp(2.75rem,11vw,3.75rem);
+  line-height:.92;letter-spacing:-.035em;margin:0
+}
+.tcard__big sup{font-size:.42em;vertical-align:super;font-weight:600;margin-left:.08em}
+.tcard__cat{font-family:var(--f-display);font-weight:600;font-size:var(--step-1);margin:0}
+.tcard__label{font-size:var(--step--1);letter-spacing:.14em;text-transform:uppercase;color:var(--ink-3);margin:0}
+.tcard__meta{
+  border-top:1px solid var(--line-soft);padding-top:var(--sp-3);
+  display:grid;gap:var(--sp-2);font-size:var(--step--1);margin-top:auto
+}
+.tcard__meta dt{color:var(--ink-3);letter-spacing:.1em;text-transform:uppercase;font-size:.6875rem}
+.tcard__meta dd{margin:0 0 var(--sp-2);color:var(--ink-2)}
+.tcard__meta dd:last-child{margin-bottom:0}
+.tcard__meta a{color:var(--kw-green);text-underline-offset:2px}
+.tcard__note{font-size:var(--step--1);color:var(--ink-2);margin:0}
+.flag{
+  display:inline-flex;align-items:center;gap:.4em;font-size:.6875rem;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;color:var(--ink-2);
+  background:var(--surface-2);border:1px solid var(--line-soft);
+  border-radius:var(--r-pill);padding:.25rem .6rem
+}
+
+/* progress ring — rotation lives on the SVG transform attribute, never in CSS:
+   a CSS transform resolves against the element box and throws the circle off-canvas */
+.ring__track{fill:none;stroke:var(--line);stroke-width:7}
+.ring__bar{fill:none;stroke:var(--series-recycling);stroke-width:7;stroke-linecap:round;
+  transition:stroke-dashoffset 1.1s var(--ease)}
+
+/* --------------------------------------------------------------- charts */
+.chartcard{
+  background:var(--surface-1);border:1px solid var(--line-soft);
+  border-radius:var(--r-lg);padding:var(--sp-5)
+}
+.chartcard h3{font-size:var(--step-2);margin-bottom:var(--sp-2)}
+.chart__sub{color:var(--ink-2);font-size:var(--step--1);margin:0 0 var(--sp-5)}
+.legend{display:flex;flex-wrap:wrap;gap:var(--sp-2) var(--sp-4);margin:0 0 var(--sp-5);padding:0;list-style:none}
+.legend li{display:flex;align-items:center;gap:.5rem;font-size:var(--step--1);color:var(--ink-2)}
+.legend i{width:12px;height:12px;border-radius:3px;display:block;flex:0 0 auto}
+
+/* stacked bars */
+.stack{display:grid;gap:var(--sp-5)}
+.stack__row{display:grid;gap:var(--sp-2)}
+.stack__head{display:flex;justify-content:space-between;align-items:baseline;gap:var(--sp-3)}
+.stack__name{font-family:var(--f-display);font-weight:600;font-size:var(--step-0)}
+.stack__bar{display:flex;height:34px;border-radius:var(--r-sm);overflow:hidden;gap:2px;background:transparent}
+.stack__seg{position:relative;min-width:0;transition:flex-basis 1s var(--ease);cursor:default}
+.stack__seg:first-child{border-radius:var(--r-sm) 0 0 var(--r-sm)}
+.stack__seg:last-child{border-radius:0 var(--r-sm) var(--r-sm) 0}
+/* Values live beside the bar, not inside it: white-on-fill fails contrast on the
+   lighter two series, and ink-on-fill flips per theme. Here they wear text tokens. */
+.stack__vals{display:flex;flex-wrap:wrap;gap:var(--sp-2) var(--sp-4);margin:0;padding:0;list-style:none}
+.stack__vals li{display:flex;align-items:center;gap:.4rem;font-size:var(--step--1);color:var(--ink-2)}
+.stack__vals i{width:10px;height:10px;border-radius:3px;flex:0 0 auto}
+.stack__vals b{color:var(--ink);font-variant-numeric:tabular-nums}
+.stack__axis{display:flex;justify-content:space-between;font-size:.6875rem;color:var(--ink-3);
+  border-top:1px solid var(--grid);padding-top:var(--sp-2);font-variant-numeric:tabular-nums}
+
+/* line chart */
+.linewrap{position:relative}
+.linewrap svg{display:block;width:100%;height:auto;overflow:visible}
+.line__grid{stroke:var(--grid);stroke-width:1}
+.line__path{fill:none;stroke:var(--series-recycling);stroke-width:2;stroke-linejoin:round;stroke-linecap:round}
+.line__area{fill:var(--series-recycling);opacity:.10}
+.line__dot{fill:var(--series-recycling);stroke:var(--surface-1);stroke-width:2}
+.line__hit{fill:transparent;cursor:pointer}
+.line__txt{fill:var(--ink-3);font-size:11px;font-family:var(--f-body)}
+.line__lab{fill:var(--ink);font-size:12px;font-weight:700;font-family:var(--f-display)}
+.tip{
+  position:absolute;z-index:5;pointer-events:none;opacity:0;transform:translate(-50%,-115%);
+  background:var(--ink);color:var(--surface-0);border-radius:var(--r-sm);
+  padding:.5rem .7rem;font-size:var(--step--1);line-height:1.35;white-space:nowrap;
+  transition:opacity .12s linear;box-shadow:0 8px 24px rgba(0,0,0,.24)
+}
+.tip b{font-size:var(--step-0)}
+
+/* table view twin */
+.tabletoggle{
+  margin-top:var(--sp-5);background:none;border:1px solid var(--line);color:var(--ink-2);
+  border-radius:var(--r-pill);padding:.4rem .9rem;font:inherit;font-size:var(--step--1);cursor:pointer
+}
+.tabletoggle:hover{border-color:var(--ink-3);color:var(--ink)}
+.dtable{width:100%;border-collapse:collapse;margin-top:var(--sp-4);font-size:var(--step--1)}
+.dtable caption{text-align:left;color:var(--ink-3);font-size:var(--step--1);padding-bottom:var(--sp-3)}
+.dtable th,.dtable td{text-align:left;padding:.5rem .6rem;border-bottom:1px solid var(--line-soft)}
+.dtable th{color:var(--ink-3);font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:.6875rem}
+.dtable td.num{text-align:right;font-variant-numeric:tabular-nums}
+[hidden]{display:none !important}
+
+.srcline{
+  margin-top:var(--sp-4);padding-top:var(--sp-4);border-top:1px solid var(--line-soft);
+  font-size:var(--step--1);color:var(--ink-3)
+}
+.srcline a{color:var(--kw-green)}
+
+/* ------------------------------------------------------- goals vs reality */
+.gvr{display:grid;gap:var(--sp-4)}
+@media (min-width:900px){.gvr{grid-template-columns:1fr 1fr}}
+.gvr__col h3{font-size:var(--step-2);margin-bottom:var(--sp-4);display:flex;align-items:center;gap:.5rem}
+.gvr__list{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-3)}
+.gvr__item{
+  background:var(--surface-1);border:1px solid var(--line-soft);border-radius:var(--r-md);
+  padding:var(--sp-4);display:flex;gap:var(--sp-4);align-items:baseline
+}
+.gvr__n{font-family:var(--f-display);font-weight:700;font-size:var(--step-3);line-height:1;flex:0 0 auto;min-width:3.6ch}
+.gvr__t{font-size:var(--step--1);color:var(--ink-2);margin:0}
+.gvr__t b{color:var(--ink);font-weight:600;display:block;font-size:var(--step-0)}
+
+.pbar{margin:var(--sp-5) 0 0}
+.pbar__row{margin-bottom:var(--sp-4)}
+.pbar__head{display:flex;justify-content:space-between;font-size:var(--step--1);margin-bottom:.35rem;gap:var(--sp-3)}
+.pbar__head b{font-variant-numeric:tabular-nums}
+.pbar__track{height:18px;border-radius:var(--r-pill);background:var(--surface-2);border:1px solid var(--line-soft);overflow:hidden}
+.pbar__fill{height:100%;border-radius:var(--r-pill);transition:width 1.2s var(--ease)}
+.pbar__fill--now{background:var(--series-disposal)}
+.pbar__fill--goal{background:var(--series-recycling)}
+.pbar__note{font-size:var(--step--1);color:var(--ink-2);margin:.4rem 0 0}
+
+.warnbox{
+  border:1px solid var(--line);border-left:4px solid var(--gold);
+  background:var(--surface-2);border-radius:var(--r-md);padding:var(--sp-5)
+}
+.warnbox h3{font-size:var(--step-1);margin-bottom:var(--sp-3)}
+.nocmp{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-4)}
+.nocmp li{display:grid;gap:.35rem}
+.nocmp .pair{font-size:var(--step-0);font-weight:600;display:flex;flex-wrap:wrap;gap:.4rem;align-items:center}
+.nocmp .vs{color:var(--kw-red);font-weight:700;font-size:var(--step--1)}
+.nocmp p{margin:0;font-size:var(--step--1);color:var(--ink-2)}
+
+/* ------------------------------------------------------------- companies */
+.pgrid{display:grid;gap:var(--sp-4);grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.pcard{
+  background:var(--surface-1);border:1px solid var(--line-soft);border-radius:var(--r-md);
+  padding:var(--sp-4);text-align:center
+}
+.pcard__icon{font-size:1.5rem;display:block;margin-bottom:var(--sp-2)}
+.pcard__pct{
+  font-family:var(--f-display);font-weight:700;font-size:clamp(2rem,7vw,2.75rem);
+  line-height:1;letter-spacing:-.03em;display:block
+}
+.pcard__n{font-size:.6875rem;color:var(--ink-3);letter-spacing:.06em;text-transform:uppercase;margin-top:var(--sp-2);display:block}
+.pcard__lab{font-size:var(--step--1);color:var(--ink-2);margin-top:var(--sp-2);display:block;line-height:1.35}
+.pcard__meter{height:6px;border-radius:var(--r-pill);background:var(--surface-2);overflow:hidden;margin-top:var(--sp-3)}
+.pcard__meter i{display:block;height:100%;background:var(--series-recycling);border-radius:var(--r-pill);transition:width 1s var(--ease)}
+
+.cotable{width:100%;border-collapse:collapse;font-size:var(--step--1);min-width:720px}
+.cotable th,.cotable td{padding:.55rem .5rem;border-bottom:1px solid var(--line-soft);text-align:center;
+  /* positioned so the .sr-only spans inside cells resolve against the cell and not the
+     initial containing block — otherwise they escape .scrollx and widen the whole page */
+  position:relative}
+.cotable th:first-child,.cotable td:first-child{text-align:left}
+.cotable thead th{
+  color:var(--ink-3);font-size:.625rem;letter-spacing:.06em;text-transform:uppercase;
+  font-weight:600;vertical-align:bottom
+}
+.cotable tbody th{text-align:left;font-weight:600;color:var(--ink);white-space:nowrap}
+.cotable .yes{color:var(--series-recycling);font-weight:700}
+.cotable .no{color:var(--ink-3)}
+.scrollx{overflow-x:auto;-webkit-overflow-scrolling:touch;margin-top:var(--sp-4)}
+.costrip{display:grid;gap:var(--sp-3);margin-top:var(--sp-5)}
+.co{background:var(--surface-1);border:1px solid var(--line-soft);border-radius:var(--r-md);overflow:hidden}
+.co>summary{
+  cursor:pointer;padding:var(--sp-4);display:flex;justify-content:space-between;gap:var(--sp-3);
+  align-items:center;font-family:var(--f-display);font-weight:600;list-style:none
+}
+.co>summary::-webkit-details-marker{display:none}
+.co>summary::after{content:"+";color:var(--ink-3);font-weight:400;font-size:1.25rem}
+.co[open]>summary::after{content:"−"}
+.co__sector{font:inherit;font-family:var(--f-body);font-weight:400;font-size:var(--step--1);color:var(--ink-3)}
+.co__body{padding:0 var(--sp-4) var(--sp-4)}
+.co__body ul{margin:0 0 var(--sp-3);padding-left:1.1rem;color:var(--ink-2);font-size:var(--step--1)}
+.co__body li{margin-bottom:.35rem}
+.co__links{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+.co__links a{
+  font-size:.6875rem;border:1px solid var(--line);border-radius:var(--r-pill);
+  padding:.25rem .65rem;text-decoration:none;color:var(--ink-2)
+}
+.co__links a:hover{border-color:var(--kw-green);color:var(--kw-green)}
+
+/* -------------------------------------------------------------- timeline */
+.tl{position:relative;margin-top:var(--sp-6)}
+.tl__scroll{overflow-x:auto;-webkit-overflow-scrolling:touch;padding-bottom:var(--sp-4)}
+.tl__track{display:flex;gap:0;min-width:900px;position:relative;padding-top:var(--sp-6)}
+.tl__track::before{
+  content:"";position:absolute;top:calc(var(--sp-6) + 26px);left:0;right:0;height:3px;
+  background:linear-gradient(90deg,var(--series-disposal),var(--gold),var(--series-recycling));
+  border-radius:var(--r-pill);opacity:.55
+}
+.tl__node{position:relative;flex:1 1 0;min-width:110px;display:flex;flex-direction:column;align-items:center;text-align:center}
+.tl__dot{
+  width:54px;height:54px;border-radius:var(--r-pill);display:grid;place-items:center;font-size:1.375rem;
+  background:var(--surface-1);border:3px solid var(--line);position:relative;z-index:2;
+  transition:transform .18s var(--ease),border-color .18s var(--ease)
+}
+.tl__node[data-kind="goal"] .tl__dot{border-color:var(--series-recycling)}
+.tl__node[data-kind="near"] .tl__dot{border-color:var(--gold)}
+.tl__year{font-family:var(--f-display);font-weight:700;font-size:var(--step-1);margin-top:var(--sp-3)}
+.tl__goal{font-size:var(--step--1);color:var(--ink-2);padding-inline:.4rem;margin-top:.2rem;line-height:1.35}
+.tl__node:hover .tl__dot,.tl__node:focus-visible .tl__dot{transform:scale(1.12);border-color:var(--kw-green)}
+.tl__card{
+  position:absolute;top:calc(100% + 10px);left:50%;transform:translateX(-50%);
+  width:270px;background:var(--ink);color:var(--surface-0);border-radius:var(--r-md);
+  padding:var(--sp-4);text-align:left;font-size:var(--step--1);line-height:1.45;
+  opacity:0;visibility:hidden;transition:opacity .16s linear;z-index:10;
+  box-shadow:0 14px 40px rgba(0,0,0,.3)
+}
+.tl__node:hover .tl__card,.tl__node:focus-within .tl__card{opacity:1;visibility:visible}
+.tl__card b{display:block;margin-bottom:.3rem}
+.tl__card .t{color:var(--gold);display:block;margin-bottom:.4rem}
+.tl__card .s{display:block;margin-top:.5rem;opacity:.7;font-size:.6875rem}
+.tl__hint{font-size:var(--step--1);color:var(--ink-3);margin-top:var(--sp-3)}
+
+/* ---------------------------------------------------------------- verdict */
+.verdict{background:var(--kw-black);color:#F2F1E6;border-radius:var(--r-lg);padding:var(--sp-6);position:relative;overflow:hidden}
+.verdict::after{
+  content:"♻";position:absolute;right:-1.5rem;bottom:-3rem;font-size:14rem;line-height:1;
+  color:rgba(242,241,230,.05);pointer-events:none
+}
+.verdict h2{font-size:clamp(1.625rem,5.5vw,2.5rem);margin-bottom:var(--sp-4);position:relative}
+.verdict p{color:#CFCEC2;position:relative;max-width:68ch}
+.verdict strong{color:#F2F1E6}
+.verdict__cols{display:grid;gap:var(--sp-4);margin:var(--sp-5) 0 0;position:relative}
+@media (min-width:800px){.verdict__cols{grid-template-columns:1fr 1fr}}
+.verdict__box{border:1px solid rgba(242,241,230,.18);border-radius:var(--r-md);padding:var(--sp-4)}
+.verdict__box h4{font-size:var(--step-0);letter-spacing:.1em;text-transform:uppercase;margin-bottom:var(--sp-3)}
+.verdict__box--for h4{color:var(--series-recycling)}
+.verdict__box--against h4{color:var(--series-disposal)}
+.verdict__box ul{margin:0;padding-left:1.1rem;font-size:var(--step--1);color:#CFCEC2}
+.verdict__box li{margin-bottom:.5rem}
+
+/* ---------------------------------------------------------------- sources */
+.srclist{list-style:none;margin:0;padding:0;display:grid;gap:var(--sp-4)}
+.srclist li{border-left:3px solid var(--kw-green);padding-left:var(--sp-4)}
+.srclist b{display:block;font-family:var(--f-display)}
+.srclist span{display:block;font-size:var(--step--1);color:var(--ink-2);margin:.2rem 0}
+.srclist a{font-size:var(--step--1);color:var(--kw-green);word-break:break-word}
+
+.foot{padding:var(--sp-7) 0;border-top:1px solid var(--line);color:var(--ink-3);font-size:var(--step--1)}
+
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none !important;transition:none !important}
+}
+
+/* ==========================================================================
+   PROJECTIONS — visually fenced off from the published figures above.
+   Modelled numbers get a distinct, cooler treatment and a standing banner so
+   a reader skimming the page cannot mistake them for official data.
+   ========================================================================== */
+.projzone{position:relative;border-top:3px solid var(--series-recovery)}
+.projbanner{
+  display:flex;align-items:center;gap:var(--sp-3);flex-wrap:wrap;
+  background:var(--series-recovery);color:#fff;border-radius:var(--r-md);
+  padding:var(--sp-3) var(--sp-4);font-size:var(--step--1);font-weight:600;
+  margin-bottom:var(--sp-5)
+}
+.projbanner b{font-size:var(--step-0)}
+.formula{
+  font-family:ui-monospace,SFMono-Regular,Menlo,Consolas,monospace;
+  font-size:var(--step--1);background:var(--surface-2);border:1px solid var(--line-soft);
+  border-radius:var(--r-sm);padding:var(--sp-3) var(--sp-4);overflow-x:auto;color:var(--ink)
+}
+
+/* back-test panel */
+.bt{display:grid;gap:var(--sp-3);grid-template-columns:1fr;margin:var(--sp-4) 0}
+@media (min-width:700px){.bt{grid-template-columns:repeat(3,1fr)}}
+.bt__cell{background:var(--surface-2);border:1px solid var(--line-soft);border-radius:var(--r-md);padding:var(--sp-4);text-align:center}
+.bt__cell--err{border-color:var(--series-disposal)}
+.bt__n{display:block;font-family:var(--f-display);font-weight:700;font-size:var(--step-3);line-height:1}
+.bt__cell--err .bt__n{color:var(--series-disposal)}
+.bt__l{display:block;font-size:var(--step--1);color:var(--ink-2);margin-top:var(--sp-2);line-height:1.35}
+
+/* scenario controls */
+.ctl{margin-bottom:var(--sp-4)}
+.ctl__lab{display:block;font-size:.6875rem;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3);margin-bottom:var(--sp-2);font-weight:600}
+.ctl__row{display:flex;flex-wrap:wrap;gap:var(--sp-2)}
+.chip{
+  font:inherit;font-size:var(--step--1);cursor:pointer;
+  background:var(--surface-1);color:var(--ink-2);
+  border:1px solid var(--line);border-radius:var(--r-pill);padding:.45rem .9rem;
+  transition:border-color .15s var(--ease),color .15s var(--ease),background .15s var(--ease)
+}
+.chip:hover{border-color:var(--series-recovery);color:var(--ink)}
+.chip[aria-checked="true"]{background:var(--series-recovery);border-color:var(--series-recovery);color:#fff;font-weight:600}
+
+/* projection chart marks */
+.proj__band{fill:var(--series-recovery);opacity:.14}
+.proj__line{fill:none;stroke:var(--series-recovery);stroke-width:2;stroke-linejoin:round;stroke-linecap:round;stroke-dasharray:7 4}
+.proj__dot{fill:var(--series-recovery);stroke:var(--surface-1);stroke-width:2}
+.projnote{font-size:var(--step--1);color:var(--ink-2);margin:var(--sp-4) 0 0}
+
+#projLimits ul,#projNoRate ul{margin:0;padding-left:1.1rem;color:var(--ink-2);font-size:var(--step--1)}
+#projLimits li{margin-bottom:.45rem}
+
+/* ==========================================================================
+   JUMP NAV + AT A GLANCE
+   ========================================================================== */
+.jump{
+  position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--surface-0) 88%,transparent);
+  backdrop-filter:blur(10px);border-bottom:1px solid var(--line-soft);
+  transform:translateY(-100%);opacity:0;pointer-events:none;
+  transition:transform .28s var(--ease),opacity .28s var(--ease)
+}
+.jump.is-on{transform:none;opacity:1;pointer-events:auto}
+.jump__in{display:flex;align-items:center;gap:var(--sp-4);height:52px;
+  /* keep the last links clear of the fixed theme button */
+  padding-right:52px}
+.jump__brand{font-family:var(--f-display);font-weight:700;font-size:var(--step--1);white-space:nowrap;flex:0 0 auto}
+@media (max-width:760px){.jump__brand{display:none}}
+.jump__list{
+  display:flex;gap:var(--sp-4);list-style:none;margin:0;padding:0;
+  overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none
+}
+.jump__list::-webkit-scrollbar{display:none}
+.jump__list a{
+  display:block;padding:.35rem 0;font-size:var(--step--1);color:var(--ink-3);
+  text-decoration:none;white-space:nowrap;border-bottom:2px solid transparent;
+  transition:color .15s var(--ease),border-color .15s var(--ease)
+}
+.jump__list a:hover{color:var(--ink)}
+.jump__list a.is-here{color:var(--kw-green);border-bottom-color:var(--kw-green);font-weight:600}
+/* anchored sections clear the sticky bar */
+:target{scroll-margin-top:64px}
+section[id]{scroll-margin-top:64px}
+
+.glance{background:var(--surface-1);border-bottom:1px solid var(--line-soft)}
+.glance__h{font-size:clamp(1.625rem,5.5vw,2.5rem);text-align:center;margin-bottom:var(--sp-3)}
+.glance__sub{text-align:center;color:var(--ink-2);max-width:52ch;margin:0 auto var(--sp-7)}
+.glance__flow{display:grid;gap:var(--sp-6);align-items:start}
+@media (min-width:980px){.glance__flow{grid-template-columns:1fr auto 1fr;gap:var(--sp-5)}}
+.glance__lab{font-size:var(--step-1);margin-bottom:var(--sp-4);text-align:center}
+.glance__note{font-size:var(--step--1);color:var(--ink-3);text-align:center;margin:var(--sp-4) 0 0}
+.glance__arrow{
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:var(--sp-2);
+  color:var(--ink-3);align-self:center
+}
+.glance__arrow svg{width:120px;height:40px}
+.glance__arrow span{font-size:.6875rem;letter-spacing:.14em;text-transform:uppercase;font-weight:600}
+@media (max-width:979px){.glance__arrow svg{transform:rotate(90deg);width:70px;height:40px}}
+
+.glance__rings{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-4)}
+@media (min-width:560px) and (max-width:979px){.glance__rings{grid-template-columns:repeat(4,1fr)}}
+.gring{position:relative;text-align:center}
+.gring svg{width:88px;height:88px;display:block;margin:0 auto}
+.gring .ring__bar{stroke:var(--series-recycling)}
+.gring__art{position:absolute;top:22px;left:50%;transform:translateX(-50%);width:26px;height:26px;color:var(--ink-3);display:block}
+.gring__art svg{width:26px;height:26px}
+.gring__n{
+  position:absolute;top:52px;left:50%;transform:translateX(-50%);
+  font-family:var(--f-display);font-weight:700;font-size:var(--step-1);line-height:1
+}
+.gring__l{display:block;font-family:var(--f-display);font-weight:600;font-size:var(--step-0);margin-top:var(--sp-3)}
+.gring__k{display:block;font-size:.6875rem;color:var(--ink-3);margin-top:.15rem;line-height:1.35}
+
+.glance__now{display:grid;grid-template-columns:repeat(2,1fr);gap:var(--sp-4)}
+@media (min-width:560px) and (max-width:979px){.glance__now{grid-template-columns:repeat(4,1fr)}}
+.gnow{
+  text-align:center;background:var(--surface-2);border:1px solid var(--line-soft);
+  border-radius:var(--r-md);padding:var(--sp-4) var(--sp-3)
+}
+.gnow__n{
+  display:block;font-family:var(--f-display);font-weight:700;letter-spacing:-.03em;
+  font-size:clamp(1.5rem,5vw,2rem);line-height:1;color:var(--series-disposal)
+}
+.gnow__l{display:block;font-size:var(--step--1);color:var(--ink-2);margin-top:var(--sp-2);line-height:1.35}
+.gnow__y{display:block;font-size:.6875rem;color:var(--ink-3);margin-top:var(--sp-2)}
+
+.glance__keys{
+  list-style:none;margin:var(--sp-7) 0 0;padding:0;
+  display:grid;gap:var(--sp-4);grid-template-columns:1fr
+}
+@media (min-width:860px){.glance__keys{grid-template-columns:repeat(3,1fr)}}
+.gkey{
+  display:flex;gap:var(--sp-4);align-items:flex-start;
+  border-top:2px solid var(--kw-green);padding-top:var(--sp-4)
+}
+.gkey__art{flex:0 0 auto;width:32px;height:32px;color:var(--kw-green);display:block}
+.gkey__art svg{width:32px;height:32px}
+.gkey b{display:block;font-family:var(--f-display);font-size:var(--step-0);margin-bottom:.25rem}
+.gkey span{font-size:var(--step--1);color:var(--ink-2);line-height:1.45}
+
+/* the dashboard cards take the illustration set too */
+.tcard__art{width:34px;height:34px;color:var(--ink-3);display:block;margin-bottom:var(--sp-2)}
+.tcard__art svg{width:34px;height:34px}
+
+/* ------------------------------------------------------------------ print */
+@media print{
+  .jump,.themebtn,.tabletoggle,.tl__card{display:none !important}
+  body{background:#fff;color:#000}
+  .scrollx[hidden]{display:block !important}
+  .card,.chartcard,.tcard,.gnow{break-inside:avoid;border:1px solid #ccc}
+  .hero,.verdict{background:#fff !important;color:#000 !important}
+  .hero h1,.verdict h2{color:#000}
+  a[href^="http"]::after{content:" (" attr(href) ")";font-size:9px;word-break:break-all}
+  .tl__scroll,.scrollx{overflow:visible !important}
+}
+
+.hero__disc{
+  font-size:.75rem;line-height:1.5;color:#8F8E82;max-width:62ch;
+  border-left:2px solid rgba(242,241,230,.22);padding-left:var(--sp-3);margin-top:var(--sp-4)
+}
+
+</style>
+<!-- ======================================================== HERO ======= -->
+<header class="hero">
+  <span class="hero__bar" aria-hidden="true"></span>
+  <div class="hero__sky" aria-hidden="true">
+    <svg viewBox="0 0 1200 220" preserveAspectRatio="xMidYMax slice" role="presentation">
+      <g fill="none" stroke="rgba(242,241,230,.16)" stroke-width="2">
+        <!-- Kuwait Towers -->
+        <line x1="250" y1="220" x2="250" y2="58"/>
+        <ellipse cx="250" cy="78" rx="38" ry="19" fill="rgba(0,122,61,.30)" stroke="rgba(242,241,230,.30)"/>
+        <ellipse cx="250" cy="126" rx="22" ry="11" fill="rgba(0,122,61,.20)" stroke="rgba(242,241,230,.24)"/>
+        <line x1="205" y1="220" x2="205" y2="104"/>
+        <ellipse cx="205" cy="118" rx="26" ry="13" fill="rgba(0,122,61,.22)" stroke="rgba(242,241,230,.26)"/>
+        <line x1="298" y1="220" x2="298" y2="140"/>
+        <circle cx="298" cy="146" r="9" fill="rgba(201,146,46,.35)" stroke="rgba(242,241,230,.26)"/>
+        <!-- skyline -->
+        <path d="M0 220 V176 h44 v-32 h34 v52 h40 v-74 h30 v74"/>
+        <path d="M340 220 v-92 l30 -26 l30 26 v92"/>
+        <path d="M430 220 v-60 h56 v-40 h26 v100"/>
+        <path d="M540 220 v-118 l26 -22 l26 22 v118"/>
+        <path d="M630 220 v-74 h40 v-44 h30 v118"/>
+        <path d="M730 220 v-54 h36 v-62 h34 v116"/>
+        <path d="M830 220 v-96 h30 v-30 h32 v126"/>
+        <path d="M920 220 v-62 h50 v-34 h28 v96"/>
+        <path d="M1020 220 v-84 h34 v-40 h30 v124"/>
+        <path d="M1110 220 v-52 h44 v-30 h46 v82"/>
+      </g>
+    </svg>
+  </div>
+  <div class="wrap hero__in">
+    <p class="eyebrow" style="color:var(--gold)">♻️ Independent analysis · Every figure sourced to an official publication</p>
+    <h1>Kuwait’s<br><em>Recycling</em><br>Goals</h1>
+    <p class="hero__ar">أهداف الكويت لإعادة التدوير</p>
+    <p class="hero__sub">Where Kuwait Wants to Be — and Are Companies Helping Us Get There?</p>
+    <p class="muted" style="color:#B9B8AB;max-width:56ch">
+      Every target on this page is printed in an official Kuwaiti government document, and every
+      one carries its source. Nothing is estimated. Where Kuwait publishes no number, this page
+      says so instead of inventing one.
+    </p>
+    <p class="hero__disc">
+      This is an independent analysis. It is not published by, affiliated with or endorsed by the
+      State of Kuwait, the Environment Public Authority, the Central Statistical Bureau or the
+      United Nations — it quotes and links their published work.
+    </p>
+    <div class="hero__stats">
+      <div class="hero__stat"><b>2040</b><span>The horizon of Kuwait’s National Waste Management Strategy</span></div>
+      <div class="hero__stat"><b>25</b><span>Targets under 5 objectives, set by the Environment Public Authority</span></div>
+      <div class="hero__stat"><b>11%</b><span>Of all waste actually recycled in 2018 — the measured baseline</span></div>
+      <div class="hero__stat" style="border-color:var(--gold)"><b style="color:var(--gold)">0.76%</b><span>Kuwait’s national recycling rate in 2021 — the lowest ever recorded</span></div>
+    </div>
+  </div>
+</header>
+
+<main>
+<nav class="jump" id="jump" aria-label="Jump to a section">
+  <div class="wrap jump__in">
+    <span class="jump__brand">♻️ Kuwait&rsquo;s Recycling Goals</span>
+    <ul class="jump__list">
+      <li><a href="#glance">At a glance</a></li>
+      <li><a href="#strategy">Strategy</a></li>
+      <li><a href="#targets">2040 targets</a></li>
+      <li><a href="#sdg12">SDG 12</a></li>
+      <li><a href="#indicator">The data</a></li>
+      <li><a href="#reality">Goals vs reality</a></li>
+      <li><a href="#companies">Companies</a></li>
+      <li><a href="#projection">Projection</a></li>
+      <li><a href="#verdict">Can Kuwait do it?</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ================================================== AT A GLANCE ====== -->
+<section class="section--tight glance" id="glance">
+  <div class="wrap">
+    <p class="eyebrow" style="text-align:center">The whole section in one screen</p>
+    <h2 class="glance__h">Kuwait&rsquo;s recycling goals, at a glance</h2>
+    <p class="glance__sub">Four official targets for 2040. One measured starting point. One direction of travel.</p>
+
+    <div class="glance__flow">
+      <div class="glance__col glance__col--goal">
+        <h3 class="glance__lab">🎯 Where Kuwait says it is going</h3>
+        <div class="glance__rings" id="glanceRings"></div>
+        <p class="glance__note">Set by the Environment Public Authority in the National Waste Management Strategy 2040.</p>
+      </div>
+
+      <div class="glance__arrow" aria-hidden="true">
+        <svg viewBox="0 0 120 40" role="presentation">
+          <defs><marker id="ah" markerWidth="8" markerHeight="8" refX="6" refY="4" orient="auto">
+            <path d="M0,0 L8,4 L0,8 Z" fill="currentColor"/></marker></defs>
+          <line x1="4" y1="20" x2="104" y2="20" stroke="currentColor" stroke-width="2"
+                stroke-dasharray="6 5" marker-end="url(#ah)"/>
+        </svg>
+        <span>16 years</span>
+      </div>
+
+      <div class="glance__col glance__col--now">
+        <h3 class="glance__lab">📍 Where Kuwait actually is</h3>
+        <div class="glance__now" id="glanceNow"></div>
+        <p class="glance__note">Latest published figures. The national recycling rate has fallen in five of its six recorded year-on-year changes.</p>
+      </div>
+    </div>
+
+    <ul class="glance__keys" id="glanceKeys"></ul>
+  </div>
+</section>
+
+
+<!-- ============================================ OFFICIAL WASTE STRATEGY = -->
+<section class="section" id="strategy">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">♻️ Official Kuwait waste strategy</p>
+      <h2>The Kuwait National Waste Management Strategy 2040</h2>
+      <p>Kuwait’s waste-management goals are not aspirations scattered across speeches. They sit in a
+      single strategy — <b>KNWMS 2040</b> — developed by the Kuwait Environment Public Authority over
+      several years under the eMISKWaste project, and published with its targets, its deadlines and
+      the authority responsible for each one.</p>
+    </div>
+
+    <div class="card" style="margin-bottom:var(--sp-5)">
+      <p class="eyebrow">The vision, in the strategy’s own words</p>
+      <blockquote style="margin:0 0 var(--sp-4);font-family:var(--f-display);font-size:var(--step-2);line-height:1.35">
+        <span id="knwmsVision"></span>
+      </blockquote>
+      <div id="knwmsMeta" style="display:flex;flex-wrap:wrap;gap:var(--sp-2)"></div>
+    </div>
+
+    <div class="grid grid--2" style="align-items:start">
+      <div class="card">
+        <p class="eyebrow">The five-step waste hierarchy</p>
+        <h3 style="font-size:var(--step-2);margin-bottom:var(--sp-4)">Recycling is the third choice, not the first</h3>
+        <p class="tcard__note" style="margin-bottom:var(--sp-4)">The strategy is built on a ranked
+        hierarchy. Prevention beats reuse, reuse beats recycling, recycling beats recovery, and
+        everything beats disposal. A target of 30% recycling is therefore a floor on the third-best
+        outcome — not the ceiling of Kuwait’s ambition.</p>
+        <ul class="gvr__list" id="hierarchy"></ul>
+      </div>
+      <div>
+        <p class="eyebrow">Five objectives</p>
+        <div class="grid" id="objectives" style="gap:var(--sp-3)"></div>
+      </div>
+    </div>
+
+    <h3 style="font-size:var(--step-2);margin:var(--sp-7) 0 var(--sp-4)">All 25 targets, grouped by objective</h3>
+    <div class="costrip" id="targetList"></div>
+  </div>
+</section>
+
+<!-- ================================================= 2040 DASHBOARD ===== -->
+<section class="section" id="targets" style="background:var(--surface-2)">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">📊 Kuwait 2040 targets</p>
+      <h2>The four numbers Kuwait has committed to</h2>
+      <p>Each of these is printed in the Environment Public Authority’s Waste Management Atlas, in the
+      pages setting out the strategy’s 25 targets. No figure appears on this page unless it appears
+      in that document.</p>
+    </div>
+    <div class="grid grid--4" id="dashboard"></div>
+  </div>
+</section>
+
+<!-- ===================================================== STACKED CHART == -->
+<section class="section" id="chart">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">📈 Targets in proportion</p>
+      <h2>Kuwait’s Waste Management Targets</h2>
+      <p>Where every tonne of each stream is meant to end up by 2040. Read across: the green share is
+      recycled, the blue share is recovered some other way, the orange share is disposed of.</p>
+    </div>
+    <div class="chartcard" id="stackWrap">
+      <h3>Kuwait’s Waste Management Targets</h3>
+      <p class="chart__sub">Treatment split per waste stream, 2040 targets, per cent of the stream</p>
+      <ul class="legend">
+        <li><i style="background:var(--series-recycling)"></i> Recycling <span style="color:var(--ink-3)">(incl. soil application for sludge)</span></li>
+        <li><i style="background:var(--series-recovery)"></i> Other recovery <span style="color:var(--ink-3)">(incl. energy recovery)</span></li>
+        <li><i style="background:var(--series-disposal)"></i> Disposal</li>
+      </ul>
+      <div class="stack" id="stackChart"></div>
+      <button class="tabletoggle" type="button" data-target="stackTable" aria-expanded="false"
+              data-show="Hide the table" data-hide="Show these values as a table">Show these values as a table</button>
+      <div class="scrollx" hidden><table class="dtable" id="stackTable"></table></div>
+      <p class="srcline">
+        <b>Source:</b> Kuwait Environment Public Authority (KEPA), <i>Waste Management Atlas of Kuwait</i> —
+        Kuwait National Waste Management Strategy 2040, “5 Objectives and 25 Targets”, pp. 24–25.
+        <a href="https://epa.gov.kw/Portals/0/PDF/Atlas_En.pdf" target="_blank" rel="noopener">epa.gov.kw/Portals/0/PDF/Atlas_En.pdf</a><br>
+        <b>Note on WEEE:</b> the atlas states this stream’s target in two forms — the written target reads
+        “Safe disposal of WEEE (50 % collection rate)”, while the accompanying chart splits the stream
+        50 / 30 / 20. Both are reproduced here exactly as published, neither is reconciled by this page.<br>
+        <b>Note on sewage sludge:</b> the strategy allocates no disposal share at all, so that bar has two
+        segments rather than three.
+      </p>
+    </div>
+  </div>
+</section>
+
+<!-- ====================================================== E-WASTE etc === -->
+<section class="section--tight" id="separation">
+  <div class="wrap">
+    <div class="grid grid--2">
+      <div class="card">
+        <p class="eyebrow">🗑️ Waste separation at the source</p>
+        <h3 style="font-size:var(--step-2);margin-bottom:var(--sp-4)">The part that depends on households</h3>
+        <blockquote style="margin:0 0 var(--sp-4);color:var(--ink-2);border-left:3px solid var(--kw-green);padding-left:var(--sp-4)">
+          <span id="separationText"></span>
+        </blockquote>
+        <div class="pgrid" id="separationStreams"></div>
+      </div>
+      <div class="card" id="dataGoal">
+        <p class="eyebrow">📊 Waste data</p>
+      </div>
+    </div>
+
+    <h3 style="font-size:var(--step-2);margin:var(--sp-7) 0 var(--sp-4)">🗑️ What the strategy says about landfills</h3>
+    <div class="grid grid--4" id="landfillGoals"></div>
+  </div>
+</section>
+
+<!-- ========================================================= SDG 12 ===== -->
+<section class="section" id="sdg12" style="background:var(--surface-2)">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">🌍 United Nations</p>
+      <h2>Kuwait and UN Sustainable Development Goal 12</h2>
+      <p><b>“Responsible Consumption and Production.”</b> SDG 12 is the goal that sits directly behind
+      Kuwait’s waste targets — and the one Kuwait scores itself lowest on but one.</p>
+    </div>
+
+    <div class="grid grid--2" style="align-items:start;margin-bottom:var(--sp-6)">
+      <div class="card">
+        <p class="eyebrow">What Kuwait’s own statistical bureau says Goal 12 means</p>
+        <p id="sdgSummary" style="font-family:var(--f-display);font-size:var(--step-1);line-height:1.45"></p>
+        <div id="sdgMeta" style="display:flex;flex-wrap:wrap;gap:var(--sp-2);margin-top:var(--sp-4)"></div>
+        <p class="srcline">Source: <a href="https://sdg.csb.gov.kw/g12_EN" target="_blank" rel="noopener">Kuwait Central Statistical Bureau — SDG Goal 12</a></p>
+      </div>
+      <div class="card" id="sdgAchievement" style="text-align:center"></div>
+    </div>
+
+    <h3 style="font-size:var(--step-2);margin-bottom:var(--sp-4)">The six things SDG 12 asks Kuwait to do</h3>
+    <div class="grid grid--3" id="sdgPillars" style="margin-bottom:var(--sp-6)"></div>
+
+    <h3 style="font-size:var(--step-2);margin-bottom:var(--sp-4)">Goal 12’s targets, as listed by Kuwait’s CSB</h3>
+    <ul class="gvr__list" id="sdgTargets" style="margin-bottom:var(--sp-6)"></ul>
+
+    <div class="warnbox" id="sdgCompanies"></div>
+  </div>
+</section>
+
+<!-- ================================================== LINE CHART ======== -->
+<section class="section" id="indicator">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">📉 Real data over time</p>
+      <h2>Kuwait National Recycling Indicator Over Time</h2>
+      <p>Every year Kuwait’s Central Statistical Bureau publishes for indicator 12.5.1 — all of them,
+      unmodified. No year is estimated, smoothed or filled in.</p>
+    </div>
+    <div class="chartcard" id="lineWrap">
+      <h3>Kuwait National Recycling Indicator Over Time</h3>
+      <p class="chart__sub">Indicator 12.5.1 — “National recycling rate, tons of material recycled”, 2015–2021, Kuwait Central Statistical Bureau</p>
+      <div class="linewrap" id="lineChart"></div>
+      <button class="tabletoggle" type="button" data-target="lineTable" aria-expanded="false"
+              data-show="Hide the table" data-hide="Show year, value, unit and source as a table">Show year, value, unit and source as a table</button>
+      <div class="scrollx" hidden><table class="dtable" id="lineTable"></table></div>
+      <p class="srcline">
+        <b>Sources:</b>
+        <a href="https://sdg.csb.gov.kw/G12_Idicator_EN?id=122" target="_blank" rel="noopener">Kuwait Central Statistical Bureau — SDG portal, indicator 12.5.1</a> ·
+        <a href="https://kuwait.un.org/sites/default/files/2023-09/VNR2_English_Final.pdf" target="_blank" rel="noopener">State of Kuwait, Second Voluntary National Review (VNR2), 2023, p. 73</a>
+      </p>
+    </div>
+    <div class="warnbox" id="indicatorMeaning" style="margin-top:var(--sp-5)"></div>
+  </div>
+</section>
+
+<!-- ============================================== GOALS VS REALITY ====== -->
+<section class="section" id="reality" style="background:var(--surface-2)">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">⚖️ The honest comparison</p>
+      <h2>Goals vs Reality</h2>
+      <p>On the left, what Kuwait has committed to. On the right, what Kuwait has actually measured.
+      The two columns are deliberately <b>not</b> wired together — because in most cases the official
+      target and the official statistic do not measure the same thing.</p>
+    </div>
+
+    <div class="gvr" style="margin-bottom:var(--sp-7)">
+      <div class="gvr__col">
+        <h3>🇰🇼 Kuwait’s targets</h3>
+        <ul class="gvr__list" id="kwTargets"></ul>
+      </div>
+      <div class="gvr__col">
+        <h3>📊 Current / latest available data</h3>
+        <ul class="gvr__list" id="kwReality"></ul>
+      </div>
+    </div>
+
+    <h3 style="font-size:var(--step-2);margin-bottom:var(--sp-3)">Where a progress comparison is legitimate</h3>
+    <p class="muted" style="max-width:62ch;margin-bottom:var(--sp-5)">Only two comparisons on this page
+    survive the test of using the same definition, the same waste category and the same measurement
+    method. They are drawn below. Everything else is listed underneath as what it is — not comparable.</p>
+    <div id="progressBars"></div>
+
+    <div class="warnbox" style="margin-top:var(--sp-6)">
+      <h3>❌ Comparisons this page refuses to draw</h3>
+      <p class="muted" style="font-size:var(--step--1)">Each pair below looks like a progress bar waiting
+      to happen. None of them is. Putting these numbers on one scale would produce a chart that is
+      confident and wrong.</p>
+      <ul class="nocmp" id="noCompare"></ul>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================== COMPANIES ======== -->
+<section class="section" id="companies">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">🏢 The private sector</p>
+      <h2>Are Companies Helping Kuwait Reach Its Recycling Goals?</h2>
+      <p><span class="js-n">—</span> large companies operating in Kuwait, researched against their own
+      published disclosures. Here is what share of them report each practice.</p>
+    </div>
+
+    <div class="warnbox" id="companyCaveat" style="margin-bottom:var(--sp-6)"></div>
+
+    <div class="pgrid" id="practiceCards" style="margin-bottom:var(--sp-5)"></div>
+
+    <div class="card" style="margin-bottom:var(--sp-6)">
+      <p class="eyebrow">What each practice had to show to be counted</p>
+      <ul id="practiceDefs" style="color:var(--ink-2);font-size:var(--step--1);padding-left:1.1rem;margin:0"></ul>
+    </div>
+
+    <h3 style="font-size:var(--step-2);margin-bottom:var(--sp-3)">The full matrix</h3>
+    <div class="scrollx"><table class="cotable" id="companyMatrix"></table></div>
+
+    <h3 style="font-size:var(--step-2);margin:var(--sp-7) 0 var(--sp-3)">The evidence, company by company</h3>
+    <div class="costrip" id="companyList"></div>
+
+    <div class="card" id="companyLink" style="margin-top:var(--sp-6)"></div>
+  </div>
+</section>
+
+<!-- ================================================== PROJECTIONS ======= -->
+<section class="section projzone" id="projection">
+  <div class="wrap">
+    <div class="projbanner">
+      <span>⚠️</span>
+      <b>Everything below this line is a projection, not an official figure.</b>
+      <span>No Kuwaiti government body has published these numbers. The method, its inputs and its measured error are all shown.</span>
+    </div>
+
+    <div class="sec-head">
+      <p class="eyebrow">🔮 Waste production, projected</p>
+      <h2>How Much Waste Will Kuwait Produce?</h2>
+      <p>SDG target 12.5 asks Kuwait to <b>reduce waste production</b> by 2030, and the
+      KNWMS 2040 sets its targets as shares of whatever Kuwait generates. Both depend on a
+      number nobody has published: how much waste is coming. This section projects it —
+      openly, with the assumptions exposed and adjustable.</p>
+    </div>
+
+    <div class="card" id="projMethod" style="margin-bottom:var(--sp-5)"></div>
+    <div class="card" id="projBacktest" style="margin-bottom:var(--sp-6)"></div>
+
+    <div class="chartcard" id="projWrap">
+      <h3>Projected Municipal Solid Waste Generated in Kuwait</h3>
+      <p class="chart__sub">Tonnes per year, 2024–2040 · change an assumption and the chart, the totals and the table all move with it</p>
+      <div id="projControls"></div>
+      <div class="linewrap" id="projChart"></div>
+      <p class="projnote" id="projScenarioNote"></p>
+      <button class="tabletoggle" type="button" data-target="projTable" aria-expanded="false"
+              data-show="Hide the table" data-hide="Show the projected series as a table">Show the projected series as a table</button>
+      <div class="scrollx" hidden><table class="dtable" id="projTable"></table></div>
+      <p class="srcline">
+        <b>Inputs:</b> <a href="https://population.un.org/wpp/" target="_blank" rel="noopener">UN World Population Prospects 2024, medium variant</a> ·
+        <a href="https://epa.gov.kw/Portals/0/PDF/Atlas_En.pdf" target="_blank" rel="noopener">Kuwait EPA, Waste Management Atlas — 1.6 kg per person per day</a><br>
+        <b>Output:</b> a projection by this page. Neither the UN nor the Kuwait EPA publishes these tonnages.
+      </p>
+    </div>
+
+    <div class="pgrid" id="projHeadline" style="margin-top:var(--sp-5)"></div>
+
+    <div class="grid grid--2" style="align-items:start;margin-top:var(--sp-6)">
+      <div class="warnbox" id="projNoRate"></div>
+      <div class="warnbox" id="projLimits"></div>
+    </div>
+
+    <h3 style="font-size:var(--step-2);margin:var(--sp-7) 0 var(--sp-3)">🇰🇼 What Kuwait itself has said about the future</h3>
+    <p class="muted" style="max-width:62ch;margin-bottom:var(--sp-5)">These are not projections by this
+    page. Each one is a dated commitment or scenario published by the State of Kuwait.</p>
+    <ul class="gvr__list" id="projOfficial"></ul>
+
+    <h3 style="font-size:var(--step-2);margin:var(--sp-7) 0 var(--sp-3)">📉 The other series Kuwait publishes — and why it argues for 2026</h3>
+    <div class="chartcard">
+      <div class="scrollx"><table class="dtable" id="projHazard"></table></div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================== TIMELINE ======== -->
+<section class="section" id="timeline-section" style="background:var(--surface-2)">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">🕰️ Milestones</p>
+      <h2>Kuwait’s Road Toward Better Waste Management</h2>
+      <p>Only milestones with a source. Hover or focus a point to see the goal, the target, the year
+      and where it comes from.</p>
+    </div>
+    <div class="tl">
+      <div class="tl__scroll">
+        <div class="tl__track" id="timeline"></div>
+      </div>
+      <p class="tl__hint">↔ Scroll the timeline sideways on a small screen. Tab through the points to read them with a keyboard.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== VERDICT ======== -->
+<section class="section" id="verdict">
+  <div class="wrap">
+    <div class="verdict">
+      <p class="eyebrow" style="color:var(--gold)">The question this section exists to answer</p>
+      <h2>Can Kuwait Reach Its Recycling Goals?</h2>
+
+      <p><b>On the evidence collected here, the honest answer is: not on the current trajectory — and
+      the reason is not mainly the targets, it is the measurement.</b></p>
+
+      <p>Kuwait’s targets are real, dated and owned. The strategy names the responsible authority for
+      each of its 25 targets and sets 2040 as the horizon, with 2030 as a waypoint. That is more
+      structure than a great many national waste plans have.</p>
+
+      <p>But three things in the record cut against the goals being met on time. First, the one
+      indicator Kuwait publishes over a run of years — the national recycling rate — is
+      <strong>falling, not rising</strong>: 2.94% in 2015 down to 0.76% in 2021, described in Kuwait’s
+      own review to the UN as “the lowest rate recorded”. Second, the measured baseline is far from
+      the destination: 11% of all waste recycled in 2018 against high-recycling countries at around
+      50%, with 47% of waste going to municipal landfills. Third, and most telling, Kuwait cannot yet
+      check its own progress against most of these targets — there is no published baseline for the
+      50% e-waste collection target, none for the 80% sludge target, and no published
+      municipal-solid-waste recycling rate to set against the 30% target. The national total itself is
+      a range, 37 to 43 million tonnes, because parts of it are estimated.</p>
+
+      <p>That last point is why the December 2026 data deadline matters more than it looks. A target
+      you cannot measure cannot be managed, and Kuwait has given itself a hard date to fix exactly
+      that. <strong>Whether Kuwait reaches its 2040 goals is, on this evidence, still open — but
+      whether it will be able to tell is decided in 2026.</strong></p>
+
+      <div class="verdict__cols">
+        <div class="verdict__box verdict__box--for">
+          <h4>✓ What points toward yes</h4>
+          <ul>
+            <li>A published national strategy with 25 targets, named owners, action plans and a 2040 horizon.</li>
+            <li>A hard, dated commitment to publish waste data by 31 December 2026 — the precondition for everything else.</li>
+            <li>Financing instruments already named: public-private partnerships, extended producer responsibility, gate fees, RDF revenue.</li>
+            <li>A landfill ban on high-organic-content waste that targets the three sites emitting 96% of Kuwait’s landfill gas.</li>
+            <li>Real private-sector motion: of <span class="js-n">—</span> researched companies, most run recycling programmes and several now separate e-waste through the same local facility.</li>
+          </ul>
+        </div>
+        <div class="verdict__box verdict__box--against">
+          <h4>✗ What points toward no</h4>
+          <ul>
+            <li>The national recycling rate fell in five of the six year-on-year changes on record, to its lowest value in 2021.</li>
+            <li>11% of all waste recycled, and 94% of that is just minerals and metal — paper, plastic and glass barely register.</li>
+            <li>No published baseline for the e-waste, sludge or municipal-recycling targets, so progress toward them cannot currently be verified.</li>
+            <li>Kuwait scores its own SDG 12 achievement at 28.9%, and publishes no count at all for companies reporting on sustainability.</li>
+            <li>Waste separation at source — which the strategy says its success depends on — is the least common practice in the researched company sample.</li>
+          </ul>
+        </div>
+      </div>
+
+      <p class="tcard__note" style="color:#9D9C90;margin-top:var(--sp-5)">This answer is assembled only
+      from the sources listed below. It is not a forecast, and no official Kuwaiti source states a
+      probability of meeting these targets.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== SOURCES ======== -->
+<section class="section--tight" id="sources">
+  <div class="wrap">
+    <div class="sec-head">
+      <p class="eyebrow">🔗 Every source on this page</p>
+      <h2>Sources</h2>
+    </div>
+    <ul class="srclist" id="sourceList"></ul>
+  </div>
+</section>
+
+</main>
+
+<footer class="foot">
+  <div class="wrap">
+    <p>All targets and statistics on this page are reproduced from official State of Kuwait
+    publications and the United Nations, each linked above. Company information is drawn from those
+    companies’ own published sustainability and ESG disclosures and is a researched sample, not a
+    survey. Figures were verified in September 2026; official sources may have been updated since.</p>
+  </div>
+</footer>
+<script>
+/* ============================================================================
+   KUWAIT'S RECYCLING GOALS — verified data layer
+   ----------------------------------------------------------------------------
+   RULE OF THIS FILE: every number carries its source. Nothing is estimated,
+   interpolated or rounded into existence. If a figure is not in an official
+   document, it is not in here — it is recorded as `null` with a `gap` note.
+
+   Primary sources
+   S1  Kuwait Environment Public Authority (KEPA) — "Waste Management Atlas of
+       Kuwait", incl. the Kuwait National Waste Management Strategy 2040
+       (KNWMS 2040): 5 Objectives and 25 Targets, pp. 22–25.
+       https://epa.gov.kw/Portals/0/PDF/Atlas_En.pdf
+   S2  Kuwait Central Statistical Bureau (CSB) — SDG portal, Goal 12,
+       indicator 12.5.1. https://sdg.csb.gov.kw/G12_Idicator_EN?id=122
+   S3  State of Kuwait — The Second Voluntary National Review Report on the
+       SDGs (VNR2), 2023. https://kuwait.un.org/sites/default/files/2023-09/VNR2_English_Final.pdf
+   S4  Kuwait CSB — SDG portal, Goal 12 overview. https://sdg.csb.gov.kw/g12_EN
+   ========================================================================== */
+
+const SOURCES = {
+  S1: {
+    id:'S1',
+    org:'Kuwait Environment Public Authority (KEPA)',
+    title:'Waste Management Atlas of Kuwait — Kuwait National Waste Management Strategy 2040',
+    url:'https://epa.gov.kw/Portals/0/PDF/Atlas_En.pdf',
+    note:'Official EPA publication of the KNWMS 2040. Targets appear on pp. 24–25 ("5 Objectives and 25 Targets"). Strategy developed with the Fraunhofer Institute UMSICHT under the eMISKWaste project; waste reference years 2018–2020.'
+  },
+  S2: {
+    id:'S2',
+    org:'Kuwait Central Statistical Bureau (CSB)',
+    title:'SDG portal — Goal 12, indicator 12.5.1 "National recycling rate, tons of material recycled"',
+    url:'https://sdg.csb.gov.kw/G12_Idicator_EN?id=122',
+    note:'Kuwait’s official SDG database. The published table has two columns only — Year and Data — with no unit column.'
+  },
+  S3: {
+    id:'S3',
+    org:'State of Kuwait — Permanent National Steering Committee for Agenda 2030',
+    title:'The Second Voluntary National Review Report on the SDGs (VNR2), 2023',
+    url:'https://kuwait.un.org/sites/default/files/2023-09/VNR2_English_Final.pdf',
+    note:'Kuwait’s own report to the United Nations. p. 73 states the unit of indicator 12.5.1; Table 2 (p. 5) gives SDG achievement percentages for 2019.'
+  },
+  S4: {
+    id:'S4',
+    org:'Kuwait Central Statistical Bureau (CSB)',
+    title:'SDG portal — Goal 12: Ensure sustainable consumption and production patterns',
+    url:'https://sdg.csb.gov.kw/g12_EN',
+    note:'Official Kuwaiti statement of what SDG 12 and its targets mean for Kuwait.'
+  },
+  S5: {
+    id:'S5',
+    org:'Kuwait Central Statistical Bureau (CSB)',
+    title:'SDG portal — Goal 12, indicator 12.6.1 "Number of companies reporting sustainability"',
+    url:'https://sdg.csb.gov.kw/G12_Idicator_EN?id=123',
+    note:'The portal renders this indicator with a single row carrying no year and a value of 0 — i.e. no national figure has been published.'
+  }
+};
+
+/* ---------------------------------------------------------------------------
+   1. THE KNWMS 2040 — vision, hierarchy, objectives
+   ------------------------------------------------------------------------- */
+
+const KNWMS = {
+  name:'Kuwait National Waste Management Strategy 2040',
+  short:'KNWMS 2040',
+  owner:'Kuwait Environment Public Authority (KEPA)',
+  structure:'5 objectives · 25 targets · 25 action plans',
+  horizon:[2022, 2030, 2040],
+  source:'S1',
+  vision:'The vision of the National Waste Management Strategy Kuwait is developing an effective waste management system which minimizes the adverse effects of waste generation and management on human health and the environment while enabling the effective application of the five-step waste hierarchy to ensure efficient, safe and environmentally sound utilization of waste streams as resources.',
+  hierarchy:[
+    { step:'Prevention',          rank:'Most preferred' },
+    { step:'Preparing for re-use', rank:'' },
+    { step:'Recycling',           rank:'' },
+    { step:'Recovery',            rank:'' },
+    { step:'Disposal',            rank:'Least preferred' }
+  ],
+  objectives:[
+    { n:1, short:'Move towards environmentally sound waste management technologies',
+      long:'Moving towards environmentally sound waste management technologies in order to mitigate negative effects on human health and the environment.' },
+    { n:2, short:'Implement the five-step waste hierarchy',
+      long:'Moving towards a waste management system which implements the five-step waste hierarchy in order to stimulate resource efficiency.' },
+    { n:3, short:'Set clear responsibilities and legislation',
+      long:'Clearly defining public and private responsibilities and adopting legislation which is comprehensive and coherent and, after adoption, enforcing legislation.' },
+    { n:4, short:'Build up sufficient capabilities among actors in waste management',
+      long:'Ensuring that all actors in the waste management system have sufficient knowledge, skills, and equipment to fulfil their roles and responsibilities.' },
+    { n:5, short:'Make available all necessary information',
+      long:'Set up and implement a data provision plan to distribute relevant waste data to other authorities and public by EPA by 31st of December 2026.' }
+  ],
+  financing:[
+    'Involvement of private sector through public-private partnerships',
+    'Adjustment of gate fees',
+    'Extended producer responsibility',
+    'Gradual adjustment of waste charges',
+    'Generation of financing through increased recycling and utilisation of refuse derived fuel (RDF)'
+  ],
+  /* Verbatim from S1, p. 25 */
+  separationPlan:'What is most relevant for the citizens is that the success of the strategy depends on a better separation of waste at the sources. In order to achieve that, Kuwait will provide infrastructure to separate paper and other dry recyclables, but also hazardous components such as waste electronics or batteries from household waste.',
+  separationStreams:[
+    { icon:'📄', label:'Paper',                    detail:'Named in the strategy text as a stream Kuwait will provide separation infrastructure for.' },
+    { icon:'♻️', label:'Other dry recyclables',    detail:'Named in the strategy text alongside paper.' },
+    { icon:'🔌', label:'Waste electronics (WEEE)', detail:'Named as a hazardous component to be separated from household waste.' },
+    { icon:'🔋', label:'Batteries',                detail:'Named as a hazardous component to be separated from household waste.' },
+    { icon:'☣️', label:'Hazardous household waste', detail:'Target 20 of the 25: "Separate collection of hazardous household waste".' }
+  ]
+};
+
+/* ---------------------------------------------------------------------------
+   2. THE 2040 TARGETS — treatment splits per waste stream
+   Every percentage below is printed in S1, pp. 24–25.
+   ------------------------------------------------------------------------- */
+
+const TARGETS = [
+  {
+    id:'msw',
+    short:'Municipal Solid Waste',
+    icon:'🗑️',
+    stream:'Municipal Solid Waste',
+    headline:30,
+    headlineLabel:'recycling target',
+    deadline:2040,
+    split:[
+      { key:'recycling', label:'Recycling',      value:30 },
+      { key:'recovery',  label:'Other recovery', value:35 },
+      { key:'disposal',  label:'Disposal',       value:35 }
+    ],
+    targetText:'Waste hierarchy for municipal solid waste (30% recycling, 35% recovery)',
+    responsible:'KEPA, Kuwait Municipality, PAI',
+    source:'S1',
+    note:'Municipal solid waste is household waste plus household-like waste from companies. Kuwait generates 1.6 kg of it per person per day — above the GCC average of 1.5 kg and more than twice the global average of 0.74 kg.'
+  },
+  {
+    id:'cd',
+    short:'Construction & Demolition',
+    icon:'🏗️',
+    stream:'Construction & Demolition Waste',
+    headline:15,
+    headlineLabel:'recycling target',
+    deadline:2040,
+    split:[
+      { key:'recycling', label:'Recycling',      value:15 },
+      { key:'recovery',  label:'Other recovery', value:30 },
+      { key:'disposal',  label:'Disposal',       value:55 }
+    ],
+    targetText:'Construction & Demolition waste: 15 % recycling, 30 % recovery',
+    responsible:'KEPA, Kuwait Municipality, PAI',
+    source:'S1',
+    note:'The single largest waste stream in Kuwait: 22,500 thousand tonnes a year, 53% of all non-household waste. The recycling target is the lowest of the four because the volumes are so large.'
+  },
+  {
+    id:'weee',
+    short:'E-waste (WEEE)',
+    icon:'🔌',
+    stream:'Electronic Waste (WEEE)',
+    headline:50,
+    headlineLabel:'collection rate target',
+    deadline:2040,
+    split:[
+      { key:'recycling', label:'Recycling',      value:50 },
+      { key:'recovery',  label:'Other recovery', value:30 },
+      { key:'disposal',  label:'Disposal',       value:20 }
+    ],
+    targetText:'Safe disposal of WEEE (50 % collection rate)',
+    responsible:'KEPA',
+    source:'S1',
+    note:'The atlas states this target twice and in two forms. The written target reads "Safe disposal of WEEE (50 % collection rate)". The accompanying infographic splits the same stream 50% recycling / 30% other recovery / 20% disposal. Both are reproduced here exactly as published; the card headline uses the written target.',
+    caution:true
+  },
+  {
+    id:'sludge',
+    short:'Sewage Sludge',
+    icon:'🌱',
+    stream:'Sewage Sludge',
+    headline:80,
+    headlineLabel:'soil application / recycling target',
+    deadline:2040,
+    split:[
+      { key:'recycling', label:'Soil application (recycling)', value:80 },
+      { key:'recovery',  label:'Energy recovery',              value:20 }
+    ],
+    targetText:'Sewage sludge: 80 % soil application (recycling), 20 % energy recovery',
+    responsible:'KEPA, MPW, PAAFR',
+    source:'S1',
+    note:'The only stream where the strategy sends the large majority back into productive use. No share at all is allocated to disposal.'
+  }
+];
+
+/* The 25 targets, grouped under the objective each one serves (S1, p. 25).   */
+const TARGET_LIST = [
+  { objective:1, text:'Prohibit landfilling of waste with high organic content', who:'KM, MoH, KEPA, MPW, PAI' },
+  { objective:1, text:'Rehabilitate authorised landfills', who:'KEPA, KM' },
+  { objective:1, text:'Rehabilitate harmful unauthorised dumpsites', who:'KEPA, KM' },
+  { objective:1, text:'Prevent further unauthorised waste dumping', who:'KEPA' },
+  { objective:1, text:'Industrial hazardous waste: safe disposal, <1% export, 45% landfill', who:'KEPA, PAI' },
+  { objective:1, text:'Safe disposal of asbestos and other hazardous construction waste', who:'KEPA, KM, PAI' },
+  { objective:1, text:'100% incineration of medical hazardous waste', who:'KEPA, MoH' },
+  { objective:1, text:'Safe disposal of WEEE (50 % collection rate)', who:'KEPA' },
+  { objective:1, text:'Separate collection of hazardous household waste', who:'KM' },
+  { objective:2, text:'Waste hierarchy for municipal solid waste (30% recycling, 35% recovery)', who:'KEPA, KM, PAI' },
+  { objective:2, text:'Construction & Demolition waste: 15 % recycling, 30 % recovery', who:'KEPA, KM, PAI' },
+  { objective:2, text:'Sewage sludge: 80 % soil application (recycling), 20 % energy recovery', who:'KEPA, MPW, PAAFR' },
+  { objective:3, text:'Strengthen Environmental Protection Law', who:'KEPA' },
+  { objective:3, text:'Adapt Executive Regulations for relevant waste streams', who:'KEPA' },
+  { objective:3, text:'Allocate responsibilities of public authorities', who:'KEPA' },
+  { objective:3, text:'Develop enforcement system', who:'KEPA' },
+  { objective:4, text:'Capacity building: public sector', who:'KEPA, KM, MoH, MPW, PAI, KGAC' },
+  { objective:4, text:'Capacity building: non-household waste generators', who:'KEPA, waste producers' },
+  { objective:4, text:'Capacity building: waste management sector', who:'KM, MoH, MPW, PAI, KGAC' },
+  { objective:4, text:'Launch citizen’s awareness campaign', who:'KM' },
+  { objective:4, text:'Implement work safety regulations', who:'KEPA, MoH, (PAI)' },
+  { objective:5, text:'Provide waste data to KEPA', who:'KEPA, waste producers' },
+  { objective:5, text:'Implement waste monitoring system by KEPA', who:'KEPA' },
+  { objective:5, text:'Acquire monitoring equipment', who:'KEPA' },
+  { objective:5, text:'Distribute and publish waste data', who:'KEPA' }
+];
+
+/* Landfill targets get their own block — four of the 25 targets are about     */
+/* landfills and dumpsites, and they are the ones with a measurable baseline.  */
+const LANDFILL_GOALS = [
+  { icon:'🏚️', goal:'Rehabilitate authorised landfills',
+    detail:'Kuwait has 19 major landfill sites. Six are still in operation, and most are not properly engineered — no protective liner beneath the waste body and no landfill gas collection.', source:'S1' },
+  { icon:'⚠️', goal:'Rehabilitate harmful unauthorised dumpsites',
+    detail:'Unauthorised dumping sites are to be identified and remediated, not merely closed.', source:'S1' },
+  { icon:'🚫', goal:'Prevent further unauthorised waste dumping',
+    detail:'An enforcement system is one of the 25 targets in its own right, under objective 3.', source:'S1' },
+  { icon:'🔥', goal:'Prohibit landfilling of waste with high organic content',
+    detail:'Three municipal landfills — Al-Jahra, South of 7th Ring Road and Mina Abdullah — emit 96% of Kuwait’s landfill gas (45,500 m³ per hour of a national 47,500 m³ per hour). The ban targets exactly this.', source:'S1' }
+];
+
+/* ---------------------------------------------------------------------------
+   3. WHERE KUWAIT ACTUALLY IS — measured, published figures
+   ------------------------------------------------------------------------- */
+
+/* Treatment of all waste in Kuwait, 2018 (S1). Total 44,654 thousand t = 100% */
+const TREATMENT_2018 = {
+  year:2018,
+  unit:'thousand tonnes per year',
+  total:44654,
+  source:'S1',
+  rows:[
+    { label:'Municipal landfills',                    value:20995, pct:47 },
+    { label:'Clay used for backfilling',              value:14476, pct:32 },
+    { label:'Recycling',                              value:4822,  pct:11 },
+    { label:'Sand used for landfill construction',    value:4195,  pct:9  },
+    { label:'Solid industrial waste treatment centre',value:114,   pct:null, pctText:'<1' },
+    { label:'End-of-life vehicle treatment',          value:78,    pct:null, pctText:'<1' },
+    { label:'Medical waste incinerators',             value:5,     pct:null, pctText:'<1' }
+  ],
+  headline:'The estimated amount of recycled waste in Kuwait is 4.8 million tons per year. That is equivalent to an overall recycling rate of 11 % of the generated waste. For comparison, countries with high rates like Germany or South Korea recycle around 50 % of their waste.'
+};
+
+/* What actually gets recycled, by material, 2018 (S1) */
+const RECYCLED_BY_MATERIAL = {
+  year:2018, unit:'thousand tonnes per year', total:4822, source:'S1',
+  rows:[
+    { label:'Minerals',          value:3372 },
+    { label:'Metal',             value:1144 },
+    { label:'Paper',             value:118  },
+    { label:'Glass',             value:60   },
+    { label:'Used mineral oil',  value:44   },
+    { label:'Plastic',           value:35   },
+    { label:'End-of-life vehicles', value:35 },
+    { label:'Cardboard',         value:9    },
+    { label:'Batteries',         value:3    },
+    { label:'Others (WEEE, wood, cartridges, used cooking oil)', value:1 }
+  ],
+  note:'Two materials — minerals and metal — are 94% of everything Kuwait recycles. WEEE is not even reported on its own line; it sits inside a combined "others" category of 1 thousand tonnes a year.'
+};
+
+/* Landfill estate, 2020 (S1) */
+const LANDFILL_STATE = {
+  year:2020, source:'S1',
+  totalAreaKm2:19.8,
+  sites:19, inOperation:6,
+  volumeMillionM3:214.3,
+  gasM3PerHour:47500,
+  areaSplit:[
+    { label:'Closed',        km2:9.6, pct:48 },
+    { label:'In operation',  km2:8.3, pct:42 },
+    { label:'Rehabilitated', km2:2.0, pct:10 }
+  ],
+  note:'19.8 km² of Kuwait contains landfilled waste — 0.1% of the land area, or 2,800 football pitches.'
+};
+
+/* Household waste composition, 2018 (S1) */
+const HOUSEHOLD_COMPOSITION = {
+  year:2018, source:'S1',
+  totalKt:1439,
+  perCapitaKgDayHousehold:0.85,
+  perCapitaKgDayMSW:1.6,
+  benchmarkGlobal:0.74,
+  benchmarkGCC:1.5,
+  rows:[
+    { label:'Others',                  pct:26.2 },
+    { label:'Organic material',        pct:25.8 },
+    { label:'Plastics',                pct:16.7 },
+    { label:'Paper and cardboard',     pct:12.1 },
+    { label:'Fine fraction (<10 mm)',  pct:6.7  },
+    { label:'Compounds',               pct:5.9  },
+    { label:'Metals',                  pct:2.9  }
+  ]
+};
+
+/* ---------------------------------------------------------------------------
+   4. SDG 12 — indicator 12.5.1 over time
+   Values exactly as published by CSB (S2). Unit confirmed by Kuwait's own VNR2
+   (S3, p. 73). No year is interpolated; these are all the years CSB publishes.
+   ------------------------------------------------------------------------- */
+
+const INDICATOR_1251 = {
+  code:'12.5.1',
+  name:'National recycling rate, tons of material recycled',
+  publisher:'Kuwait Central Statistical Bureau',
+  columnHeader:'Data',
+  unitPublished:null,
+  unitClarified:'per cent of the total solid waste generated',
+  unitEvidence:'CSB publishes this series under two column headings only — "Year" and "Data" — with no unit. Kuwait’s Second Voluntary National Review (2023) states the unit directly: "In 2015, Kuwait recorded a good performance in terms of recycling solid wastes indicator 12.5.1, achieving recycling of 2.94 per cent of the total solid waste generated. This effort however, requires further boosting, as the percentage went down to 0.76 per cent in 2021, the lowest rate recorded."',
+  sources:['S2','S3'],
+  series:[
+    { year:2015, value:2.94 },
+    { year:2016, value:1.24 },
+    { year:2017, value:1.05 },
+    { year:2018, value:1.50 },
+    { year:2019, value:1.10 },
+    { year:2020, value:0.81 },
+    { year:2021, value:0.76 }
+  ],
+  whatItMeasures:'The share of all solid waste generated in Kuwait in a given year that was recycled. It is a whole-country figure covering every waste stream at once — household, commercial, industrial, construction and demolition. It is NOT the recycling rate of household bins, and it is NOT the same measurement as the 30% municipal-solid-waste target or the 15% construction-and-demolition target, each of which applies to one stream only.',
+  misreadWarning:'Do not read this line as "Kuwait is at 0.76% on the way to 30%". The two numbers count different things. The 30% target is a share of one stream (municipal solid waste); 0.76% is a share of all solid waste generated in the country.'
+};
+
+const SDG12 = {
+  goal:'Goal 12: Ensure sustainable consumption and production patterns',
+  csbSummary:'Using environmentally friendly production methods and reducing the amount of waste we generate are targets for Goal 12. National recycling rates should increase by 2030, measured in tons of recycled material. In addition, companies should adopt sustainable practices and publish sustainability reports.',
+  applicableIndicators:9,
+  totalIndicators:13,
+  numberOfTargets:11,
+  source:'S4',
+  targets:[
+    { id:'12.1', icon:'📋', text:'Implementation of the 10-year framework of programs on sustainable consumption and production patterns, with all countries taking action and taking the lead of developed countries, taking into account the level of development and capacity of developing countries' },
+    { id:'12.2', icon:'⛏️', text:'Achieve sustainable management and efficient use of natural resources by 2030' },
+    { id:'12.3', icon:'🍽️', text:'Halving global food waste per retail and consumer space, reducing food losses in production and supply chains, including post-harvest losses by 2030' },
+    { id:'12.4', icon:'☣️', text:'To achieve the environmentally sound management of chemicals and all wastes throughout their lifecycle, in accordance with agreed international frameworks, and to significantly reduce their release into air, water and soil in order to minimize their adverse effects on human health and the environment by 2020' },
+    { id:'12.5', icon:'♻️', text:'Reduce waste production, through prevention, reduction, recycling and reuse, by 2030', highlight:true },
+    { id:'12.6', icon:'🏢', text:'Encourage companies, particularly large and transnational corporations, to adopt sustainable practices and incorporate sustainability information into their reporting cycle', highlight:true },
+    { id:'12.7', icon:'🧾', text:'Promote sustainable public procurement practices, in accordance with national policies and priorities' },
+    { id:'12.8', icon:'🎓', text:'Ensure that people everywhere have relevant information and awareness of sustainable development and lifestyles in harmony with nature by 2030' }
+  ],
+  pillars:[
+    { icon:'🚯', label:'Reducing waste',   text:'Target 12.5 asks Kuwait to reduce waste production by 2030 — reduction first, not recycling first.' },
+    { icon:'🛑', label:'Prevention',       text:'Prevention is the top step of the KNWMS 2040 waste hierarchy and the first word of target 12.5.' },
+    { icon:'🔁', label:'Reuse',            text:'"Preparing for re-use" sits second in the national hierarchy, above recycling.' },
+    { icon:'♻️', label:'Recycling',        text:'CSB: "National recycling rates should increase by 2030, measured in tons of recycled material."' },
+    { icon:'🏭', label:'Sustainable production', text:'Target 12.2 — sustainable management and efficient use of natural resources by 2030.' },
+    { icon:'🏢', label:'Sustainable business practice', text:'Target 12.6 — companies are encouraged to adopt sustainable practices and to publish sustainability information in their reporting cycle.' }
+  ],
+  achievement2019:{ value:28.9, year:2019, source:'S3',
+    note:'Kuwait’s own VNR2 puts SDG 12 achievement at 28.9% as of 2019 — the second-lowest of the 17 goals it scores.' },
+  indicator1261:{ name:'Number of companies reporting sustainability', code:'12.6.1', source:'S5',
+    published:false,
+    note:'Kuwait’s official SDG database carries this indicator but publishes no figure for it: the table renders one row with a blank year and a value of 0. There is no national count of how many Kuwaiti companies report on sustainability.' }
+};
+
+/* ---------------------------------------------------------------------------
+   5. GOALS VS REALITY — only like-for-like pairs become progress bars
+   ------------------------------------------------------------------------- */
+
+const COMPARISONS = [
+  {
+    comparable:true,
+    title:'Landfill area rehabilitated',
+    category:'Landfill estate (km² of land containing waste)',
+    currentLabel:'Rehabilitated by 2020',
+    currentValue:10,
+    currentDetail:'2.0 km² of the 19.8 km² that contains landfilled waste. A further 48% is closed but not rehabilitated, and 42% is still in operation.',
+    targetLabel:'KNWMS 2040 target',
+    targetValue:100,
+    targetDetail:'The strategy target is to rehabilitate authorised landfills and harmful unauthorised dumpsites. It sets no percentage, so 100% is drawn as the stated intent — every site, not a share of them.',
+    targetIsStated:false,
+    sources:['S1'],
+    why:'Both numbers are measured the same way — share of landfill area — and come from the same EPA publication.'
+  },
+  {
+    comparable:true,
+    title:'National recycling rate against its own best year',
+    category:'All solid waste generated in Kuwait (SDG indicator 12.5.1)',
+    currentLabel:'2021 (latest published)',
+    currentValue:0.76,
+    scaleMax:3,
+    currentDetail:'0.76% — the lowest rate Kuwait has recorded in the published series.',
+    targetLabel:'2015 (best published year)',
+    targetValue:2.94,
+    targetDetail:'2.94% — Kuwait’s own high-water mark, six years before the latest reading.',
+    targetIsStated:true,
+    sources:['S2','S3'],
+    why:'This compares one indicator against itself across years — identical definition, identical publisher, identical method. It is the only fully like-for-like recycling comparison available, and the direction of travel is downward.'
+  }
+];
+
+/* Pairs that look comparable and are not. Shown deliberately, not hidden.     */
+const NON_COMPARISONS = [
+  {
+    a:'30% municipal solid waste recycling (2040 target, KEPA)',
+    b:'0.76% national recycling rate (2021, CSB)',
+    why:'Different denominators. The target is a share of one stream — municipal solid waste. The indicator is a share of all solid waste generated in the country, a total dominated by construction, demolition and mining waste. Dividing one by the other produces a number that means nothing.'
+  },
+  {
+    a:'30% municipal solid waste recycling (2040 target, KEPA)',
+    b:'11% overall recycling rate (2018, KEPA)',
+    why:'Same publisher, still different scope. The 11% covers all waste Kuwait generates; the 30% covers municipal solid waste only. Kuwait does not publish a current recycling rate for municipal solid waste on its own.'
+  },
+  {
+    a:'15% construction & demolition recycling (2040 target, KEPA)',
+    b:'3,372 thousand tonnes of minerals recycled (2018, KEPA)',
+    why:'The recycled "minerals" line is not published as a percentage of construction and demolition waste, and the two categories are not defined identically. Turning them into a rate would mean doing arithmetic the source did not do.'
+  },
+  {
+    a:'50% WEEE collection rate (2040 target, KEPA)',
+    b:'— no baseline exists —',
+    why:'Kuwait publishes no e-waste collection rate. In the 2018 recycling figures, WEEE is not given its own line at all: it is folded into a combined "others" category totalling 1 thousand tonnes a year. There is nothing to compare the target to.'
+  },
+  {
+    a:'80% sewage sludge soil application (2040 target, KEPA)',
+    b:'— no baseline exists —',
+    why:'No current split of sewage sludge between soil application and energy recovery is published in the atlas, so the 2040 target has no measured starting point in the public record.'
+  }
+];
+
+/* ---------------------------------------------------------------------------
+   6. THE COMPANY DATASET
+   ----------------------------------------------------------------------------
+   HOW THIS WAS BUILT, AND WHAT IT IS NOT.
+
+   This is a hand-researched sample of 14 large companies operating in Kuwait,
+   selected because they publish environmental disclosures that can be checked.
+   That selection is the whole caveat: it is not a random sample, not a survey,
+   and not representative of Kuwaiti business as a whole. Small and unlisted
+   firms — most of the economy — are absent by construction. Read every
+   percentage below as "of these 14 researched companies", never as
+   "of companies in Kuwait".
+
+   A flag is set true ONLY where a specific published claim supports it. Where
+   a company simply does not disclose, the flag is false — false here means
+   "not found in published disclosure", not "the company does not do this".
+   ------------------------------------------------------------------------- */
+
+const PRACTICE_DEFS = [
+  { key:'recyclingProgram',  icon:'♻️', label:'Recycling programme',
+    test:'A named, operating programme that collects material from the company’s own operations for recycling.' },
+  { key:'plasticReduction',  icon:'🧴', label:'Plastic reduction',
+    test:'A published initiative that cuts virgin plastic use or diverts plastic from disposal.' },
+  { key:'paperRecycling',    icon:'📄', label:'Paper recycling',
+    test:'Paper specifically collected and sent for recycling, with a figure or a stated rate.' },
+  { key:'eWasteRecycling',   icon:'🔌', label:'Electronic-waste recycling',
+    test:'Electronic waste specifically collected and sent for recycling or refurbishment.' },
+  { key:'wasteSeparation',   icon:'🗑️', label:'Waste separation',
+    test:'Waste separated into distinct streams at the company’s own premises.' },
+  { key:'sustainabilityTargets', icon:'🌱', label:'Sustainability targets',
+    test:'A quantified or dated environmental target, not merely an activity.' },
+  { key:'sustainabilityReport',  icon:'📑', label:'Sustainability report',
+    test:'A published sustainability or ESG report.' }
+];
+
+const COMPANIES = [
+  {
+    name:'National Bank of Kuwait (NBK)', sector:'Banking',
+    recyclingProgram:true, plasticReduction:true, paperRecycling:true,
+    eWasteRecycling:false, wasteSeparation:false, sustainabilityTargets:true,
+    sustainabilityReport:true,
+    evidence:[
+      'Recycled approximately 86% of its total paper consumption in 2024.',
+      'Renewed its waste removal and management partnership with Omniya, associated with a reduction of 462.5 tonnes of CO₂.',
+      'Cut total greenhouse gas emissions 28.30% against a 2021 baseline, passing its interim 2025 target early.',
+      'Kuwait’s VNR2 records NBK achieving 100% paper recycling and a 64% cut in plastic consumption in its 2021 reporting.'
+    ],
+    links:[
+      { label:'NBK 2024 Sustainability Report (announcement)', url:'https://www.nbk.com/news-and-insights/Media-Relations/news.html?news=nbk-issues-2024-sustainability-report' },
+      { label:'Kuwait VNR2 2023, p. 88', url:'https://kuwait.un.org/sites/default/files/2023-09/VNR2_English_Final.pdf' }
+    ]
+  },
+  {
+    name:'Kuwait Finance House (KFH)', sector:'Banking',
+    recyclingProgram:true, plasticReduction:true, paperRecycling:true,
+    eWasteRecycling:false, wasteSeparation:false, sustainabilityTargets:true,
+    sustainabilityReport:true,
+    evidence:[
+      'Recycled 67,515 kg of paper, which it estimates preserved about 1,147 mature trees.',
+      '85% of credit cards issued in 2025 were made from recycled plastic, up 66.67% year on year.',
+      'Ran a plastic-bottle recycling campaign ("Keep it Green") at Assima Mall.',
+      'Publishes principles for reducing energy, paper and water consumption; sixth annual sustainability report.'
+    ],
+    links:[
+      { label:'KFH Sustainability Report 2024 (PDF)', url:'https://www.kfh.com/dam/jcr:c938b7d5-506e-4c8e-b05f-5f2da9f9cc5d/KFH%20Sustainability%20Report%202024.pdf' }
+    ]
+  },
+  {
+    name:'Gulf Bank', sector:'Banking',
+    recyclingProgram:true, plasticReduction:true, paperRecycling:false,
+    eWasteRecycling:true, wasteSeparation:false, sustainabilityTargets:true,
+    sustainabilityReport:true,
+    evidence:[
+      'Recycled over 22.3 tonnes of electronic waste across two years with a specialist partner (18 tonnes reported by February 2023).',
+      'Distributed over 100,000 reusable bags with cooperative societies, and repurposes expired street advertising material into reusable bags.',
+      'Published an ESG strategy covering 2024–2030, overseen by a board-chaired sustainability committee.',
+      'Paper: reported reducing paper waste by one million sheets — a reduction, not a recycling figure, so the paper-recycling flag is left false.'
+    ],
+    links:[
+      { label:'Gulf Bank recycles 18 tons of electronic waste', url:'https://www.e-gulfbank.com/en/about-us/media/press-releases/2023/02/gulf-bank-recycles-18-tons-of-electronic-waste/' },
+      { label:'Gulf Bank — "A Step Towards Change"', url:'https://www.e-gulfbank.com/en/about-us/media/press-releases/2024/01/gulf-bank-launches-a-step-towards-change-environmental-sustainability-initiative/' }
+    ]
+  },
+  {
+    name:'Boubyan Bank', sector:'Banking',
+    recyclingProgram:true, plasticReduction:false, paperRecycling:true,
+    eWasteRecycling:true, wasteSeparation:false, sustainabilityTargets:false,
+    sustainabilityReport:true,
+    evidence:[
+      'Recycled 100% of paper waste in its 2024 report; about 1,500 kg of paper in 2025, avoiding an estimated 1,739.7 kg CO₂e.',
+      'Recycles 100% of the electronic waste generated by its operations.',
+      'Publishes an annual sustainability report; 2025 edition titled "Embedding ESG: Driving Responsible Growth".',
+      'No quantified, dated environmental target was found in the published summaries, so that flag is left false.'
+    ],
+    links:[
+      { label:'Boubyan Bank 2025 Sustainability Report (announcement)', url:'https://www.zawya.com/en/press-release/companies-news/boubyan-bank-releases-its-2025-annual-sustainability-report-titled-embedding-esg-driving-responsible-growth-typntqbc' }
+    ]
+  },
+  {
+    name:'Burgan Bank', sector:'Banking',
+    recyclingProgram:true, plasticReduction:true, paperRecycling:true,
+    eWasteRecycling:true, wasteSeparation:true, sustainabilityTargets:true,
+    sustainabilityReport:true,
+    evidence:[
+      'Head-office waste management and recycling programme with Tadwire covering cardboard, paper, plastic, wood and electronic waste — separated on site.',
+      'Recycled waste rose from 4 tonnes in 2024 to 91 tonnes in 2025; total waste generation fell about 12%.',
+      'Headquarters certified LEED Gold (O+M v4.1).',
+      'Sixth annual sustainability report; first bank in Kuwait to publish its 2024 report. Publishes a standalone ESG policy.'
+    ],
+    links:[
+      { label:'Burgan Bank 2023 Sustainability Report (PDF)', url:'https://www.burgan.com/Reports%20Framework%20and%20Policies/BurganBank2023SustainabilityReport.pdf' },
+      { label:'Burgan Bank & Tadwire waste initiative', url:'https://kuwaittimes.com/article/23778/kuwait/other-news/burgan-bank-tadwire-launch-responsible-waste-management-initiative/' }
+    ]
+  },
+  {
+    name:'Zain', sector:'Telecom',
+    recyclingProgram:true, plasticReduction:true, paperRecycling:true,
+    eWasteRecycling:true, wasteSeparation:true, sustainabilityTargets:true,
+    sustainabilityReport:true,
+    evidence:[
+      'Waste Management Policy developed in 2023 "with the goal of eliminating all forms of waste, including e-waste, plastic waste, and wood and paper waste, by 2030".',
+      'Zain Kuwait works with TadwiRe, described in the report as the first recycling facility of its kind in Kuwait, and is installing internal e-waste bins.',
+      'Zain Kuwait collected, over Q2–Q3 2024: 20,946 kg paper, 1,086.5 kg plastic, 326 kg wood and 107 kg e-waste — separated by stream.',
+      'The clearest company-level waste target found in this sample, because it names a year and a scope.'
+    ],
+    links:[
+      { label:'Zain Sustainability Report 2024 — Sustainability Agenda', url:'https://zain.com/SR2024/18-sustainability-agenda/' }
+    ]
+  },
+  {
+    name:'stc Kuwait', sector:'Telecom',
+    recyclingProgram:true, plasticReduction:false, paperRecycling:false,
+    eWasteRecycling:true, wasteSeparation:false, sustainabilityTargets:false,
+    sustainabilityReport:true,
+    evidence:[
+      'Signed a partnership with Tadwire to recycle e-waste and other waste generated by its operations.',
+      'Publishes a sustainability review in its annual report and a standalone 2025 sustainability report.'
+    ],
+    links:[
+      { label:'stc Kuwait Sustainability Report 2025 (PDF)', url:'https://cws.stc.com.kw/DigitalStatic/AnnualReport2025/pdfs/sections/en/Sustainability%20Report.pdf' }
+    ]
+  },
+  {
+    name:'Ooredoo Kuwait', sector:'Telecom',
+    recyclingProgram:true, plasticReduction:false, paperRecycling:false,
+    eWasteRecycling:true, wasteSeparation:false, sustainabilityTargets:false,
+    sustainabilityReport:true,
+    evidence:[
+      'Publishes an Environmental, Social & Governance report for Kuwait (2022 edition).',
+      'Applies circular-economy principles to electronic devices and equipment and supports efforts to reduce electronic waste.',
+      'Monitors energy use, carbon footprint and electronic waste through dashboards aligned with GSMA and CITRA reporting.'
+    ],
+    links:[
+      { label:'Ooredoo Kuwait 2022 ESG Report (PDF)', url:'https://www.ooredoo.com.kw/assets/portal/Frontend/Reports/ESG2022.pdf' }
+    ]
+  },
+  {
+    name:'Boursa Kuwait', sector:'Financial markets',
+    recyclingProgram:true, plasticReduction:true, paperRecycling:true,
+    eWasteRecycling:false, wasteSeparation:true, sustainabilityTargets:false,
+    sustainabilityReport:true,
+    evidence:[
+      'Strategic partnership with Omniya Plastic Collection Company since March 2019; 1,241 tonnes of plastic collected to date, 471 tonnes in 2025 alone — explicitly aligned by Boursa to UN SDG 12.',
+      'In 2025 processed about 1,972 kg of its own waste, separated into 472 kg plastic and 1,500 kg paper.',
+      'Fifth standalone sustainability report.',
+      'Also publishes the ESG Reporting Guide that sets disclosure expectations for every listed issuer in Kuwait.'
+    ],
+    links:[
+      { label:'Boursa Kuwait Sustainability Report (PDF)', url:'https://www.boursakuwait.com.kw/api/documents/boursa/1649054880123.pdf' },
+      { label:'Boursa Kuwait ESG Reporting Guide for Listed Companies (PDF)', url:'https://www.boursakuwait.com.kw/api/documents/boursa/1684840404216.pdf' }
+    ]
+  },
+  {
+    name:'Agility', sector:'Logistics',
+    recyclingProgram:true, plasticReduction:false, paperRecycling:false,
+    eWasteRecycling:false, wasteSeparation:false, sustainabilityTargets:true,
+    sustainabilityReport:true,
+    evidence:[
+      'Menzies Aviation, an Agility company, has set a target of zero cargo waste to landfill by end 2026.',
+      'Tristar, also in the group, diverted waste through recycling in 2024; 93% of that diversion was waste oil, followed by plastic.',
+      'Note: the zero-waste-to-landfill target belongs to a group company, not to Agility’s Kuwait operations specifically.'
+    ],
+    links:[
+      { label:'Agility — Environmental Progress', url:'https://www.agility.com/en/sustainability/environmental-progress/' }
+    ]
+  },
+  {
+    name:'Jazeera Airways', sector:'Aviation',
+    recyclingProgram:false, plasticReduction:true, paperRecycling:false,
+    eWasteRecycling:false, wasteSeparation:false, sustainabilityTargets:true,
+    sustainabilityReport:true,
+    evidence:[
+      'Switched to 100% biodegradable spoons, forks, knives and napkins, avoiding about 300 kg of plastic on flights each month; wooden stirrers replaced plastic ones.',
+      'Committed to net-zero emissions by 2050.',
+      'Published its first standalone ESG report in 2023 ("Flying Green — a Step towards Sustainable Aviation").'
+    ],
+    links:[
+      { label:'Jazeera Airways ESG Report 2023 (PDF)', url:'https://investorrelations.jazeeraairways.com/media/1351/j9-esg-report-2023-design-english.pdf' }
+    ]
+  },
+  {
+    name:'Mezzan Holding', sector:'Food & industrials',
+    recyclingProgram:true, plasticReduction:true, paperRecycling:false,
+    eWasteRecycling:false, wasteSeparation:false, sustainabilityTargets:false,
+    sustainabilityReport:true,
+    evidence:[
+      'ThinkGreen initiative reduced the use of small plastic bottles and moved employees to reusable bottles.',
+      'Kuwait Lube Oil Company, a Mezzan subsidiary, operates a refinery that recycles used oils, converting hazardous material into reusable product.',
+      'Published its first standalone sustainability report for 2025.'
+    ],
+    links:[
+      { label:'Mezzan Sustainability Report 2025 (PDF)', url:'https://www.mezzan.com/wp-content/uploads/2026/06/Mezzan_Sustainability-Report-2025_English_compressed.pdf' },
+      { label:'Mezzan — Commitment to the Environment', url:'https://www.mezzan.com/commitment-to-environment/' }
+    ]
+  },
+  {
+    name:'Kuwait Petroleum Corporation (KPC)', sector:'Oil & gas',
+    recyclingProgram:true, plasticReduction:false, paperRecycling:false,
+    eWasteRecycling:false, wasteSeparation:false, sustainabilityTargets:true,
+    sustainabilityReport:true,
+    evidence:[
+      'Energy transition strategy includes petrochemical recycling — reprocessing waste plastic materials into usable products.',
+      'Reduced operated upstream Scope 1 emission intensity 26% in FY 2023/24 against FY 2021/22, to 8.54 kg/BOE.',
+      'Publishes a corporate sustainability report (2023–25 edition).'
+    ],
+    links:[
+      { label:'KPC Sustainability Report 2023-25 (PDF)', url:'https://www.kpc.com.kw/uploads/SustainabiltyReport/KPC%202023-5%20Sustainability%20Report.pdf' }
+    ]
+  },
+  {
+    name:'EQUATE Petrochemical Company', sector:'Petrochemicals',
+    recyclingProgram:true, plasticReduction:false, paperRecycling:false,
+    eWasteRecycling:false, wasteSeparation:false, sustainabilityTargets:true,
+    sustainabilityReport:true,
+    evidence:[
+      'Closed-loop recycling programmes aimed at recapturing and reusing high-value polymer waste.',
+      'Targets a 20% reduction in industrial emissions by 2026.',
+      'Has published sustainability reports since 2011.'
+    ],
+    links:[
+      { label:'EQUATE — Reporting', url:'https://www.equate.com/reporting-2/' }
+    ]
+  }
+];
+
+/* ---------------------------------------------------------------------------
+   7. TIMELINE — only milestones with a source
+   ------------------------------------------------------------------------- */
+
+const TIMELINE = [
+  { year:2015, icon:'🇰🇼', kind:'past',
+    goal:'Agenda 2030 folded into Kuwait Vision 2035',
+    target:'National recycling rate reaches 2.94% — the highest in the published record',
+    detail:'Kuwait integrated the UN 2030 Agenda into Vision 2035 in 2015. In the same year the national recycling rate (indicator 12.5.1) recorded its best published value.',
+    source:'S3' },
+  { year:2016, icon:'📋', kind:'past',
+    goal:'Sustainable consumption and production enter national policy',
+    target:'Action plans prioritised in national policies (indicator 12.1.1)',
+    detail:'Kuwait reports having implemented and prioritised action plans for sustainable consumption and production in its national policies since 2016.',
+    source:'S3' },
+  { year:2018, icon:'📊', kind:'past',
+    goal:'The baseline year of the national waste survey',
+    target:'11% of all waste recycled; 47% to municipal landfills',
+    detail:'The reference year behind the EPA Waste Management Atlas. Kuwait generated 37–43 million tonnes of waste; 4.8 million tonnes were recycled.',
+    source:'S1' },
+  { year:2019, icon:'🛞', kind:'past',
+    goal:'Al-Rheyya tyre dumps closed',
+    target:'Waste tyres moved to a treatment centre for recycling',
+    detail:'EPA closed the damaged-tyre dumps and transferred the material to Salmi for recycling into plastic, rubber and road-surfacing uses. More than 42 million tyres were moved.',
+    source:'S3' },
+  { year:2021, icon:'📉', kind:'past',
+    goal:'Export of recyclable waste regulated',
+    target:'Ministerial Decree No. 20 of 2021; recycling rate falls to 0.76%',
+    detail:'The Ministry of Commerce and Industry issued Decree No. 20 of 2021 regulating the export of recyclable waste, in line with the Basel Convention. The same year, the national recycling rate hit its lowest recorded value.',
+    source:'S3' },
+  { year:2022, icon:'📘', kind:'past',
+    goal:'KNWMS 2040 published',
+    target:'5 objectives, 25 targets, 25 action plans',
+    detail:'The strategy and its targets were published in the EPA Waste Management Atlas of Kuwait. 2022 is the first column of the strategy’s own implementation timeline.',
+    source:'S1' },
+  { year:2026, icon:'🗂️', kind:'near',
+    goal:'EPA waste data becomes public',
+    target:'Data provision plan implemented by 31 December 2026',
+    detail:'Objective 5 of the strategy, with a hard date: set up and implement a plan to distribute relevant waste data to other authorities and to the public.',
+    source:'S1' },
+  { year:2030, icon:'🎯', kind:'near',
+    goal:'SDG 12 deadline — and the strategy’s midpoint',
+    target:'Reduce waste production through prevention, reduction, recycling and reuse',
+    detail:'2030 is the deadline for UN target 12.5 and the middle column of the KNWMS 2040 implementation timeline.',
+    source:'S4' },
+  { year:2040, icon:'♻️', kind:'goal',
+    goal:'The KNWMS 2040 targets fall due',
+    target:'MSW 30% recycling · C&D 15% · WEEE 50% collection · sludge 80% to soil',
+    detail:'The full set of waste-stream targets, plus the landfill ban on high-organic-content waste and the rehabilitation of authorised landfills and harmful dumpsites.',
+    source:'S1' },
+  { year:2050, icon:'🛢️', kind:'goal',
+    goal:'Carbon neutrality for the oil sector',
+    target:'Announced by the State of Kuwait at COP27, 2022',
+    detail:'Kuwait announced at the twenty-seventh Conference of the Parties in Sharm El-Sheikh that it expects to reach carbon neutrality for the oil sector in 2050.',
+    source:'S7' },
+  { year:2060, icon:'🇰🇼', kind:'goal',
+    goal:'Carbon neutrality for all sectors',
+    target:'Announced at the same conference',
+    detail:'The State of Kuwait expects to reach carbon neutrality for all sectors of the country in 2060 — the furthest dated commitment found in the official record.',
+    source:'S7' }
+];
+
+/* ===========================================================================
+   8. PROJECTIONS — THE ONLY MODELLED NUMBERS ON THIS PAGE
+   ---------------------------------------------------------------------------
+   Everything above this line is published by an official body. Nothing below
+   it is. These are arithmetic projections built from official inputs, and they
+   are labelled as projections everywhere they appear.
+
+   The model is deliberately the simplest one that can be checked by hand:
+
+       municipal solid waste in year Y  =  population(Y) × kg per person per day × 365
+
+   Inputs, both official, neither invented:
+     · population  — UN World Population Prospects 2024, medium variant
+     · 1.6 kg/person/day — Kuwait EPA, Waste Management Atlas (municipal solid
+       waste per capita, the figure the atlas prints for Kuwait)
+
+   It was back-tested against the one year where Kuwait publishes the real
+   number, and the error is reported rather than corrected away. No fudge
+   factor is applied anywhere.
+   ========================================================================= */
+
+SOURCES.S6 = {
+  id:'S6',
+  org:'United Nations, Department of Economic and Social Affairs — Population Division',
+  title:'World Population Prospects 2024, medium variant — Kuwait',
+  url:'https://population.un.org/wpp/',
+  note:'The UN’s official population estimates and projections. Retrieved as the UN WPP series republished by Our World in Data (ourworldindata.org/grapher/population-long-run-with-projections). This is a United Nations projection, not a Kuwaiti government one.'
+};
+
+SOURCES.S7 = {
+  id:'S7',
+  org:'State of Kuwait — Permanent National Steering Committee for Agenda 2030',
+  title:'VNR2 2023, p. 96 — carbon neutrality announcement at COP27',
+  url:'https://kuwait.un.org/sites/default/files/2023-09/VNR2_English_Final.pdf',
+  note:'"Kuwait announced at the twenty-seventh Conference of the Parties to the United Nations Framework Convention on Climate Change 2022 in Sharm El-Sheikh, that the State of Kuwait expects to reach carbon neutrality for the oil sector in 2050 and for all sectors of the country in 2060."'
+};
+
+const PROJECTION = {
+  /* UN WPP 2024, medium variant. Annual, unmodified. */
+  population:[
+    { year:2024, value:4934508 }, { year:2025, value:5026079 }, { year:2026, value:5102771 },
+    { year:2027, value:5168370 }, { year:2028, value:5224923 }, { year:2029, value:5276041 },
+    { year:2030, value:5324200 }, { year:2031, value:5371645 }, { year:2032, value:5419953 },
+    { year:2033, value:5469087 }, { year:2034, value:5519018 }, { year:2035, value:5569671 },
+    { year:2036, value:5620962 }, { year:2037, value:5672833 }, { year:2038, value:5725241 },
+    { year:2039, value:5778079 }, { year:2040, value:5831215 }
+  ],
+  popSource:'S6',
+
+  /* Kuwait's own statistical bureau reported a lower 2025 population than the
+     UN projects. Rather than pick a winner, the lower figure is offered as an
+     alternative path that rescales the UN curve to meet it. */
+  csbAnchor:{
+    year:2025, value:4881254,
+    label:'Kuwait CSB 2025 population estimate',
+    note:'Kuwait’s Central Statistical Bureau put the population at 4,881,254 at the start of 2025 (down 0.65% from 4,913,271 in 2024). That is about 2.9% below the UN projection for the same year. This figure is taken from press reporting of the CSB’s 2025 population estimates bulletin, not from a CSB page read directly, so it is offered as an alternative scenario rather than as the page’s primary input.',
+    url:'https://kuwaittimes.com/article/33166/kuwait/other-news/kuwait-population-declines-to-488m/'
+  },
+
+  perCapitaKgDay:1.6,
+  perCapitaSource:'S1',
+
+  scenarios:[
+    { key:'down', label:'Prevention works',   drift:-0.01, blurb:'Waste per person falls 1% a year — the direction SDG target 12.5 and the top of the waste hierarchy ask for.' },
+    { key:'flat', label:'No change',          drift:0,     blurb:'Waste per person stays at the 1.6 kg/day the EPA atlas records. The default.' },
+    { key:'up',   label:'Consumption grows',  drift:0.01,  blurb:'Waste per person rises 1% a year, as it has in many high-income economies.' }
+  ],
+
+  /* The back-test. Run the model on 2018, where Kuwait publishes the answer. */
+  backtest:{
+    year:2018,
+    population:4323389,
+    rateKgDay:0.85,
+    rateLabel:'household waste per resident',
+    modelled:1341331,
+    official:1439000,
+    officialLabel:'KEPA atlas, household waste 2018',
+    errorPct:-6.8,
+    verdict:'The model lands 6.8% under the published figure. That error is reported here and left uncorrected — no scaling factor is applied to make the projection look better than the method is.'
+  },
+
+  /* Why this page does NOT forecast the recycling rate. */
+  noRateForecast:{
+    fit:{ intercept:2.1304, slope:-0.2625, zeroYear:2023.1 },
+    headline:'There is no recycling-rate forecast on this page, and that is a finding.',
+    body:'Fit a straight line to the seven published years of indicator 12.5.1 and it falls 0.26 percentage points a year — reaching zero in 2023 and going negative after that. A recycling rate cannot be negative. The trend line is not a forecast that Kuwait will stop recycling; it is proof that seven volatile years are too short a record to extrapolate from. Publishing a 2040 recycling-rate prediction off this series would be inventing precision the data cannot carry, so this page does not do it.',
+    reinforce:'Waste generation is projected instead, because it is driven by population — a quantity the UN does publish projections for — rather than by policy outcomes nobody has measured yet.'
+  },
+
+  limits:[
+    'It assumes every resident keeps generating waste at the same rate. Economic cycles, expatriate population swings and changes in consumption are not modelled.',
+    'It assumes the EPA’s 1.6 kg/person/day still holds. That figure comes from a 2018 survey and Kuwait has published no update.',
+    'It models how much waste arrives, not what happens to it. Nothing here predicts whether the 2040 recycling targets will be met.',
+    'UN population projections carry their own uncertainty, and Kuwait’s own bureau currently reports a lower figure than the UN projects.',
+    'A single national per-capita rate hides real variation between governorates, seasons and sectors.'
+  ],
+
+  /* Kuwait's own forward-looking statements — official, not modelled here. */
+  officialFuture:[
+    { year:'2026', icon:'🗂️', title:'EPA publishes national waste data',
+      detail:'Objective 5 of the KNWMS 2040: set up and implement a data provision plan to distribute relevant waste data to other authorities and the public by 31 December 2026.', source:'S1' },
+    { year:'2030', icon:'🎯', title:'SDG target 12.5 falls due',
+      detail:'Reduce waste production through prevention, reduction, recycling and reuse by 2030. Also the middle column of the strategy’s own implementation timeline.', source:'S4' },
+    { year:'2035', icon:'🏭', title:'The strategy’s landfill scenario B',
+      detail:'The atlas models the global warming potential of Kuwait’s landfills under two futures — scenario A, immediate landfill closure, and scenario B, continued operation until 2035 — and states that emissions fall exponentially after closure, though closed landfills keep emitting for decades.', source:'S1' },
+    { year:'2040', icon:'♻️', title:'The KNWMS 2040 targets fall due',
+      detail:'30% municipal solid waste recycling, 15% construction and demolition recycling, a 50% WEEE collection rate and 80% of sewage sludge to soil application.', source:'S1' },
+    { year:'2050', icon:'🛢️', title:'Carbon neutrality for the oil sector',
+      detail:'Announced by the State of Kuwait at COP27 in Sharm El-Sheikh, 2022.', source:'S7' },
+    { year:'2060', icon:'🇰🇼', title:'Carbon neutrality for all sectors',
+      detail:'Announced at the same conference: Kuwait expects to reach carbon neutrality for all sectors of the country in 2060.', source:'S7' }
+  ],
+
+  /* What the 2040 targets mean once converted from per cent into tonnes. */
+  targetsInTonnes:{
+    note:'The strategy sets its targets as percentages. Multiplying them by the projected 2040 municipal waste stream turns them into the tonnage Kuwait would have to handle. These tonnages are projections, not official figures.',
+    compareLabel:'Paper, glass, plastic and cardboard recycled in Kuwait in 2018, from all sources combined',
+    compareValue:222000,
+    compareSource:'S1'
+  }
+};
+
+/* Kuwait's official record of hazardous waste treated, 2019–2022 (VNR2, Table 12).
+   Included here because it is the only multi-year waste series Kuwait publishes
+   besides indicator 12.5.1 — and it is flat, not falling. */
+SOURCES.S8 = {
+  id:'S8',
+  org:'State of Kuwait / Environment Public Authority',
+  title:'VNR2 2023, Table 12 — Waste Generation per Year in Kuwait (hazardous waste treated)',
+  url:'https://kuwait.un.org/sites/default/files/2023-09/VNR2_English_Final.pdf',
+  note:'Presented in the VNR as the amount of hazardous waste treated between 2019 and 2022. The medical-waste row is corroborated by the report’s own text, which notes medical waste peaking "in 2020 at 10,693 tons".'
+};
+
+const HAZARDOUS_TREATED = {
+  source:'S8',
+  years:[2019, 2020, 2021, 2022],
+  rows:[
+    { label:'Domestic waste',  unit:'kg',     values:[1857840, 1759844, 1982769, 1823949] },
+    { label:'Medical waste',   unit:'kg',     values:[6625095, 10692729, 10751381, 10578549] },
+    { label:'Fluid waste',     unit:'gallon', values:[413333500, 486109200, 459469250, 395029000] },
+    { label:'Industrial waste',unit:'tonne',  values:[96712.0, 74509.245, 80625.65, 74147.0] }
+  ],
+  note:'These are quantities treated, not total national generation — the domestic figure is thousands of tonnes smaller than Kuwait’s household waste total, which confirms it covers only the hazardous fraction handled by the authority. The series is shown because it is short, flat and four years old: the clearest illustration of why the December 2026 data commitment matters.'
+};
+
+/* ============================================================================
+   KUWAIT'S RECYCLING GOALS — rendering layer
+   Dependency-free. Every figure rendered here is read from data.js, which
+   carries the source for each one. Nothing is computed into existence except
+   the company percentages, which are counted from the dataset at runtime so
+   the printed percentage can never drift from the table beneath it.
+   ========================================================================== */
+
+const $  = (s, r = document) => r.querySelector(s);
+const $$ = (s, r = document) => [...r.querySelectorAll(s)];
+const esc = s => String(s).replace(/[&<>"]/g, c => ({ '&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;' }[c]));
+const src = id => SOURCES[id];
+const srcLink = id => `<a href="${src(id).url}" target="_blank" rel="noopener">${esc(src(id).org)} — ${esc(src(id).title)}</a>`;
+
+const SERIES_VAR = { recycling:'--series-recycling', recovery:'--series-recovery', disposal:'--series-disposal' };
+
+/* =========================================================================
+   0. ILLUSTRATION SET
+   Inline SVG rather than emoji or photographs. Emoji render differently on
+   every platform and carry no stroke weight; stock photography would mean
+   hotlinking assets this page cannot licence or guarantee. These scale, they
+   inherit currentColor, and they read the same everywhere.
+   ======================================================================= */
+const ART = {
+  recycle:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.6" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="M24 7l6.5 11.3"/><path d="M30.5 18.3l4.6-2"/><path d="M35.1 16.3l-1.2 4.9"/>
+    <path d="M38.6 25.6L32.1 37"/><path d="M32.1 37l.5-5"/><path d="M32.6 32l4.7 1.8"/>
+    <path d="M15.9 37H9.4"/><path d="M9.4 37l4-3"/><path d="M13.4 34l-3.6-3.5"/>
+    <path d="M24 7l-6.5 11.3M9.4 25.6L15.9 37M38.6 25.6H24"/></svg>`,
+  bottle:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="M20 5h8v5h-8z"/><path d="M20 10c0 3-4 4-4 9v20a4 4 0 004 4h8a4 4 0 004-4V19c0-5-4-6-4-9"/>
+    <path d="M16 24h16"/><path d="M16 30h16"/></svg>`,
+  bin:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="M9 13h30"/><path d="M19 13V8h10v5"/><path d="M12 13l2.5 28h19L36 13"/>
+    <path d="M20 21v13M28 21v13"/></svg>`,
+  sprout:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="M24 42V22"/><path d="M24 26c0-7-5-11-12-11 0 7 5 11 12 11z"/>
+    <path d="M24 22c0-7 5-11 12-11 0 7-5 11-12 11z"/><path d="M14 42h20"/></svg>`,
+  crane:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="M10 42V10h4v32"/><path d="M6 42h12"/><path d="M12 12h26"/><path d="M12 12l10 8"/>
+    <path d="M32 12v10"/><path d="M28 22h8v7h-8z"/></svg>`,
+  plug:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="M18 6v10M30 6v10"/><path d="M13 16h22v7a11 11 0 01-11 11 11 11 0 01-11-11z"/>
+    <path d="M24 34v8"/></svg>`,
+  towers:`<svg viewBox="0 0 48 48" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linejoin="round" stroke-linecap="round" aria-hidden="true">
+    <path d="M26 44V10"/><ellipse cx="26" cy="15" rx="9" ry="4.5"/><ellipse cx="26" cy="26" rx="5" ry="2.6"/>
+    <path d="M15 44V22"/><ellipse cx="15" cy="24" rx="6" ry="3"/>
+    <path d="M37 44V31"/><circle cx="37" cy="32" r="2.6"/><path d="M8 44h34"/></svg>`
+};
+const STREAM_ART = { msw:'bin', cd:'crane', weee:'plug', sludge:'sprout' };
+
+/* =========================================================================
+   0b. AT A GLANCE — the whole argument before any paragraph
+   ======================================================================= */
+function renderGlance(){
+  const R = 34, C = 2 * Math.PI * R;
+  $('#glanceRings').innerHTML = TARGETS.map(t => `
+    <div class="gring">
+      <svg viewBox="0 0 88 88" aria-hidden="true">
+        <circle class="ring__track" cx="44" cy="44" r="${R}" stroke-width="6"></circle>
+        <circle class="ring__bar" cx="44" cy="44" r="${R}" stroke-width="6" transform="rotate(-90 44 44)"
+                stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"
+                data-circ="${C.toFixed(1)}" data-target="${t.headline}"></circle>
+      </svg>
+      <span class="gring__art">${ART[STREAM_ART[t.id]]}</span>
+      <b class="gring__n">${t.headline}%</b>
+      <span class="gring__l">${esc(t.short)}</span>
+      <span class="gring__k">${esc(t.headlineLabel.replace(' target',''))} by ${t.deadline}</span>
+    </div>`).join('');
+  observeOnce($('#glanceRings'), () => $$('#glanceRings .ring__bar').forEach(r => {
+    const c = parseFloat(r.dataset.circ), pct = parseFloat(r.dataset.target);
+    r.style.strokeDashoffset = (c - c * pct / 100).toFixed(1);
+  }));
+
+  const now = [
+    { n:'0.76%', l:'of all solid waste recycled', y:'2021 · Kuwait CSB', bad:true },
+    { n:'11%',   l:'overall recycling rate',      y:'2018 · Kuwait EPA', bad:true },
+    { n:'47%',   l:'sent to municipal landfills', y:'2018 · Kuwait EPA', bad:true },
+    { n:'10%',   l:'of landfill area rehabilitated', y:'2020 · Kuwait EPA', bad:true }
+  ];
+  $('#glanceNow').innerHTML = now.map(x => `
+    <div class="gnow">
+      <b class="gnow__n">${x.n}</b>
+      <span class="gnow__l">${esc(x.l)}</span>
+      <span class="gnow__y">${esc(x.y)}</span>
+    </div>`).join('');
+
+  const keys = [
+    { art:'recycle', t:'The targets are real and dated',
+      d:'25 targets, a named authority for each, and a 2040 horizon — published, not aspirational.' },
+    { art:'bottle', t:'The trend is going the wrong way',
+      d:'The one indicator Kuwait publishes over time fell from 2.94% in 2015 to 0.76% in 2021.' },
+    { art:'towers', t:'Most targets have no baseline yet',
+      d:'Kuwait has committed to publish national waste data by 31 December 2026. Until then, progress on most targets cannot be checked.' }
+  ];
+  $('#glanceKeys').innerHTML = keys.map(k => `
+    <li class="gkey">
+      <span class="gkey__art">${ART[k.art]}</span>
+      <div><b>${esc(k.t)}</b><span>${esc(k.d)}</span></div>
+    </li>`).join('');
+}
+
+/* =========================================================================
+   0c. JUMP NAV — appears past the hero, marks the section you are in
+   ======================================================================= */
+function initJumpNav(){
+  const nav = $('#jump'), hero = $('.hero');
+  const links = $$('#jump a');
+  const targets = links.map(a => $(a.getAttribute('href'))).filter(Boolean);
+
+  if ('IntersectionObserver' in window) {
+    // show the bar only once the hero has scrolled away
+    new IntersectionObserver(([e]) => nav.classList.toggle('is-on', !e.isIntersecting),
+      { rootMargin:'-60px 0px 0px 0px' }).observe(hero);
+
+    // mark the section currently occupying the upper third of the viewport
+    const spy = new IntersectionObserver(entries => {
+      entries.forEach(e => {
+        if (!e.isIntersecting) return;
+        links.forEach(a => a.classList.toggle('is-here', a.getAttribute('href') === '#' + e.target.id));
+      });
+    }, { rootMargin:'-15% 0px -70% 0px' });
+    targets.forEach(t => spy.observe(t));
+  } else {
+    nav.classList.add('is-on');
+  }
+}
+
+/* -------------------------------------------------------------- theme ---- */
+function initTheme(){
+  const btn = $('#themeBtn');
+  // The artifact build ships without a toggle — the host controls the theme there.
+  if (!btn) return;
+  const stored = (() => { try { return localStorage.getItem('kwg-theme'); } catch { return null; } })();
+  if (stored) document.documentElement.setAttribute('data-theme', stored);
+  const paint = () => {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark'
+      || (!document.documentElement.getAttribute('data-theme')
+          && matchMedia('(prefers-color-scheme: dark)').matches);
+    btn.textContent = dark ? '☀' : '☾';
+    btn.setAttribute('aria-label', dark ? 'Switch to light theme' : 'Switch to dark theme');
+  };
+  btn.addEventListener('click', () => {
+    const dark = document.documentElement.getAttribute('data-theme') === 'dark'
+      || (!document.documentElement.getAttribute('data-theme')
+          && matchMedia('(prefers-color-scheme: dark)').matches);
+    const next = dark ? 'light' : 'dark';
+    document.documentElement.setAttribute('data-theme', next);
+    try { localStorage.setItem('kwg-theme', next); } catch {}
+    paint();
+    redrawCharts();
+  });
+  paint();
+}
+
+/* ------------------------------------------------------- shared tooltip -- */
+function makeTip(host){
+  const el = document.createElement('div');
+  el.className = 'tip';
+  el.setAttribute('role', 'status');
+  host.appendChild(el);
+  return {
+    show(html, x, y){ el.innerHTML = html; el.style.left = x + 'px'; el.style.top = y + 'px'; el.style.opacity = '1'; },
+    hide(){ el.style.opacity = '0'; }
+  };
+}
+
+/* =========================================================================
+   1. THE STRATEGY — vision, hierarchy, objectives, the 25 targets
+   ======================================================================= */
+function renderStrategy(){
+  $('#knwmsVision').textContent = KNWMS.vision;
+  $('#knwmsMeta').innerHTML =
+    `<span class="flag">${esc(KNWMS.owner)}</span> <span class="flag">${esc(KNWMS.structure)}</span>
+     <span class="flag">Timeline ${KNWMS.horizon.join(' → ')}</span>`;
+
+  $('#hierarchy').innerHTML = KNWMS.hierarchy.map((h, i) => `
+    <li class="gvr__item">
+      <span class="gvr__n" style="color:var(--kw-green)">${i + 1}</span>
+      <p class="gvr__t"><b>${esc(h.step)}</b>${h.rank ? esc(h.rank) : 'Preferred over every step below it.'}</p>
+    </li>`).join('');
+
+  $('#objectives').innerHTML = KNWMS.objectives.map(o => `
+    <div class="card">
+      <p class="tcard__label">Objective ${o.n}</p>
+      <h3 style="font-size:var(--step-1);margin:.35rem 0 .6rem">${esc(o.short)}</h3>
+      <p class="tcard__note">${esc(o.long)}</p>
+    </div>`).join('');
+
+  const byObj = n => TARGET_LIST.filter(t => t.objective === n);
+  $('#targetList').innerHTML = KNWMS.objectives.map(o => `
+    <details class="co">
+      <summary>Objective ${o.n} — ${esc(o.short)}
+        <span class="co__sector">${byObj(o.n).length} targets</span></summary>
+      <div class="co__body">
+        <ul>${byObj(o.n).map(t => `<li>${esc(t.text)} <span style="color:var(--ink-3)">— ${esc(t.who)}</span></li>`).join('')}</ul>
+      </div>
+    </details>`).join('');
+
+  $('#separationText').textContent = KNWMS.separationPlan;
+  $('#separationStreams').innerHTML = KNWMS.separationStreams.map(s => `
+    <div class="pcard">
+      <span class="pcard__icon">${s.icon}</span>
+      <b style="font-family:var(--f-display);font-size:var(--step-0)">${esc(s.label)}</b>
+      <span class="pcard__lab">${esc(s.detail)}</span>
+    </div>`).join('');
+
+  $('#landfillGoals').innerHTML = LANDFILL_GOALS.map(g => `
+    <div class="card">
+      <span style="font-size:1.5rem">${g.icon}</span>
+      <h3 style="font-size:var(--step-1);margin:.5rem 0 .5rem">${esc(g.goal)}</h3>
+      <p class="tcard__note">${esc(g.detail)}</p>
+    </div>`).join('');
+
+  $('#dataGoal').innerHTML = `
+    <p><b>Target 25 of 25 — "Distribute and publish waste data."</b> Objective 5 of the strategy is
+    entirely about information, and it is the only objective carrying a hard calendar date:
+    <b>set up and implement a data provision plan to distribute relevant waste data to other
+    authorities and the public by EPA by 31st of December 2026.</b></p>
+    <p class="tcard__note">Its four targets are: provide waste data to KEPA · implement a waste monitoring
+    system by KEPA · acquire monitoring equipment · distribute and publish waste data. The atlas is
+    candid about why this matters — Kuwait's own total waste figure is a range, 37 to 43 million
+    tonnes, because parts of it are estimated. "The improvement of weighing and recording of waste
+    amounts is one of the major goals of the KNWMS 2040."</p>`;
+}
+
+/* =========================================================================
+   2. THE 2040 DASHBOARD
+   ======================================================================= */
+function renderDashboard(){
+  const R = 52, C = 2 * Math.PI * R;
+  $('#dashboard').innerHTML = TARGETS.map(t => `
+    <article class="tcard">
+      <div class="tcard__top">
+        <div>
+          <span class="tcard__art">${ART[STREAM_ART[t.id]] || ''}</span>
+          <p class="tcard__big">${t.headline}<sup>%</sup></p>
+          <p class="tcard__label">${esc(t.headlineLabel)}</p>
+        </div>
+        <svg class="tcard__ring" width="96" height="96" viewBox="0 0 128 128" aria-hidden="true">
+          <circle class="ring__track" cx="64" cy="64" r="${R}"></circle>
+          <circle class="ring__bar" cx="64" cy="64" r="${R}" transform="rotate(-90 64 64)"
+                  stroke-dasharray="${C.toFixed(1)}" stroke-dashoffset="${C.toFixed(1)}"
+                  data-target="${t.headline}" data-circ="${C.toFixed(1)}"></circle>
+        </svg>
+      </div>
+      <p class="tcard__cat">${esc(t.stream)}</p>
+      <p class="tcard__note">${esc(t.note)}</p>
+      ${t.caution ? `<p class="flag" style="color:var(--gold);border-color:var(--gold)">⚠ Read the note — published two ways</p>` : ''}
+      <dl class="tcard__meta">
+        <dt>Target</dt><dd>“${esc(t.targetText)}”</dd>
+        <dt>Category</dt><dd>${esc(t.stream)}</dd>
+        <dt>Deadline</dt><dd>${t.deadline}</dd>
+        <dt>Responsible</dt><dd>${esc(t.responsible)}</dd>
+        <dt>Source</dt><dd>${srcLink(t.source)}</dd>
+      </dl>
+    </article>`).join('');
+
+  // animate the rings into place when the dashboard scrolls into view
+  const rings = $$('#dashboard .ring__bar');
+  const fill = () => rings.forEach(r => {
+    const c = parseFloat(r.dataset.circ), pct = parseFloat(r.dataset.target);
+    r.style.strokeDashoffset = (c - c * pct / 100).toFixed(1);
+  });
+  observeOnce($('#dashboard'), fill);
+}
+
+function observeOnce(el, fn){
+  if (!el) return;
+  if (!('IntersectionObserver' in window) || matchMedia('(prefers-reduced-motion: reduce)').matches) { fn(); return; }
+  const io = new IntersectionObserver(es => es.forEach(e => { if (e.isIntersecting) { fn(); io.disconnect(); } }), { threshold:.25 });
+  io.observe(el);
+}
+
+/* =========================================================================
+   3. 100% STACKED BAR — Kuwait's Waste Management Targets
+   Labels are rendered inside a segment only when the segment is wide enough
+   to hold them; every value is also in the table view below.
+   ======================================================================= */
+function renderStackedChart(){
+  const host = $('#stackChart');
+  const tip  = makeTip($('#stackWrap'));
+
+  host.innerHTML = TARGETS.map(t => {
+    const total = t.split.reduce((s, x) => s + x.value, 0);
+    return `
+    <div class="stack__row">
+      <div class="stack__head">
+        <span class="stack__name">${t.icon} ${esc(t.stream)}</span>
+      </div>
+      <div class="stack__bar" role="img"
+           aria-label="${esc(t.stream)}: ${t.split.map(s => `${s.label} ${s.value} per cent`).join(', ')}">
+        ${t.split.map(s => `
+          <div class="stack__seg" data-stream="${esc(t.stream)}" data-label="${esc(s.label)}" data-value="${s.value}"
+               style="flex:0 0 calc(${(s.value / total * 100).toFixed(2)}% - 2px);background:var(${SERIES_VAR[s.key]})"></div>`).join('')}
+      </div>
+      <ul class="stack__vals">
+        ${t.split.map(s => `
+          <li><i style="background:var(${SERIES_VAR[s.key]})"></i><b>${s.value}%</b> ${esc(s.label)}</li>`).join('')}
+      </ul>
+    </div>`;
+  }).join('') + `
+    <div class="stack__axis"><span>0%</span><span>25%</span><span>50%</span><span>75%</span><span>100%</span></div>`;
+
+  // hover / focus layer
+  $$('.stack__seg', host).forEach(seg => {
+    const show = e => {
+      const r = seg.getBoundingClientRect(), h = $('#stackWrap').getBoundingClientRect();
+      tip.show(`<b>${seg.dataset.value}%</b> ${esc(seg.dataset.label)}<br>${esc(seg.dataset.stream)}`,
+               r.left - h.left + r.width / 2, r.top - h.top);
+    };
+    seg.addEventListener('mouseenter', show);
+    seg.addEventListener('mousemove', show);
+    seg.addEventListener('mouseleave', tip.hide);
+  });
+
+  $('#stackTable').innerHTML = `
+    <caption>Kuwait National Waste Management Strategy 2040 — treatment targets by waste stream, per cent. Sewage sludge has no disposal share; the strategy allocates none.</caption>
+    <thead><tr><th>Waste stream</th><th class="num">Recycling</th><th class="num">Other recovery</th><th class="num">Disposal</th><th>Deadline</th></tr></thead>
+    <tbody>${TARGETS.map(t => {
+      const g = k => { const f = t.split.find(s => s.key === k); return f ? f.value + '%' : '—'; };
+      return `<tr><th scope="row">${esc(t.stream)}</th>
+        <td class="num">${g('recycling')}</td><td class="num">${g('recovery')}</td>
+        <td class="num">${g('disposal')}</td><td>${t.deadline}</td></tr>`;
+    }).join('')}</tbody>`;
+}
+
+/* =========================================================================
+   4. LINE CHART — indicator 12.5.1 over time
+   ======================================================================= */
+function renderLineChart(){
+  const host = $('#lineChart');
+  const data = INDICATOR_1251.series;
+  const W = 760, H = 320, P = { t:26, r:26, b:44, l:50 };
+  const maxY = 3, minY = 0;
+  const x = i => P.l + (W - P.l - P.r) * (i / (data.length - 1));
+  const y = v => P.t + (H - P.t - P.b) * (1 - (v - minY) / (maxY - minY));
+
+  const ticks = [0, 0.5, 1, 1.5, 2, 2.5, 3];
+  const path  = data.map((d, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(d.value).toFixed(1)}`).join(' ');
+  const area  = `${path} L${x(data.length - 1).toFixed(1)},${y(0).toFixed(1)} L${x(0).toFixed(1)},${y(0).toFixed(1)} Z`;
+
+  host.innerHTML = `
+  <svg viewBox="0 0 ${W} ${H}" role="img"
+       aria-label="Kuwait national recycling indicator 12.5.1, ${data[0].year} to ${data[data.length-1].year}: falls from ${data[0].value} per cent to ${data[data.length-1].value} per cent.">
+    ${ticks.map(t => `
+      <line class="line__grid" x1="${P.l}" x2="${W - P.r}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}"></line>
+      <text class="line__txt" x="${P.l - 10}" y="${(y(t) + 4).toFixed(1)}" text-anchor="end">${t.toFixed(1)}</text>`).join('')}
+    <path class="line__area" d="${area}"></path>
+    <path class="line__path" d="${path}"></path>
+    ${data.map((d, i) => `
+      <circle class="line__dot" cx="${x(i).toFixed(1)}" cy="${y(d.value).toFixed(1)}" r="4.5"></circle>
+      <text class="line__txt" x="${x(i).toFixed(1)}" y="${H - P.b + 20}" text-anchor="middle">${d.year}</text>`).join('')}
+    <!-- direct labels: the peak and the latest reading only -->
+    <text class="line__lab" x="${x(0).toFixed(1)}" y="${(y(data[0].value) - 14).toFixed(1)}" text-anchor="start">${data[0].value}%</text>
+    <text class="line__lab" x="${x(data.length - 1).toFixed(1)}" y="${(y(data[data.length-1].value) - 14).toFixed(1)}" text-anchor="end">${data[data.length-1].value}%</text>
+    <text class="line__txt" x="${P.l - 10}" y="${P.t - 10}" text-anchor="end">%</text>
+    ${data.map((d, i) => `
+      <rect class="line__hit" x="${(x(i) - 26).toFixed(1)}" y="${P.t}" width="52" height="${H - P.t - P.b}"
+            data-i="${i}" tabindex="0" role="button"
+            aria-label="${d.year}: ${d.value} per cent"></rect>`).join('')}
+  </svg>`;
+
+  const tip = makeTip($('#lineWrap'));
+  const at = i => {
+    const d = data[i];
+    const box = host.getBoundingClientRect(), wrap = $('#lineWrap').getBoundingClientRect();
+    const sx = box.left - wrap.left + (x(i) / W) * box.width;
+    const sy = box.top - wrap.top + (y(d.value) / H) * box.height;
+    tip.show(`<b>${d.value}%</b> of all solid waste recycled<br>${d.year} · Kuwait CSB, indicator 12.5.1`, sx, sy);
+  };
+  $$('.line__hit', host).forEach(r => {
+    r.addEventListener('mouseenter', () => at(+r.dataset.i));
+    r.addEventListener('focus',      () => at(+r.dataset.i));
+    r.addEventListener('mouseleave', tip.hide);
+    r.addEventListener('blur',       tip.hide);
+  });
+
+  $('#lineTable').innerHTML = `
+    <caption>Indicator ${INDICATOR_1251.code} — “${esc(INDICATOR_1251.name)}”, as published by ${esc(INDICATOR_1251.publisher)}.
+    The published table has two columns, “Year” and “Data”, and states no unit; the unit shown here is the one Kuwait’s own
+    Voluntary National Review gives for the same series.</caption>
+    <thead><tr><th>Year</th><th class="num">Reported value</th><th>Unit as published by CSB</th><th>Unit per Kuwait VNR2 (2023)</th></tr></thead>
+    <tbody>${data.map(d => `
+      <tr><th scope="row">${d.year}</th><td class="num">${d.value.toFixed(2)}</td>
+      <td style="color:var(--ink-3)">none stated (column header: “Data”)</td>
+      <td>${esc(INDICATOR_1251.unitClarified)}</td></tr>`).join('')}</tbody>`;
+
+  $('#indicatorMeaning').innerHTML = `
+    <h3>What this indicator actually measures</h3>
+    <p>${esc(INDICATOR_1251.whatItMeasures)}</p>
+    <p><b>How to avoid misreading it.</b> ${esc(INDICATOR_1251.misreadWarning)}</p>
+    <p class="tcard__note"><b>On the unit.</b> ${esc(INDICATOR_1251.unitEvidence)}</p>`;
+}
+
+/* =========================================================================
+   5. SDG 12
+   ======================================================================= */
+function renderSDG12(){
+  $('#sdgSummary').textContent = SDG12.csbSummary;
+  $('#sdgMeta').innerHTML = `
+    <span class="flag">${SDG12.numberOfTargets} targets</span>
+    <span class="flag">${SDG12.totalIndicators} indicators</span>
+    <span class="flag">${SDG12.applicableIndicators} applicable in Kuwait</span>`;
+
+  $('#sdgPillars').innerHTML = SDG12.pillars.map(p => `
+    <div class="card">
+      <span style="font-size:1.5rem">${p.icon}</span>
+      <h3 style="font-size:var(--step-1);margin:.5rem 0 .5rem">${esc(p.label)}</h3>
+      <p class="tcard__note">${esc(p.text)}</p>
+    </div>`).join('');
+
+  $('#sdgTargets').innerHTML = SDG12.targets.map(t => `
+    <li class="gvr__item" ${t.highlight ? 'style="border-color:var(--kw-green)"' : ''}>
+      <span class="gvr__n" style="font-size:var(--step-1);${t.highlight ? 'color:var(--kw-green)' : 'color:var(--ink-3)'}">${t.icon}<br>${t.id}</span>
+      <p class="gvr__t">${esc(t.text)}</p>
+    </li>`).join('');
+
+  $('#sdgCompanies').innerHTML = `
+    <h3>Target 12.6 — and the number Kuwait does not publish</h3>
+    <p>SDG 12 does not stop at government. Target 12.6 asks countries to
+    <b>“encourage companies, particularly large and transnational corporations, to adopt sustainable
+    practices and incorporate sustainability information into their reporting cycle”</b>, and Kuwait’s
+    own statistical bureau spells out the expectation plainly: <b>“companies should adopt sustainable
+    practices and publish sustainability reports.”</b></p>
+    <p>The indicator that would measure this is
+    <b>${SDG12.indicator1261.code} — “${esc(SDG12.indicator1261.name)}”</b>.
+    ${esc(SDG12.indicator1261.note)}</p>
+    <p class="tcard__note">Source: ${srcLink('S5')} · ${srcLink('S4')}</p>`;
+
+  $('#sdgAchievement').innerHTML = `
+    <span class="leadfig" style="color:var(--series-disposal)">${SDG12.achievement2019.value}%</span>
+    <p class="tcard__label" style="margin-top:.75rem">SDG 12 achievement, ${SDG12.achievement2019.year}</p>
+    <p class="tcard__note">${esc(SDG12.achievement2019.note)} Source: ${srcLink('S3')}</p>`;
+}
+
+/* =========================================================================
+   6. GOALS VS REALITY
+   ======================================================================= */
+function renderReality(){
+  $('#kwTargets').innerHTML = TARGETS.map(t => `
+    <li class="gvr__item">
+      <span class="gvr__n" style="color:var(--series-recycling)">${t.headline}%</span>
+      <p class="gvr__t"><b>${t.icon} ${esc(t.stream)}</b>${esc(t.headlineLabel)} · by ${t.deadline} · KEPA, KNWMS 2040</p>
+    </li>`).join('');
+
+  const r = [
+    { n:'0.76%', t:'National recycling rate, 2021',
+      d:'Share of all solid waste generated that was recycled — the lowest value in the published series. CSB indicator 12.5.1.' },
+    { n:'11%',   t:'Overall recycling rate, 2018',
+      d:'4.8 million of 44.7 million tonnes treated. Germany and South Korea recycle around 50%. KEPA atlas.' },
+    { n:'47%',   t:'Sent to municipal landfills, 2018',
+      d:'20,995 thousand tonnes. A further 32% was clay used for backfilling and 9% sand for landfill construction. KEPA atlas.' },
+    { n:'10%',   t:'Landfill area rehabilitated, 2020',
+      d:'2.0 km² of 19.8 km². 48% is closed but not rehabilitated; 42% is still in operation. KEPA atlas.' },
+    { n:'28.9%', t:'SDG 12 achievement, 2019',
+      d:'Kuwait’s own score for Responsible Consumption and Production in its Voluntary National Review.' },
+    { n:'none',  t:'Companies reporting sustainability',
+      d:'Indicator 12.6.1 exists in Kuwait’s SDG database but carries no published figure.' }
+  ];
+  $('#kwReality').innerHTML = r.map(x => `
+    <li class="gvr__item">
+      <span class="gvr__n" style="color:var(--series-disposal);font-size:${x.n === 'none' ? 'var(--step-1)' : 'var(--step-3)'}">${x.n}</span>
+      <p class="gvr__t"><b>${esc(x.t)}</b>${esc(x.d)}</p>
+    </li>`).join('');
+
+  $('#progressBars').innerHTML = COMPARISONS.map(c => {
+    const max = c.scaleMax || 100;
+    const w = v => Math.max(1.5, v / max * 100);
+    return `
+    <div class="chartcard" style="margin-bottom:var(--sp-4)">
+      <h3 style="font-size:var(--step-1)">${esc(c.title)}</h3>
+      <p class="chart__sub">${esc(c.category)}</p>
+      <div class="pbar">
+        <div class="pbar__row">
+          <div class="pbar__head"><span>CURRENT — ${esc(c.currentLabel)}</span><b>${c.currentValue}%</b></div>
+          <div class="pbar__track"><div class="pbar__fill pbar__fill--now" style="width:0" data-w="${w(c.currentValue).toFixed(1)}"></div></div>
+          <p class="pbar__note">${esc(c.currentDetail)}</p>
+        </div>
+        <div class="pbar__row">
+          <div class="pbar__head"><span>${esc(c.targetLabel).toUpperCase()}</span><b>${c.targetValue}%</b></div>
+          <div class="pbar__track"><div class="pbar__fill pbar__fill--goal" style="width:0" data-w="${w(c.targetValue).toFixed(1)}"></div></div>
+          <p class="pbar__note">${esc(c.targetDetail)}</p>
+        </div>
+      </div>
+      <p class="srcline">
+        <b>Bar scale:</b> ${c.scaleMax
+          ? `both bars are drawn on a 0–${c.scaleMax}% scale, not 0–100%, so that values under 3% are visible at all. A full bar means ${c.scaleMax}%, never 100%.`
+          : `both bars are drawn on a 0–100% scale.`}<br>
+        <b>Why this comparison is allowed:</b> ${esc(c.why)}<br>
+        ${c.sources.map(s => srcLink(s)).join(' · ')}</p>
+    </div>`;
+  }).join('');
+  observeOnce($('#progressBars'), () => $$('#progressBars .pbar__fill').forEach(f => f.style.width = f.dataset.w + '%'));
+
+  $('#noCompare').innerHTML = NON_COMPARISONS.map(n => `
+    <li>
+      <span class="pair">${esc(n.a)} <span class="vs">✕ NOT COMPARABLE ✕</span> ${esc(n.b)}</span>
+      <p>${esc(n.why)}</p>
+    </li>`).join('');
+}
+
+/* =========================================================================
+   7. COMPANIES — percentages counted from the dataset, never hardcoded
+   ======================================================================= */
+function renderCompanies(){
+  const n = COMPANIES.length;
+  $$('.js-n').forEach(el => el.textContent = n);
+
+  const stats = PRACTICE_DEFS.map(p => {
+    const count = COMPANIES.filter(c => c[p.key]).length;
+    return { ...p, count, pct: Math.round(count / n * 1000) / 10 };
+  });
+
+  $('#practiceCards').innerHTML = stats.map(s => `
+    <div class="pcard">
+      <span class="pcard__icon">${s.icon}</span>
+      <span class="pcard__pct">${s.pct % 1 === 0 ? s.pct : s.pct.toFixed(1)}%</span>
+      <span class="pcard__n">${s.count} of ${n}</span>
+      <span class="pcard__lab">${esc(s.label)}</span>
+      <div class="pcard__meter"><i style="width:0" data-w="${s.pct}"></i></div>
+    </div>`).join('');
+  observeOnce($('#practiceCards'), () => $$('#practiceCards .pcard__meter i').forEach(i => i.style.width = i.dataset.w + '%'));
+
+  $('#practiceDefs').innerHTML = PRACTICE_DEFS.map(p =>
+    `<li><b>${p.icon} ${esc(p.label)}</b> — ${esc(p.test)}</li>`).join('');
+
+  $('#companyMatrix').innerHTML = `
+    <caption>Every cell is a published claim or the absence of one. A blank means the practice was not found in that company’s published disclosure — not that the company does not do it.</caption>
+    <thead><tr><th>Company</th><th>Sector</th>${PRACTICE_DEFS.map(p => `<th>${p.icon}<br>${esc(p.label)}</th>`).join('')}</tr></thead>
+    <tbody>${COMPANIES.map(c => `
+      <tr><th scope="row">${esc(c.name)}</th><td style="text-align:left;color:var(--ink-3)">${esc(c.sector)}</td>
+      ${PRACTICE_DEFS.map(p => c[p.key]
+        ? `<td class="yes" aria-label="yes">●<span class="sr-only">yes</span></td>`
+        : `<td class="no" aria-label="not found">–<span class="sr-only">not found in published disclosure</span></td>`).join('')}
+      </tr>`).join('')}
+    </tbody>
+    <tfoot><tr><th scope="row">Total of ${n}</th><td></td>
+      ${stats.map(s => `<td class="num" style="font-weight:700">${s.count}</td>`).join('')}</tr></tfoot>`;
+
+  $('#companyList').innerHTML = COMPANIES.map(c => `
+    <details class="co">
+      <summary>${esc(c.name)}<span class="co__sector">${esc(c.sector)}</span></summary>
+      <div class="co__body">
+        <ul>${c.evidence.map(e => `<li>${esc(e)}</li>`).join('')}</ul>
+        <div class="co__links">${c.links.map(l => `<a href="${l.url}" target="_blank" rel="noopener">${esc(l.label)} ↗</a>`).join('')}</div>
+      </div>
+    </details>`).join('');
+
+  /* Link the company findings back to the national targets — carefully. */
+  const find = k => stats.find(s => s.key === k);
+  $('#companyLink').innerHTML = `
+    <h3>How this connects to Kuwait’s national goals</h3>
+    <p>The KNWMS 2040 is explicit that it cannot be delivered by government alone: <b>“a joint effort
+    from state authorities, private companies and the general public is necessary.”</b> Its financing
+    instruments name the private sector first — public-private partnerships, extended producer
+    responsibility, gate fees. So company practice is not decoration around the national goals; it is
+    one of the mechanisms the strategy names.</p>
+    <p>Read against that, the pattern in these ${n} companies lines up with some parts of the national
+    plan and not others:</p>
+    <ul style="color:var(--ink-2);font-size:var(--step--1);padding-left:1.1rem">
+      <li><b>Separation at source</b> is the thing the strategy says its success depends on, and it is
+      the <b>weakest</b> practice in this sample — ${find('wasteSeparation').count} of ${n}
+      (${find('wasteSeparation').pct}%) describe separating waste into streams on their own premises.</li>
+      <li><b>Electronic waste</b> carries a 50% national collection target and no published baseline.
+      ${find('eWasteRecycling').count} of ${n} companies here report collecting e-waste, several
+      through the same local facility — which is how a baseline could start to exist.</li>
+      <li><b>Paper and plastic</b> — the two materials most visible in household waste (12.1% and 16.7%
+      of it) — are where company action clusters: ${find('paperRecycling').count} and
+      ${find('plasticReduction').count} of ${n} respectively.</li>
+      <li><b>Reporting</b> is the outlier: all ${n} publish a sustainability report, while Kuwait’s
+      national indicator for exactly this (12.6.1) publishes no figure at all. That gap is a
+      measurement gap, not necessarily a performance gap.</li>
+    </ul>
+    <p class="warnbox" style="margin-top:var(--sp-5)"><b>What this does not show.</b> These company
+    practices support the direction of Kuwait’s national waste-management goals. They do not
+    demonstrate that the companies are delivering any national percentage target, and no official
+    source attributes progress on the 30%, 15%, 50% or 80% targets to them. Corporate tonnages are
+    reported in kilograms and tonnes against a national picture measured in millions of tonnes;
+    the two are not additive, and nothing here should be read as a national contribution figure.</p>`;
+
+  $('#companyCaveat').innerHTML = `
+    <h3>How this dataset was built — read this before the percentages</h3>
+    <p>${n} large companies operating in Kuwait were researched by hand and checked against their own
+    published disclosures. They were <b>selected because they publish</b>, which makes this a sample
+    of disclosing companies, not a survey of Kuwaiti business. Small, unlisted and family-held firms —
+    most of the economy — are absent by construction.</p>
+    <p>That selection shows up immediately in the results: <b>100% publish a sustainability report</b>
+    is a property of how the sample was chosen, not a finding about Kuwait. Every other percentage
+    should be read as “of these ${n} researched companies”, and never as “of companies in Kuwait”.</p>
+    <p class="tcard__note">A practice is marked present only where a specific published claim supports it.
+    Where a company simply does not disclose, it is marked absent — absent here means
+    <b>“not found in published disclosure”</b>, not “does not happen”. Each company’s evidence and
+    source links are listed below the table, so any cell can be checked.</p>`;
+}
+
+/* =========================================================================
+   8. TIMELINE
+   ======================================================================= */
+function renderTimeline(){
+  $('#timeline').innerHTML = TIMELINE.map(t => `
+    <div class="tl__node" data-kind="${t.kind}" tabindex="0" role="group"
+         aria-label="${t.year}: ${esc(t.goal)}. Target: ${esc(t.target)}.">
+      <span class="tl__dot">${t.icon}</span>
+      <span class="tl__year">${t.year}</span>
+      <span class="tl__goal">${esc(t.goal)}</span>
+      <div class="tl__card">
+        <b>${t.year} — ${esc(t.goal)}</b>
+        <span class="t">🎯 ${esc(t.target)}</span>
+        ${esc(t.detail)}
+        <span class="s">Source: ${esc(src(t.source).org)} — ${esc(src(t.source).title)}</span>
+      </div>
+    </div>`).join('');
+}
+
+/* =========================================================================
+   8b. PROJECTIONS — the only modelled numbers on the page
+   Every figure produced here is computed in the browser from the official
+   inputs in data.js, so a reader can change an assumption and watch the
+   result move rather than take a single number on trust.
+   ======================================================================= */
+
+const PROJ_STATE = { popPath:'un', scenario:'flat' };
+
+/* population(year) under the selected path */
+function projPopulation(){
+  const base = PROJECTION.population;
+  if (PROJ_STATE.popPath === 'un') return base;
+  // CSB-anchored: rescale the whole UN curve so it meets Kuwait's own 2025 estimate
+  const un2025 = base.find(p => p.year === PROJECTION.csbAnchor.year).value;
+  const k = PROJECTION.csbAnchor.value / un2025;
+  return base.map(p => ({ year:p.year, value:Math.round(p.value * k) }));
+}
+
+/* municipal solid waste, tonnes per year, for one per-capita drift */
+function projSeries(drift){
+  const pop = projPopulation();
+  let rate = PROJECTION.perCapitaKgDay;
+  return pop.map((p, i) => {
+    if (i > 0) rate *= (1 + drift);
+    return { year:p.year, population:p.value, rate, tonnes: p.value * rate * 365 / 1000 };
+  });
+}
+
+const fmtT  = t => t >= 1e6 ? (t / 1e6).toFixed(2) + ' Mt' : Math.round(t).toLocaleString('en') + ' t';
+const fmtN  = n => Math.round(n).toLocaleString('en');
+
+function renderProjection(){
+  $('#projMethod').innerHTML = `
+    <h3>How these numbers are made — read this first</h3>
+    <p>Everything above this point on the page is a figure some official body has
+    published. <b>Nothing below it is.</b> This section is a projection, and it is the only
+    place on this page carrying numbers nobody has published.</p>
+    <p>The model is deliberately the simplest one that can be checked by hand:</p>
+    <p class="formula">municipal solid waste in year Y &nbsp;=&nbsp; population(Y) × kg per person per day × 365</p>
+    <p>Both inputs are official and neither is invented. Population comes from the
+    <b>UN World Population Prospects 2024, medium variant</b>. The waste rate is the
+    <b>1.6 kg per person per day</b> that Kuwait's own EPA atlas records for municipal
+    solid waste. Everything else is multiplication.</p>
+    <p class="tcard__note">Sources: ${srcLink('S6')} · ${srcLink('S1')}</p>`;
+
+  const bt = PROJECTION.backtest;
+  $('#projBacktest').innerHTML = `
+    <h3>Does the method work? Test it on a year Kuwait has already published</h3>
+    <p>A projection nobody has checked is a guess with a chart around it. So the same
+    arithmetic was run on <b>${bt.year}</b>, the year the EPA atlas reports real measured
+    figures for, using the atlas's own household rate of ${bt.rateKgDay} kg per resident per day.</p>
+    <div class="bt">
+      <div class="bt__cell"><span class="bt__n">${fmtT(bt.modelled)}</span><span class="bt__l">What the model predicts for ${bt.year}</span></div>
+      <div class="bt__cell"><span class="bt__n">${fmtT(bt.official)}</span><span class="bt__l">${esc(bt.officialLabel)}</span></div>
+      <div class="bt__cell bt__cell--err"><span class="bt__n">${bt.errorPct}%</span><span class="bt__l">Error, reported and left uncorrected</span></div>
+    </div>
+    <p class="tcard__note">${esc(bt.verdict)}</p>`;
+
+  // ---- controls -------------------------------------------------------
+  $('#projControls').innerHTML = `
+    <div class="ctl">
+      <span class="ctl__lab" id="popLab">Population path</span>
+      <div class="ctl__row" role="radiogroup" aria-labelledby="popLab">
+        <button type="button" class="chip" data-k="popPath" data-v="un" aria-checked="true" role="radio">UN medium variant</button>
+        <button type="button" class="chip" data-k="popPath" data-v="csb" aria-checked="false" role="radio">Kuwait CSB-anchored (−2.9%)</button>
+      </div>
+    </div>
+    <div class="ctl">
+      <span class="ctl__lab" id="scLab">Waste per person</span>
+      <div class="ctl__row" role="radiogroup" aria-labelledby="scLab">
+        ${PROJECTION.scenarios.map(sc => `
+          <button type="button" class="chip" data-k="scenario" data-v="${sc.key}"
+                  role="radio" aria-checked="${sc.key === 'flat'}">${esc(sc.label)}</button>`).join('')}
+      </div>
+    </div>`;
+
+  $$('#projControls .chip').forEach(btn => {
+    btn.addEventListener('click', () => {
+      PROJ_STATE[btn.dataset.k] = btn.dataset.v;
+      $$(`#projControls .chip[data-k="${btn.dataset.k}"]`).forEach(o =>
+        o.setAttribute('aria-checked', String(o === btn)));
+      drawProjection();
+    });
+  });
+  $$('#projControls .chip[aria-checked="true"]').forEach(b => b.classList.add('is-on'));
+
+  $('#projLimits').innerHTML = `
+    <h3>What this projection cannot tell you</h3>
+    <ul>${PROJECTION.limits.map(l => `<li>${esc(l)}</li>`).join('')}</ul>`;
+
+  const nf = PROJECTION.noRateForecast;
+  $('#projNoRate').innerHTML = `
+    <h3>${esc(nf.headline)}</h3>
+    <p>${esc(nf.body)}</p>
+    <p class="formula">least-squares fit, 2015–2021 &nbsp;→&nbsp; ${nf.fit.intercept} ${nf.fit.slope} × (year − 2015) &nbsp;→&nbsp; reaches 0% in ${nf.fit.zeroYear}</p>
+    <p class="tcard__note">${esc(nf.reinforce)}</p>`;
+
+  $('#projOfficial').innerHTML = PROJECTION.officialFuture.map(f => `
+    <li class="gvr__item">
+      <span class="gvr__n" style="color:var(--kw-green);font-size:var(--step-2)">${f.year}</span>
+      <p class="gvr__t"><b>${f.icon} ${esc(f.title)}</b>${esc(f.detail)}
+        <a href="${src(f.source).url}" target="_blank" rel="noopener" style="color:var(--kw-green)">Source ↗</a></p>
+    </li>`).join('');
+
+  const hz = HAZARDOUS_TREATED;
+  $('#projHazard').innerHTML = `
+    <caption>${esc(src(hz.source).title)}. ${esc(hz.note)}</caption>
+    <thead><tr><th>Waste type</th><th>Unit</th>${hz.years.map(y => `<th class="num">${y}</th>`).join('')}</tr></thead>
+    <tbody>${hz.rows.map(r => `
+      <tr><th scope="row">${esc(r.label)}</th><td style="color:var(--ink-3)">${esc(r.unit)}</td>
+      ${r.values.map(v => `<td class="num">${fmtN(v)}</td>`).join('')}</tr>`).join('')}</tbody>`;
+
+  drawProjection();
+}
+
+/* ---- the projection chart ------------------------------------------- */
+function drawProjection(){
+  const all = PROJECTION.scenarios.map(sc => ({ sc, data: projSeries(sc.drift) }));
+  const sel = all.find(a => a.sc.key === PROJ_STATE.scenario);
+  const years = sel.data.map(d => d.year);
+  const lo = years.map((_, i) => Math.min(...all.map(a => a.data[i].tonnes)));
+  const hi = years.map((_, i) => Math.max(...all.map(a => a.data[i].tonnes)));
+
+  const W = 760, H = 340, P = { t:28, r:30, b:46, l:62 };
+  const maxY = 4.5e6, minY = 0;
+  const x = i => P.l + (W - P.l - P.r) * (i / (years.length - 1));
+  const y = v => P.t + (H - P.t - P.b) * (1 - (v - minY) / (maxY - minY));
+  const ticks = [0, 1e6, 2e6, 3e6, 4e6];
+
+  const line = arr => arr.map((v, i) => `${i ? 'L' : 'M'}${x(i).toFixed(1)},${y(v).toFixed(1)}`).join(' ');
+  const band = `${line(hi)} ` + lo.map((v, i) => `L${x(lo.length - 1 - i).toFixed(1)},${y(lo[lo.length - 1 - i]).toFixed(1)}`).join(' ') + ' Z';
+  const selV = sel.data.map(d => d.tonnes);
+  const last = selV.length - 1;
+
+  $('#projChart').innerHTML = `
+  <svg viewBox="0 0 ${W} ${H}" role="img"
+       aria-label="Projected municipal solid waste generated in Kuwait, ${years[0]} to ${years[last]}, rising from ${fmtT(selV[0])} to ${fmtT(selV[last])} per year under the selected scenario.">
+    ${ticks.map(t => `
+      <line class="line__grid" x1="${P.l}" x2="${W - P.r}" y1="${y(t).toFixed(1)}" y2="${y(t).toFixed(1)}"></line>
+      <text class="line__txt" x="${P.l - 10}" y="${(y(t) + 4).toFixed(1)}" text-anchor="end">${(t / 1e6).toFixed(1)}</text>`).join('')}
+    <text class="line__txt" x="${P.l - 10}" y="${P.t - 12}" text-anchor="end">Mt / yr</text>
+    <path class="proj__band" d="${band}"></path>
+    <path class="proj__line" d="${line(selV)}"></path>
+    ${years.map((yr, i) => (yr % 4 === 0 || i === last) ? `
+      <text class="line__txt" x="${x(i).toFixed(1)}" y="${H - P.b + 20}" text-anchor="middle">${yr}</text>` : '').join('')}
+    <circle class="proj__dot" cx="${x(last).toFixed(1)}" cy="${y(selV[last]).toFixed(1)}" r="5"></circle>
+    <text class="line__lab" x="${x(last).toFixed(1)}" y="${(y(selV[last]) - 15).toFixed(1)}" text-anchor="end">${fmtT(selV[last])}</text>
+    ${years.map((yr, i) => `
+      <rect class="line__hit" x="${(x(i) - 22).toFixed(1)}" y="${P.t}" width="44" height="${H - P.t - P.b}"
+            data-i="${i}" tabindex="0" role="button"
+            aria-label="${yr}: projected ${fmtT(selV[i])}"></rect>`).join('')}
+  </svg>`;
+
+  const host = $('#projChart');
+  if (!host._tip) host._tip = makeTip($('#projWrap'));
+  const tip = host._tip;
+  const at = i => {
+    const d = sel.data[i];
+    const box = host.getBoundingClientRect(), wrap = $('#projWrap').getBoundingClientRect();
+    tip.show(`<b>${fmtT(d.tonnes)}</b> projected municipal waste<br>${d.year} · population ${fmtN(d.population)} · ${d.rate.toFixed(2)} kg/person/day<br><span style="opacity:.75">range ${fmtT(lo[i])} – ${fmtT(hi[i])}</span>`,
+             box.left - wrap.left + (x(i) / W) * box.width,
+             box.top - wrap.top + (y(d.tonnes) / H) * box.height);
+  };
+  $$('.line__hit', host).forEach(r => {
+    r.addEventListener('mouseenter', () => at(+r.dataset.i));
+    r.addEventListener('focus',      () => at(+r.dataset.i));
+    r.addEventListener('mouseleave', tip.hide);
+    r.addEventListener('blur',       tip.hide);
+  });
+
+  // headline figures under the chart
+  const cum = sel.data.filter(d => d.year >= 2025).reduce((s, d) => s + d.tonnes, 0);
+  const t40 = selV[last];
+  const cmp = PROJECTION.targetsInTonnes;
+  $('#projHeadline').innerHTML = `
+    <div class="pcard"><span class="pcard__icon">🗑️</span>
+      <span class="pcard__pct">${(t40 / 1e6).toFixed(2)}</span>
+      <span class="pcard__n">Mt per year</span>
+      <span class="pcard__lab">Municipal solid waste Kuwait would generate in 2040 on this path</span></div>
+    <div class="pcard"><span class="pcard__icon">📦</span>
+      <span class="pcard__pct">${(cum / 1e6).toFixed(0)}</span>
+      <span class="pcard__n">Mt, 2025–2040</span>
+      <span class="pcard__lab">Cumulative municipal solid waste over the strategy's remaining run</span></div>
+    <div class="pcard"><span class="pcard__icon">♻️</span>
+      <span class="pcard__pct">${(t40 * 0.30 / 1e6).toFixed(2)}</span>
+      <span class="pcard__n">Mt per year</span>
+      <span class="pcard__lab">What the 30% recycling target means in tonnes at that volume</span></div>
+    <div class="pcard"><span class="pcard__icon">📈</span>
+      <span class="pcard__pct">${(t40 * 0.30 / cmp.compareValue).toFixed(1)}×</span>
+      <span class="pcard__n">multiple</span>
+      <span class="pcard__lab">That tonnage against the ${fmtN(cmp.compareValue / 1000)} thousand tonnes of paper, glass, plastic and cardboard Kuwait recycled from all sources in 2018</span></div>`;
+
+  $('#projScenarioNote').innerHTML = `
+    <b>${esc(sel.sc.label)}:</b> ${esc(sel.sc.blurb)}
+    ${PROJ_STATE.popPath === 'csb'
+      ? ` Population path rescaled to Kuwait CSB's own 2025 estimate — ${esc(PROJECTION.csbAnchor.note)}`
+      : ''}
+    The shaded band on the chart is the full range across all three waste-per-person scenarios.`;
+
+  $('#projTable').innerHTML = `
+    <caption>Projected municipal solid waste, ${years[0]}–${years[last]}, under the selected scenario.
+    <b>These are projections, not official figures.</b> Population is UN World Population Prospects 2024 medium variant${PROJ_STATE.popPath === 'csb' ? ', rescaled to Kuwait CSB’s 2025 estimate' : ''}; the waste rate starts at Kuwait EPA’s 1.6 kg per person per day.</caption>
+    <thead><tr><th>Year</th><th class="num">Population</th><th class="num">kg/person/day</th><th class="num">Projected MSW (tonnes/yr)</th><th class="num">Scenario range (tonnes/yr)</th></tr></thead>
+    <tbody>${sel.data.map((d, i) => `
+      <tr><th scope="row">${d.year}</th><td class="num">${fmtN(d.population)}</td>
+      <td class="num">${d.rate.toFixed(2)}</td><td class="num">${fmtN(d.tonnes)}</td>
+      <td class="num">${fmtN(lo[i])} – ${fmtN(hi[i])}</td></tr>`).join('')}</tbody>`;
+}
+
+/* =========================================================================
+   9. SOURCES + table toggles
+   ======================================================================= */
+function renderSources(){
+  $('#sourceList').innerHTML = Object.values(SOURCES).map(s => `
+    <li>
+      <b>${esc(s.org)}</b>
+      <span>${esc(s.title)}</span>
+      <span>${esc(s.note)}</span>
+      <a href="${s.url}" target="_blank" rel="noopener">${esc(s.url)}</a>
+    </li>`).join('');
+}
+
+function initTableToggles(){
+  $$('.tabletoggle').forEach(btn => {
+    const target = $('#' + btn.dataset.target);
+    const wrapper = target.closest('.scrollx') || target;
+    btn.addEventListener('click', () => {
+      const open = !wrapper.hasAttribute('hidden');
+      wrapper.toggleAttribute('hidden', open);
+      btn.setAttribute('aria-expanded', String(!open));
+      btn.textContent = open ? btn.dataset.show : btn.dataset.hide;
+    });
+  });
+}
+
+function redrawCharts(){ /* charts read colours from CSS vars, so a theme flip needs no redraw */ }
+
+/* ------------------------------------------------------------------ boot - */
+document.addEventListener('DOMContentLoaded', () => {
+  initTheme();
+  initJumpNav();
+  renderGlance();
+  renderStrategy();
+  renderDashboard();
+  renderStackedChart();
+  renderLineChart();
+  renderSDG12();
+  renderReality();
+  renderCompanies();
+  renderTimeline();
+  renderProjection();
+  renderSources();
+  initTableToggles();
+});
+
+</script>
