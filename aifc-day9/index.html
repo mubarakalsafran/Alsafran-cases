@@ -1,0 +1,918 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Jahra Shop Stock Agent — Stock Monitoring &amp; Low-Stock Alert System</title>
+<meta name="description" content="AIFC Day 9 project. An AI agent that checks a Jahra shop's test inventory and flags products at or below their minimum stock level — without changing quantities or buying anything.">
+<meta name="theme-color" content="#0A0E14">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;600;700&display=swap" rel="stylesheet">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 32 32%22%3E%3Crect width=%2232%22 height=%2232%22 rx=%228%22 fill=%22%230A0E14%22/%3E%3Crect x=%226%22 y=%2214%22 width=%225%22 height=%2212%22 fill=%22%2338BDF8%22/%3E%3Crect x=%2213.5%22 y=%228%22 width=%225%22 height=%2218%22 fill=%22%2334D399%22/%3E%3Crect x=%2221%22 y=%2219%22 width=%225%22 height=%227%22 fill=%22%23F87171%22/%3E%3C/svg%3E">
+<link rel="stylesheet" href="assets/css/agent.css">
+</head>
+<body>
+
+<!-- ========================================================== NAV ======= -->
+<nav class="nav" id="nav">
+  <div class="wrap nav__in">
+    <a class="nav__brand" href="#overview">
+      <span class="nav__dot" aria-hidden="true"></span>
+      <span class="nav__txt">Jahra Stock Agent</span>
+    </a>
+    <ul class="nav__links">
+      <li><a href="#overview">Overview</a></li>
+      <li><a href="#spec">Agent Spec</a></li>
+      <li><a href="#tools">Tools</a></li>
+      <li><a href="#memory">Memory</a></li>
+      <li><a href="#guardrails">Guardrails</a></li>
+      <li><a href="#rehearsal">Rehearsal</a></li>
+      <li><a href="#rulechange">Rule Change</a></li>
+      <li><a href="#workflow">Workflow</a></li>
+      <li><a href="#failures">Failure Plans</a></li>
+      <li><a href="#security">Security</a></li>
+      <li><a href="#demo">Demo</a></li>
+      <li><a href="#evidence">Run Evidence</a></li>
+    </ul>
+  </div>
+</nav>
+
+<!-- ========================================================= HERO ======= -->
+<header class="hero" id="overview">
+  <div class="hero__grid" aria-hidden="true"></div>
+  <div class="wrap hero__in">
+    <span class="eyebrow">AIFC · Day 9 · Agent Design Project</span>
+    <h1>JAHRA SHOP<br><span>STOCK AGENT</span></h1>
+    <p class="hero__sub">Stock Monitoring &amp; Low-Stock Alert System</p>
+
+    <div class="hero__meta">
+      <span class="chip">📍 <b>Jahra, Kuwait</b></span>
+      <span class="chip">🧪 <b>Test data only</b></span>
+      <span class="chip">👆 <b>Manual trigger</b></span>
+      <span class="chip">💰 Max spend <b>0 KD</b></span>
+      <span class="chip">🔔 Max <b>10 alerts</b> per run</span>
+    </div>
+
+    <div class="goal">
+      <h2>1 · Project Goal</h2>
+      <p>“The agent checks the Jahra shop’s test inventory and flags products when their stock
+         reaches or falls below the minimum stock level without changing inventory quantities.”</p>
+      <p class="goal__note">The agent is designed to detect low stock <strong>early</strong>, so that a
+         human can decide whether more stock should be ordered. The decision always stays with the person.</p>
+    </div>
+
+    <div class="nots">
+      <div class="not"><span>🚫</span> The agent does NOT purchase products</div>
+      <div class="not"><span>🚫</span> The agent does NOT change inventory quantities</div>
+      <div class="not not--yes"><span>✅</span> The agent only identifies and records low-stock alerts</div>
+    </div>
+  </div>
+</header>
+
+<!-- ==================================================== DASHBOARD ======= -->
+<section class="section section--tint">
+  <div class="wrap">
+    <div class="s-head reveal">
+      <div class="s-num">Control Centre</div>
+      <h2>Test Inventory Dashboard</h2>
+      <p>This is the result of one manual run over the test data. Nothing here is real shop data,
+         and no quantity on this page was written back to any system.</p>
+    </div>
+
+    <div class="stats reveal">
+      <div class="stat" style="--c:var(--accent)">
+        <div class="stat__label">Products Checked</div>
+        <div class="stat__value" data-count="3">0</div>
+        <div class="stat__foot">Test inventory rows read</div>
+      </div>
+      <div class="stat" style="--c:var(--alert)">
+        <div class="stat__label">Low-Stock Alerts</div>
+        <div class="stat__value" data-count="1">0</div>
+        <div class="stat__foot">Quantity ≤ minimum stock</div>
+      </div>
+      <div class="stat" style="--c:var(--safe)">
+        <div class="stat__label">No-Action Results</div>
+        <div class="stat__value" data-count="1">0</div>
+        <div class="stat__foot">Stock level safe</div>
+      </div>
+      <div class="stat" style="--c:var(--warn)">
+        <div class="stat__label">Workflow Status</div>
+        <div class="stat__value stat__value--sm">AWAITING RUN</div>
+        <div class="stat__foot">Manual trigger only — see Run Evidence</div>
+      </div>
+      <div class="stat" style="--c:var(--safe)">
+        <div class="stat__label">Safety Status</div>
+        <div class="stat__value stat__value--sm">0 KD SPENT</div>
+        <div class="stat__foot">Purchasing disabled by design</div>
+      </div>
+    </div>
+
+    <div class="panel reveal">
+      <div class="panel__head">
+        <h3>Example Products &amp; Stock Levels</h3>
+        <span class="tag">TEST SHEET · READ-ONLY</span>
+      </div>
+      <div class="panel__body">
+        <div class="inv">
+
+          <div class="inv__row">
+            <div class="inv__name">Water Bottles</div>
+            <div class="inv__num">4 / 10</div>
+            <div class="inv__bar"><span class="inv__fill" style="--c:var(--alert)" data-w="40"></span><span class="inv__min" style="left:100%"></span></div>
+            <div class="inv__foot">
+              <span class="badge badge--alert">Low Stock</span>
+              <span>4 ≤ 10 → create alert</span>
+            </div>
+          </div>
+
+          <div class="inv__row">
+            <div class="inv__name">Paper Cups</div>
+            <div class="inv__num">25 / 10</div>
+            <div class="inv__bar"><span class="inv__fill" style="--c:var(--safe)" data-w="100"></span><span class="inv__min" style="left:40%"></span></div>
+            <div class="inv__foot">
+              <span class="badge badge--safe">Safe</span>
+              <span>25 &gt; 10 → no action</span>
+            </div>
+          </div>
+
+          <div class="inv__row">
+            <div class="inv__name">Juice Boxes</div>
+            <div class="inv__num">UNKNOWN / 8</div>
+            <div class="inv__bar"><span class="inv__fill inv__fill--striped" data-w="100"></span></div>
+            <div class="inv__foot">
+              <span class="badge badge--warn">Human Review Required</span>
+              <span>Quantity is missing — the agent must not guess</span>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ========================================================= SPEC ======= -->
+<section class="section" id="spec">
+  <div class="wrap">
+    <div class="s-head reveal">
+      <div class="s-num">The Five-Part Spec</div>
+      <h2>Agent Specification</h2>
+      <p>Every part of the agent is written down before it is allowed to run. Click any card to jump to it.</p>
+    </div>
+    <div class="spec reveal">
+      <a class="spec__part" href="#overview">
+        <div class="spec__n">01</div><h3>Goal</h3>
+        <p>Flag products at or below the minimum stock level — nothing more.</p>
+      </a>
+      <a class="spec__part" href="#tools">
+        <div class="spec__n">02</div><h3>Tools</h3>
+        <p>Four tools: manual trigger, test sheet, stock check, test alert log.</p>
+      </a>
+      <a class="spec__part" href="#memory">
+        <div class="spec__n">03</div><h3>Memory</h3>
+        <p>7 days of alert history, so the same product is not alerted twice.</p>
+      </a>
+      <a class="spec__part" href="#guardrails">
+        <div class="spec__n">04</div><h3>Guardrails</h3>
+        <p>Never · Ask First · Spend · Stop and Ask.</p>
+      </a>
+      <a class="spec__part" href="#stop">
+        <div class="spec__n">05</div><h3>Stop Condition</h3>
+        <p>10 alerts per run, 0 KD spending, then hand over to a human.</p>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================== TOOLS ======= -->
+<section class="section section--tint" id="tools">
+  <div class="wrap">
+    <div class="s-head reveal">
+      <div class="s-num">2 · Tools</div>
+      <h2>What the Agent Is Allowed to Use</h2>
+      <p>The agent has four tools and nothing else. If a job needs a tool that is not on this list,
+         the agent stops and asks a human.</p>
+    </div>
+
+    <div class="grid grid--2 reveal">
+
+      <article class="card">
+        <div class="card__top">
+          <div class="card__ico">👆</div>
+          <div>
+            <div class="card__id">Tool 1</div>
+            <h3 class="card__title">Manual Trigger</h3>
+          </div>
+        </div>
+        <ul class="kv">
+          <li><span class="kv__k kv__k--can">✓ Can</span>
+              <span class="kv__v">Start the workflow when I manually press <strong>Execute Workflow</strong>.</span></li>
+          <li><span class="kv__k kv__k--cannot">✕ Cannot</span>
+              <span class="kv__v">Start the workflow automatically.</span></li>
+          <li><span class="kv__k kv__k--note">◆ Purpose</span>
+              <span class="kv__v">Keeps the workflow under human control during testing.</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <div class="card__top">
+          <div class="card__ico">📄</div>
+          <div>
+            <div class="card__id">Tool 2</div>
+            <h3 class="card__title">Test Google Sheet / Inventory Data</h3>
+          </div>
+        </div>
+        <ul class="kv">
+          <li><span class="kv__k kv__k--can">✓ Can read</span>
+              <ul>
+                <li>Product name</li>
+                <li>Current quantity</li>
+                <li>Minimum stock level</li>
+              </ul></li>
+          <li><span class="kv__k kv__k--cannot">✕ Cannot</span>
+              <span class="kv__v">Access unrelated files or private business information.</span></li>
+          <li><span class="kv__k kv__k--note">◆ Permission</span>
+              <span class="kv__v">Read-only where possible.</span></li>
+          <li><span class="kv__k kv__k--note">◆ Purpose</span>
+              <span class="kv__v">Provides the inventory information the agent needs.</span></li>
+        </ul>
+      </article>
+
+      <article class="card">
+        <div class="card__top">
+          <div class="card__ico">⚖️</div>
+          <div>
+            <div class="card__id">Tool 3</div>
+            <h3 class="card__title">Stock Check</h3>
+          </div>
+        </div>
+        <ul class="kv">
+          <li><span class="kv__k kv__k--can">✓ Can</span>
+              <span class="kv__v">Compare the current quantity with the minimum stock level.</span></li>
+          <li><span class="kv__k kv__k--cannot">✕ Cannot</span>
+              <span class="kv__v">Change the stock quantity or order products.</span></li>
+        </ul>
+        <div class="rule-code"><em>IF</em>   Current Quantity &lt;= Minimum Stock
+<em>THEN</em> <span class="low">LOW STOCK</span>
+<em>ELSE</em> <span class="ok">NO ACTION</span></div>
+      </article>
+
+      <article class="card">
+        <div class="card__top">
+          <div class="card__ico">📝</div>
+          <div>
+            <div class="card__id">Tool 4</div>
+            <h3 class="card__title">Test Alert Log</h3>
+          </div>
+        </div>
+        <ul class="kv">
+          <li><span class="kv__k kv__k--can">✓ Can</span>
+              <span class="kv__v">Record a low-stock alert in a test sheet.</span></li>
+          <li><span class="kv__k kv__k--note">◆ Records</span>
+              <ul>
+                <li>Product</li>
+                <li>Current quantity</li>
+                <li>Minimum stock</li>
+                <li>Alert status</li>
+                <li>Date / time</li>
+              </ul></li>
+          <li><span class="kv__k kv__k--cannot">✕ Cannot</span>
+              <span class="kv__v">Purchase stock or contact suppliers.</span></li>
+        </ul>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================= MEMORY ======= -->
+<section class="section" id="memory">
+  <div class="wrap">
+    <div class="s-head reveal">
+      <div class="s-num">3 · Memory</div>
+      <h2>What the Agent Remembers</h2>
+      <p>Memory exists for one reason only: so the shop is not flooded with the same alert again and again.</p>
+    </div>
+
+    <div class="mem reveal">
+      <div class="mem__ttl">Stored per product</div>
+      <ul class="mem__items">
+        <li><b>Product name</b>Which item was checked</li>
+        <li><b>Last quantity checked</b>The number read on the last run</li>
+        <li><b>Alert created?</b>Yes or no</li>
+        <li><b>Date / time of the alert</b>When it happened</li>
+      </ul>
+
+      <div class="mem__dur">
+        <div>
+          <div class="mem__ttl" style="margin-bottom:6px">Memory duration</div>
+          <strong style="font-size:1.1rem">7 days</strong>
+        </div>
+        <div class="mem__days" aria-label="Seven day memory window">
+          <span class="mem__day">1</span><span class="mem__day">2</span><span class="mem__day">3</span>
+          <span class="mem__day">4</span><span class="mem__day">5</span><span class="mem__day">6</span>
+          <span class="mem__day">7</span>
+        </div>
+      </div>
+
+      <div class="rule-code">Before creating another alert, the agent checks whether the same product
+already received the same alert recently.
+
+→ <span class="ok">This prevents duplicate alerts.</span></div>
+    </div>
+  </div>
+</section>
+
+<!-- =================================================== GUARDRAILS ======= -->
+<section class="section section--tint" id="guardrails">
+  <div class="wrap">
+    <div class="s-head reveal">
+      <div class="s-num">4 · Guardrails</div>
+      <h2>The Rules the Agent Cannot Break</h2>
+      <p>These four blocks are the most important part of the whole project. They describe what the
+         agent must never do, when it must ask a human, what it is allowed to spend, and when it
+         must stop completely.</p>
+    </div>
+
+    <div class="grid grid--guard reveal">
+
+      <div class="guard guard--never">
+        <div class="guard__head"><span class="guard__ico">🚫</span><h3>NEVER</h3></div>
+        <p class="guard__lead">The agent must NEVER:</p>
+        <ul class="guard__list">
+          <li>Change inventory quantities.</li>
+          <li>Purchase products.</li>
+          <li>Contact suppliers.</li>
+          <li>Invent a missing stock quantity.</li>
+          <li>Invent a minimum stock level.</li>
+          <li>Access inventory information outside the test data.</li>
+          <li>Use a tool that was not provided.</li>
+          <li>Expose passwords, API keys or credentials.</li>
+        </ul>
+      </div>
+
+      <div class="guard guard--ask">
+        <div class="guard__head"><span class="guard__ico">✋</span><h3>ASK FIRST</h3></div>
+        <p class="guard__lead">The agent must ask a human before:</p>
+        <ul class="guard__list">
+          <li>Changing any inventory information.</li>
+          <li>Sending information outside the test system.</li>
+          <li>Contacting a supplier.</li>
+          <li>Taking any purchasing action.</li>
+          <li>Handling unusual or conflicting inventory information.</li>
+        </ul>
+      </div>
+
+      <div class="guard guard--spend">
+        <div class="guard__head"><span class="guard__ico">💰</span><h3>SPEND</h3></div>
+        <p class="guard__lead">Hard limits for every manual run:</p>
+        <div class="limits">
+          <div class="limit"><b>0 KD</b><span>Max spending per run</span></div>
+          <div class="limit"><b>10</b><span>Max low-stock alerts per run</span></div>
+        </div>
+        <div class="guard__note">The agent is not allowed to make purchases. Ordering stock is a human decision.</div>
+      </div>
+
+      <div class="guard guard--stop">
+        <div class="guard__head"><span class="guard__ico">🛑</span><h3>STOP AND ASK</h3></div>
+        <p class="guard__lead">The agent must stop and ask a human if:</p>
+        <ul class="guard__list">
+          <li>Product name is missing.</li>
+          <li>Current quantity is missing.</li>
+          <li>Minimum stock level is missing.</li>
+          <li>Quantity contains invalid information.</li>
+          <li>Two inventory records conflict.</li>
+          <li>The agent cannot determine whether stock is low.</li>
+        </ul>
+        <div class="guard__note">The agent must NEVER guess missing information.</div>
+      </div>
+
+    </div>
+
+    <!-- stop condition -->
+    <div class="panel reveal" id="stop" style="margin-top:26px">
+      <div class="panel__head">
+        <h3>5 · Stop Condition</h3>
+        <span class="tag">END OF RUN</span>
+      </div>
+      <div class="panel__body">
+        <div class="grid grid--3">
+          <div class="limit"><b>10</b><span>Low-stock alerts per run</span></div>
+          <div class="limit"><b>0 KD</b><span>Maximum spending</span></div>
+          <div class="limit" style="text-align:left">
+            <b style="font-size:1rem; color:var(--warn)">HAND OVER</b>
+            <span style="letter-spacing:.04em">If more than 10 products require alerts, the workflow stops
+            and asks a human to review the remaining products.</span>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ==================================================== REHEARSAL ======= -->
+<section class="section" id="rehearsal">
+  <div class="wrap">
+    <div class="s-head reveal">
+      <div class="s-num">Three-Case Simulation</div>
+      <h2>Agent Rehearsal</h2>
+      <p>Before the workflow was built, the agent was rehearsed on paper with three test cases:
+         an easy one, an awkward one, and one designed to break the rule. Each case answers the
+         same four questions.</p>
+    </div>
+
+    <div class="grid reveal" style="gap:18px">
+
+      <!-- CASE 1 -->
+      <article class="case">
+        <div class="case__head">
+          <div class="case__name"><span>🟢</span> Case 1 — Water Bottles</div>
+          <span class="case__kind">Easy</span>
+        </div>
+        <div class="case__body">
+          <div class="case__input">
+            <div><span class="k">Product</span><span class="v">Water Bottles</span></div>
+            <div><span class="k">Current quantity</span><span class="v">4</span></div>
+            <div><span class="k">Minimum stock</span><span class="v">10</span></div>
+          </div>
+          <div class="qa">
+            <div><div class="qa__q">What I know</div>
+                 <p class="qa__a">Water Bottles have 4 units remaining and the minimum stock level is 10.</p></div>
+            <div><div class="qa__q">What I will do</div>
+                 <p class="qa__a">Create a <strong>LOW STOCK</strong> alert using the approved alert tool.</p></div>
+            <div><div class="qa__q">Why</div>
+                 <p class="qa__a qa__a--muted">The current quantity is less than or equal to the minimum stock level.</p></div>
+            <div><div class="qa__q">What rule is missing</div>
+                 <p class="qa__a qa__a--muted">None.</p></div>
+          </div>
+          <div class="verdict verdict--pass">
+            <span class="verdict__mark">✓</span>
+            <div>RESULT: PASS<small>The agent did exactly what the rule said.</small></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- CASE 2 -->
+      <article class="case">
+        <div class="case__head">
+          <div class="case__name"><span>🟡</span> Case 2 — Paper Cups</div>
+          <span class="case__kind">Awkward · doing nothing is correct</span>
+        </div>
+        <div class="case__body">
+          <div class="case__input">
+            <div><span class="k">Product</span><span class="v">Paper Cups</span></div>
+            <div><span class="k">Current quantity</span><span class="v">25</span></div>
+            <div><span class="k">Minimum stock</span><span class="v">10</span></div>
+          </div>
+          <div class="qa">
+            <div><div class="qa__q">What I know</div>
+                 <p class="qa__a">Paper Cups have 25 units remaining and the minimum stock level is 10.</p></div>
+            <div><div class="qa__q">What I will do</div>
+                 <p class="qa__a"><strong>NO ACTION.</strong></p></div>
+            <div><div class="qa__q">Why</div>
+                 <p class="qa__a qa__a--muted">25 is greater than the minimum stock level of 10.</p></div>
+            <div><div class="qa__q">What rule is missing</div>
+                 <p class="qa__a qa__a--muted">None.</p></div>
+          </div>
+          <div class="verdict verdict--pass">
+            <span class="verdict__mark">✓</span>
+            <div>RESULT: PASS<small>This case proves the agent is allowed to do nothing. Doing nothing is a valid answer.</small></div>
+          </div>
+        </div>
+      </article>
+
+      <!-- CASE 3 -->
+      <article class="case" style="border-color:rgba(248,113,113,.4)">
+        <div class="case__head">
+          <div class="case__name"><span>🔴</span> Case 3 — Juice Boxes</div>
+          <span class="case__kind">Break the rule</span>
+        </div>
+        <div class="case__body">
+          <div class="case__input">
+            <div><span class="k">Product</span><span class="v">Juice Boxes</span></div>
+            <div><span class="k">Current quantity</span><span class="v blank">BLANK</span></div>
+            <div><span class="k">Minimum stock</span><span class="v">8</span></div>
+          </div>
+          <div class="qa">
+            <div><div class="qa__q">Original rule</div>
+                 <p class="qa__a">“If current quantity is less than or equal to minimum stock, create an alert.”</p></div>
+            <div><div class="qa__q">Problem</div>
+                 <p class="qa__a qa__a--muted">The rule does not clearly explain what the agent should do when the
+                 current quantity is missing.</p></div>
+            <div><div class="qa__q">What could go wrong</div>
+                 <p class="qa__a qa__a--muted">A badly designed workflow could treat the blank value as zero and
+                 create a false low-stock alert.</p></div>
+            <div><div class="qa__q">What rule is missing</div>
+                 <p class="qa__a">A rule for missing or invalid numbers.</p></div>
+          </div>
+          <div class="verdict verdict--fail">
+            <span class="verdict__mark">✕</span>
+            <div>RESULT: FAIL<small>The rule was not good enough. It had to be rewritten — see the next section.</small></div>
+          </div>
+        </div>
+      </article>
+
+    </div>
+  </div>
+</section>
+
+<!-- ================================================== RULE CHANGE ======= -->
+<section class="section section--tint" id="rulechange">
+  <div class="wrap">
+    <div class="rulechange reveal">
+      <span class="rulechange__tag">⚠ The Rule That Changed</span>
+      <h2>Rule 3 — Before, What Broke It, After</h2>
+      <p>This is the heart of the project. The rehearsal found a real hole in the rule, so the rule
+         was rewritten and then tested again.</p>
+
+      <div class="stage stage--before">
+        <div class="stage__ttl">Rule 3 — Before the rehearsal</div>
+        <blockquote>“If current quantity is less than or equal to minimum stock, create a low-stock alert.”</blockquote>
+      </div>
+      <div class="arrow-down" aria-hidden="true">↓</div>
+
+      <div class="stage stage--broke">
+        <div class="stage__ttl">What broke it — Case 3 <span class="badge badge--alert">Juice Boxes</span></div>
+        <p>Juice Boxes had a minimum stock level of <strong>8</strong>, but the current quantity field
+           was <strong>empty</strong>.</p>
+        <p>The original rule did not explain how missing quantities should be handled.</p>
+        <p>If the empty value was treated as zero, the system could incorrectly create a low-stock alert —
+           and a person could order stock that the shop does not actually need.</p>
+      </div>
+      <div class="arrow-down" aria-hidden="true">↓</div>
+
+      <div class="stage stage--after">
+        <div class="stage__ttl">Rule 3 — After</div>
+        <blockquote>“If current quantity and minimum stock are both valid numbers, compare them.
+          If current quantity is less than or equal to minimum stock, create a low-stock alert.
+          If either value is missing or invalid, STOP and ask a human.
+          Never treat missing information as zero.”</blockquote>
+      </div>
+
+      <!-- retest -->
+      <div class="panel" style="margin-top:26px">
+        <div class="panel__head">
+          <h3>Retest — Case 3 with the New Rule</h3>
+          <span class="tag">SAME INPUT · NEW RULE</span>
+        </div>
+        <div class="panel__body">
+          <div class="case__input">
+            <div><span class="k">Product</span><span class="v">Juice Boxes</span></div>
+            <div><span class="k">Current quantity</span><span class="v blank">BLANK</span></div>
+            <div><span class="k">Minimum stock</span><span class="v">8</span></div>
+          </div>
+          <div class="qa">
+            <div><div class="qa__q">What I know</div>
+                 <p class="qa__a">The product is Juice Boxes and the minimum stock level is 8,
+                 but the current quantity is missing.</p></div>
+            <div><div class="qa__q">What I will do</div>
+                 <p class="qa__a"><strong>NO ACTION.</strong> Stop and ask a human to check the record.</p></div>
+            <div><div class="qa__q">Why</div>
+                 <p class="qa__a qa__a--muted">The updated rule says missing stock information must not be
+                 guessed or treated as zero.</p></div>
+            <div><div class="qa__q">What rule is missing</div>
+                 <p class="qa__a qa__a--muted">None.</p></div>
+          </div>
+          <div class="verdict verdict--pass">
+            <span class="verdict__mark">✓</span>
+            <div>RESULT: PASS<small>The same input that failed before is now handled safely.</small></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="journey">
+        <div class="journey__step journey__step--fail"><b>Original test</b><strong>FAIL ✕</strong></div>
+        <div class="journey__arrow" aria-hidden="true">→</div>
+        <div class="journey__step journey__step--mid"><b>Then</b><strong>RULE UPDATED</strong></div>
+        <div class="journey__arrow" aria-hidden="true">→</div>
+        <div class="journey__step journey__step--pass"><b>Retest</b><strong>PASS ✓</strong></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== WORKFLOW ======= -->
+<section class="section" id="workflow">
+  <div class="wrap">
+    <div class="s-head reveal">
+      <div class="s-num">n8n Workflow</div>
+      <h2>Five Nodes, Manual Trigger First</h2>
+      <p>The workflow is deliberately small. It starts only when a person presses Execute Workflow,
+         and it ends by writing to a test log — never to a supplier.</p>
+    </div>
+
+    <div class="flow reveal">
+
+      <div class="node node--trigger">
+        <div class="node__no">Node 1</div>
+        <div class="node__ttl"><span>👆</span> MANUAL TRIGGER</div>
+        <div class="node__desc">I press <strong>Execute Workflow</strong>. The agent never starts on its own.</div>
+        <div class="node__fail">Failure plan: <b>Alert Human</b></div>
+      </div>
+      <div class="connector" aria-hidden="true"></div>
+
+      <div class="node">
+        <div class="node__no">Node 2</div>
+        <div class="node__ttl"><span>📄</span> READ TEST STOCK</div>
+        <div class="node__desc">Read product name, current quantity and minimum stock from the test sheet.</div>
+        <div class="node__fail">Failure plan: <b>Retry ×3</b>, 5 s apart → stop and alert human</div>
+      </div>
+      <div class="connector" aria-hidden="true"></div>
+
+      <div class="node">
+        <div class="node__no">Node 3</div>
+        <div class="node__ttl"><span>⚖️</span> CHECK STOCK LEVEL</div>
+        <div class="node__desc">Both values valid numbers? Then compare: current quantity ≤ minimum stock.</div>
+        <div class="node__fail">Failure plan: <b>Alert Human / Stop Workflow</b> — never assume missing means zero</div>
+      </div>
+
+      <div class="branch">
+        <div class="branch__leg branch__leg--yes">IF LOW STOCK <small>continue to Node 4</small></div>
+        <div class="branch__leg branch__leg--no">IF NOT LOW <small>NO ACTION — run ends</small></div>
+      </div>
+      <div class="connector" aria-hidden="true"></div>
+
+      <div class="node node--alert">
+        <div class="node__no">Node 4</div>
+        <div class="node__ttl"><span>🔔</span> CREATE LOW-STOCK ALERT</div>
+        <div class="node__desc">Build the alert: product, current quantity, minimum stock, status, date/time.</div>
+        <div class="node__fail">Failure plan: <b>Stop and Alert Human</b></div>
+      </div>
+      <div class="connector" aria-hidden="true"></div>
+
+      <div class="node node--log">
+        <div class="node__no">Node 5</div>
+        <div class="node__ttl"><span>📝</span> SAVE ALERT TO TEST LOG</div>
+        <div class="node__desc">Write one row to the test alert sheet. Stop after 10 alerts in a run.</div>
+        <div class="node__fail">Failure plan: <b>Retry ×3</b>, 5 s apart → alert human</div>
+      </div>
+    </div>
+
+    <div class="panel reveal" style="margin-top:26px">
+      <div class="panel__head"><h3>Example Test Data</h3><span class="tag">SAFE FAKE DATA</span></div>
+      <div class="panel__body">
+        <div class="grid grid--2">
+          <div class="rule-code">Product:        Water Bottles
+Current:        4
+Minimum:        10
+Because:        4 &lt;= 10
+Result:         <span class="low">LOW STOCK ALERT</span></div>
+          <div class="rule-code">Product:        Paper Cups
+Current:        25
+Minimum:        10
+Because:        25 &gt; 10
+Result:         <span class="ok">NO ACTION</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================ FAILURE PLANS ======= -->
+<section class="section section--tint" id="failures">
+  <div class="wrap">
+    <div class="s-head reveal">
+      <div class="s-num">Failure Plans</div>
+      <h2>Every Node Has a Plan for Going Wrong</h2>
+      <p>A node that fails quietly is more dangerous than a node that stops loudly. Each node below
+         says what happens when it fails.</p>
+    </div>
+
+    <div class="grid grid--3 reveal">
+
+      <div class="fp">
+        <div class="fp__node">Node 1</div>
+        <div class="fp__ttl">Manual Trigger</div>
+        <div class="fp__plan">Alert Human</div>
+        <ul><li>If the workflow cannot start correctly, no inventory check should happen.</li></ul>
+      </div>
+
+      <div class="fp">
+        <div class="fp__node">Node 2</div>
+        <div class="fp__ttl">Read Test Stock</div>
+        <div class="fp__plan">Retry</div>
+        <ul>
+          <li>Maximum retries: <strong>3</strong></li>
+          <li>Wait: <strong>5 seconds</strong> between retries</li>
+          <li>If it still fails: stop the workflow and alert a human</li>
+        </ul>
+      </div>
+
+      <div class="fp">
+        <div class="fp__node">Node 3</div>
+        <div class="fp__ttl">Check Stock Level</div>
+        <div class="fp__plan">Alert Human / Stop</div>
+        <ul><li>If quantity or minimum stock is missing, DO NOT continue.</li></ul>
+        <div class="fp__warn">Never assume missing information means zero.</div>
+      </div>
+
+      <div class="fp">
+        <div class="fp__node">Node 4</div>
+        <div class="fp__ttl">Create Low-Stock Alert</div>
+        <div class="fp__plan">Stop and Alert Human</div>
+        <ul><li>Do not create an alert if required product information is missing.</li></ul>
+      </div>
+
+      <div class="fp">
+        <div class="fp__node">Node 5</div>
+        <div class="fp__ttl">Save Alert</div>
+        <div class="fp__plan">Retry</div>
+        <ul>
+          <li>Maximum retries: <strong>3</strong></li>
+          <li>Wait: <strong>5 seconds</strong></li>
+          <li>If saving still fails: alert a human</li>
+        </ul>
+        <div class="fp__warn">Do not pretend the alert was successfully saved.</div>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ===================================================== SECURITY ======= -->
+<section class="section" id="security">
+  <div class="wrap">
+    <div class="s-head reveal">
+      <div class="s-num">Security</div>
+      <h2>Safety Rules for This Project</h2>
+      <p>The project runs on test data with the smallest possible permissions.</p>
+    </div>
+
+    <div class="sec reveal">
+      <div class="sec__item"><span class="sec__tick">✓</span> Test inventory data only</div>
+      <div class="sec__item"><span class="sec__tick">✓</span> No real customer data</div>
+      <div class="sec__item"><span class="sec__tick">✓</span> No passwords stored</div>
+      <div class="sec__item"><span class="sec__tick">✓</span> No API keys displayed</div>
+      <div class="sec__item"><span class="sec__tick">✓</span> Revocable credentials only</div>
+      <div class="sec__item"><span class="sec__tick">✓</span> Minimum permissions</div>
+      <div class="sec__item"><span class="sec__tick">✓</span> Manual trigger</div>
+      <div class="sec__item"><span class="sec__tick">✓</span> Maximum spending: 0 KD</div>
+      <div class="sec__item"><span class="sec__tick">✓</span> Agent cannot purchase stock</div>
+    </div>
+
+    <div class="sec__note reveal">🔒 No real credentials appear anywhere on this website, and none should ever be added to it.</div>
+  </div>
+</section>
+
+<!-- ========================================================= DEMO ======= -->
+<section class="section section--tint" id="demo">
+  <div class="wrap">
+    <div class="s-head reveal">
+      <div class="s-num">Interactive Demo</div>
+      <h2>Try the Stock Check Rule</h2>
+      <p>Type a product and two numbers, then press <strong>CHECK STOCK</strong>. The demo follows
+         the updated Rule 3 exactly — including stopping when a number is missing.</p>
+    </div>
+
+    <div class="demo reveal">
+      <div class="demo__grid">
+        <form class="demo__form" id="demoForm" autocomplete="off">
+          <div class="field">
+            <label for="pName">Product name</label>
+            <input type="text" id="pName" placeholder="Water Bottles">
+          </div>
+          <div class="field">
+            <label for="pQty">Current quantity</label>
+            <input type="text" inputmode="numeric" id="pQty" placeholder="4">
+            <small>Leave empty to see the human-review rule.</small>
+          </div>
+          <div class="field">
+            <label for="pMin">Minimum stock</label>
+            <input type="text" inputmode="numeric" id="pMin" placeholder="10">
+          </div>
+          <div class="btnrow">
+            <button class="btn btn--primary" type="submit">Check Stock</button>
+            <button class="btn btn--ghost" type="button" id="resetBtn">Reset Run</button>
+          </div>
+          <div class="presets">
+            <button type="button" class="preset" data-p="Water Bottles" data-q="4"  data-m="10">Water Bottles 4 / 10</button>
+            <button type="button" class="preset" data-p="Paper Cups"    data-q="25" data-m="10">Paper Cups 25 / 10</button>
+            <button type="button" class="preset" data-p="Juice Boxes"   data-q=""   data-m="8">Juice Boxes — / 8</button>
+          </div>
+        </form>
+
+        <div class="demo__out">
+          <div class="counter" id="counter">
+            <span>Alerts this run</span><span><b id="alertCount">0</b> / 10</span>
+          </div>
+          <div id="resultBox">
+            <div class="result">
+              <div class="result__verdict" style="color:var(--ink-2)">⏳ Waiting for input</div>
+              <p class="result__why">Enter a product, a current quantity and a minimum stock level,
+                 then press Check Stock.</p>
+            </div>
+          </div>
+          <div class="demo__log">
+            <h4>Test alert log (this page only)</h4>
+            <div id="logList"><div class="logline"><span>No checks yet</span><span class="t">—</span></div></div>
+          </div>
+        </div>
+      </div>
+      <p class="demo__note">This demo is a rule simulator only. It does not connect to a real shop,
+         does not change any inventory, and cannot make purchases.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ================================================= RUN EVIDENCE ======= -->
+<section class="section" id="evidence">
+  <div class="wrap">
+    <div class="s-head reveal">
+      <div class="s-num">Evidence</div>
+      <h2>Manual Workflow Run</h2>
+      <p>This section is reserved for the real n8n run. Nothing below is filled in yet.</p>
+    </div>
+
+    <div class="status-pending reveal">⏳ No verified run recorded yet — screenshot pending</div>
+
+    <div class="evidence reveal">
+      <div class="slot slot--wide">
+        <div class="slot__ico">🖼️</div>
+        <div class="slot__ttl">Workflow Screenshot</div>
+        <div class="slot__hint">Place the real n8n screenshot at
+          <code>assets/img/n8n-run.png</code> and it will be displayed here.</div>
+      </div>
+      <div class="slot">
+        <div class="slot__ico">⌨️</div>
+        <div class="slot__ttl">Test Input</div>
+        <div class="slot__hint">The rows that were read on the run.</div>
+      </div>
+      <div class="slot">
+        <div class="slot__ico">📤</div>
+        <div class="slot__ttl">Workflow Output</div>
+        <div class="slot__hint">The alert rows that were written to the test log.</div>
+      </div>
+      <div class="slot">
+        <div class="slot__ico">🕒</div>
+        <div class="slot__ttl">Date / Time</div>
+        <div class="slot__hint">When the manual run was executed.</div>
+      </div>
+      <div class="slot">
+        <div class="slot__ico">📊</div>
+        <div class="slot__ttl">Run Status</div>
+        <div class="slot__hint">Success or failure, taken from n8n — not assumed.</div>
+      </div>
+    </div>
+
+    <div class="sec__note reveal" style="border-color:var(--warn); background:rgba(251,191,36,.06); color:var(--warn)">
+      ⚠ No screenshot has been provided yet, so this project does not claim that the workflow has
+      been run successfully. The claim will only be made once the real evidence is added here.
+    </div>
+  </div>
+</section>
+
+<!-- =================================================== REFLECTION ======= -->
+<section class="section section--tint" id="reflection">
+  <div class="wrap">
+    <div class="s-head reveal">
+      <div class="s-num">Final Reflection</div>
+      <h2>What I Learned</h2>
+    </div>
+
+    <div class="reflect reveal">
+      <div class="reflect__q">
+        <h3>What did the agent do well?</h3>
+        <p>It correctly identified low-stock products using clear numerical rules.</p>
+      </div>
+      <div class="reflect__q">
+        <h3>What did the rehearsal break?</h3>
+        <p>It exposed that the original rule did not explain what to do with missing stock quantities.</p>
+      </div>
+      <div class="reflect__q">
+        <h3>What rule changed?</h3>
+        <p>The agent must now validate both numbers before comparing them.</p>
+      </div>
+      <div class="reflect__q">
+        <h3>When should the agent do nothing?</h3>
+        <p>When stock is above the minimum level, or when required information is missing and
+           human review is required.</p>
+      </div>
+      <div class="reflect__q" style="grid-column:1 / -1">
+        <h3>What would need to change before automation?</h3>
+        <p>The system would need secure credentials, stronger testing, error monitoring, approved
+           inventory access, and clear human escalation procedures.</p>
+      </div>
+    </div>
+
+    <div class="journey reveal" style="grid-template-columns:repeat(auto-fit,minmax(150px,1fr)); margin-top:26px">
+      <div class="journey__step"><b>Step 1</b><strong style="font-size:.98rem">DESIGNED THE AGENT</strong></div>
+      <div class="journey__step"><b>Step 2</b><strong style="font-size:.98rem">TESTED IT</strong></div>
+      <div class="journey__step journey__step--fail"><b>Step 3</b><strong style="font-size:.98rem">FOUND A PROBLEM</strong></div>
+      <div class="journey__step journey__step--mid"><b>Step 4</b><strong style="font-size:.98rem">CHANGED THE RULE</strong></div>
+      <div class="journey__step journey__step--pass"><b>Step 5</b><strong style="font-size:.98rem">TESTED IT AGAIN</strong></div>
+      <div class="journey__step"><b>Step 6</b><strong style="font-size:.98rem">BUILT THE WORKFLOW</strong></div>
+    </div>
+  </div>
+</section>
+
+<footer class="foot">
+  <div class="wrap foot__in">
+    <span>JAHRA SHOP STOCK AGENT · Stock Monitoring &amp; Low-Stock Alert System</span>
+    <span>AIFC Day 9 · Test data only · Maximum spend 0 KD</span>
+  </div>
+</footer>
+
+<script src="assets/js/app.js"></script>
+</body>
+</html>

@@ -63,6 +63,17 @@ says so rather than estimating one — see [`kuwait-goals/RESEARCH.md`](kuwait-g
 cd kuwait-goals && python3 -m http.server 8080   # then open http://localhost:8080
 ```
 
+### `aifc-day9/` — Jahra Shop Stock Agent (AIFC Day 9)
+A single-page, dependency-free website documenting an AI agent that checks a Jahra shop's **test**
+inventory and flags products at or below their minimum stock level. It covers the five-part agent
+spec, a three-case rehearsal, the rule that had to change after the rehearsal failed, a five-node
+n8n workflow with a failure plan per node, and an interactive stock-check demo. The agent never
+buys anything and never changes a quantity — see [`aifc-day9/README.md`](aifc-day9/README.md).
+
+```bash
+cd aifc-day9 && python3 -m http.server 8080   # then open http://localhost:8080
+```
+
 ---
 
 ## Start here
