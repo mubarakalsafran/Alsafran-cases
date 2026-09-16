@@ -1,0 +1,1088 @@
+<title>Kuwait Orders Data Lab</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=IBM+Plex+Sans:wght@400;500;600;700&display=swap">
+<style>
+:root{
+  --bg:#F6F5F1; --surface:#FFFFFF; --surface-2:#EFEDE7; --line:#E0DCD3;
+  --t0:#15181D; --t1:#4C535D; --t2:#79818C;
+  --accent:#1F5FB0; --accent-fill:#3987E5; --accent-soft:#E8F0FB;
+  --warm:#B0441B; --warm-fill:#D95926;
+  --good:#0E6B48; --good-fill:#199E70;
+  --grid:#E6E3DC; --shadow:0 1px 2px rgba(20,24,30,.05),0 10px 26px -18px rgba(20,24,30,.35);
+  --mono:"IBM Plex Mono",ui-monospace,SFMono-Regular,Menlo,monospace;
+  --sans:"IBM Plex Sans",ui-sans-serif,system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#0B0E13; --surface:#151A21; --surface-2:#1C232C; --line:#242C37;
+  --t0:#F1F4F8; --t1:#A6B1BF; --t2:#727C89;
+  --accent:#6FADF5; --accent-fill:#3987E5; --accent-soft:#162333;
+  --warm:#F08A5D; --warm-fill:#D95926;
+  --good:#3FC494; --good-fill:#199E70;
+  --grid:#222A34; --shadow:0 1px 0 rgba(255,255,255,.03) inset,0 14px 34px -20px rgba(0,0,0,.8);
+}}
+:root[data-theme="dark"]{
+  --bg:#0B0E13; --surface:#151A21; --surface-2:#1C232C; --line:#242C37;
+  --t0:#F1F4F8; --t1:#A6B1BF; --t2:#727C89;
+  --accent:#6FADF5; --accent-fill:#3987E5; --accent-soft:#162333;
+  --warm:#F08A5D; --warm-fill:#D95926;
+  --good:#3FC494; --good-fill:#199E70;
+  --grid:#222A34; --shadow:0 1px 0 rgba(255,255,255,.03) inset,0 14px 34px -20px rgba(0,0,0,.8);
+}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--t0);font-family:var(--sans);font-size:15px;line-height:1.55;-webkit-font-smoothing:antialiased}
+.num,.mono{font-family:var(--mono);font-variant-numeric:tabular-nums}
+h1,h2,h3,h4{margin:0;text-wrap:balance;letter-spacing:-.015em}
+a{color:var(--accent)}
+:focus-visible{outline:2px solid var(--accent-fill);outline-offset:2px;border-radius:5px}
+.wrap{max-width:1280px;margin:0 auto;padding-inline:20px}
+.eyebrow{font-family:var(--mono);font-size:11px;font-weight:600;letter-spacing:.16em;text-transform:uppercase;color:var(--t2)}
+
+/* ---------- hero ---------- */
+.hero{border-bottom:1px solid var(--line);background:
+  radial-gradient(760px 300px at 8% -30%, color-mix(in srgb,var(--accent-fill) 14%,transparent), transparent 62%),
+  radial-gradient(620px 260px at 92% -20%, color-mix(in srgb,var(--warm-fill) 9%,transparent), transparent 62%);}
+.hero-in{padding-block:34px 26px}
+.hero h1{font-size:clamp(30px,6.2vw,58px);line-height:.96;font-weight:700;letter-spacing:-.035em;margin-top:12px}
+.hero h1 .b{color:var(--accent)}
+.hero .tag{margin-top:12px;font-size:clamp(15px,2.2vw,19px);color:var(--t1);max-width:46ch}
+.hero .lede{margin-top:8px;font-size:13.5px;color:var(--t2);max-width:64ch}
+.hero.slim .hero-in{padding-block:18px 14px}
+.hero.slim h1{font-size:clamp(20px,3.4vw,28px);margin-top:6px}
+.hero.slim .tag{font-size:13px;margin-top:2px}
+
+/* ---------- nav ---------- */
+.tabs{position:sticky;top:env(safe-area-inset-top,0px);z-index:50;background:color-mix(in srgb,var(--bg) 92%,transparent);backdrop-filter:blur(10px);border-bottom:1px solid var(--line)}
+.tabs-in{display:flex;gap:2px;overflow-x:auto;scrollbar-width:thin}
+.tab{flex:0 0 auto;appearance:none;background:none;border:0;border-bottom:2px solid transparent;color:var(--t2);font:600 13.5px/1 var(--sans);padding:14px 14px;cursor:pointer;white-space:nowrap}
+.tab:hover{color:var(--t0)}
+.tab[aria-current="page"]{color:var(--accent);border-bottom-color:var(--accent-fill)}
+
+/* ---------- filters ---------- */
+.filters{border-bottom:1px solid var(--line);background:var(--surface)}
+.filters-in{padding-block:14px}
+.fgrid{display:grid;gap:12px;grid-template-columns:repeat(auto-fit,minmax(150px,1fr))}
+.f label{display:block;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.14em;text-transform:uppercase;color:var(--t2);margin-bottom:5px}
+.f select,.f input{width:100%;background:var(--surface-2);color:var(--t0);border:1px solid var(--line);border-radius:9px;padding:9px 10px;font:400 14px/1.2 var(--sans)}
+.f.end{display:flex;align-items:flex-end}
+.btn{appearance:none;border:1px solid var(--line);background:var(--surface-2);color:var(--t1);border-radius:9px;padding:9px 12px;font:600 13px/1.2 var(--sans);cursor:pointer;width:100%}
+.btn:hover:not(:disabled){border-color:var(--accent-fill);color:var(--accent)}
+.btn:disabled{opacity:.45;cursor:default}
+.btn.sm{width:auto;padding:7px 11px;font-size:12px}
+.fnote{margin:10px 0 0;font-size:12px;color:var(--t2)}
+
+/* ---------- surfaces ---------- */
+main{padding-block:22px 40px}
+.stack{display:grid;gap:16px}
+.card{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:18px;min-width:0}
+.card.flat{box-shadow:none;background:transparent;border:0;padding:0}
+.kpis{display:grid;gap:14px;grid-template-columns:repeat(auto-fit,minmax(min(100%,180px),1fr))}
+.kpi{background:var(--surface);border:1px solid var(--line);border-radius:14px;box-shadow:var(--shadow);padding:15px 16px;min-width:0}
+.kpi .k-l{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--t2)}
+.kpi .k-v{margin-top:7px;display:flex;align-items:baseline;gap:6px;font-family:var(--mono);font-weight:600;font-size:clamp(23px,3.2vw,31px);line-height:1;letter-spacing:-.02em}
+.kpi.acc .k-v{color:var(--accent)}
+.kpi .k-u{font-size:12px;font-weight:600;color:var(--t2);letter-spacing:0}
+.kpi .k-s{margin-top:8px;font-size:11.5px;line-height:1.45;color:var(--t1)}
+.striplab{margin:0 0 10px;font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--accent)}
+.striplab.mute{color:var(--t2)}
+
+/* ---------- chart frame ---------- */
+.cf h3{font-size:clamp(15px,1.9vw,18px);font-weight:600;line-height:1.3}
+.cf .sub{margin:5px 0 0;font-size:12px;color:var(--t2)}
+.cf .plot{margin-top:16px}
+.cf dl{margin:15px 0 0;padding-top:11px;border-top:1px solid var(--line);display:grid;gap:3px;font-size:11px;line-height:1.5;color:var(--t2)}
+.cf dl>div{display:flex;gap:8px}
+.cf dt{flex:0 0 auto;font-weight:600;font-family:var(--mono);font-size:10px;letter-spacing:.06em;text-transform:uppercase;padding-top:1px;min-width:66px}
+.cf dd{margin:0}
+
+/* ---------- horizontal bars ---------- */
+.bars{display:grid;gap:7px}
+.bar{display:grid;grid-template-columns:minmax(74px,124px) 1fr auto;align-items:center;gap:10px}
+.bar .bl{font-size:12px;color:var(--t1);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
+.bar .bt{position:relative;height:19px;border-radius:4px;background:linear-gradient(to right,var(--grid) 1px,transparent 1px) 0 0/25% 100%}
+.bar .bf{position:absolute;inset:0 auto 0 0;width:var(--p);border-radius:3px;background:var(--c,var(--accent-fill));transition:width .5s cubic-bezier(.22,.61,.36,1)}
+.bar .bv{font-family:var(--mono);font-size:11.5px;color:var(--t1);min-width:52px;text-align:right}
+.bar.click{cursor:pointer}
+.bar.click:hover .bf{filter:brightness(1.12)}
+.bar.dim .bf{opacity:.34}
+.axis{display:grid;grid-template-columns:minmax(74px,124px) 1fr auto;gap:10px;margin-top:9px}
+.axis .ticks{display:flex;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--t2)}
+.axis .pad{min-width:52px}
+.axtitle{margin-top:7px;font-size:10.5px;color:var(--t2);text-align:center;font-family:var(--mono);letter-spacing:.04em}
+@media (prefers-reduced-motion:reduce){.bar .bf{transition:none}}
+
+/* ---------- vertical grouped bars ---------- */
+.vwrap{display:grid;grid-template-columns:auto 1fr;gap:10px}
+.vaxis{display:flex;flex-direction:column;justify-content:space-between;font-family:var(--mono);font-size:10px;color:var(--t2);height:210px;text-align:right}
+.vplot{height:210px;display:flex;gap:26px;align-items:flex-end;border-bottom:1px solid var(--line);
+  background:repeating-linear-gradient(to top,transparent 0,transparent calc(25% - 1px),var(--grid) calc(25% - 1px),var(--grid) 25%)}
+.vgroup{flex:1;display:flex;gap:8px;align-items:flex-end;justify-content:center;height:100%}
+.vbar{flex:0 1 46px;border-radius:4px 4px 0 0;background:var(--c,var(--accent-fill));height:var(--h);min-height:2px;position:relative}
+.vlabs{display:grid;grid-auto-flow:column;grid-auto-columns:1fr;gap:26px;margin-top:8px;padding-left:0;font-size:11px;color:var(--t1);text-align:center}
+.legend{display:flex;flex-wrap:wrap;gap:14px;margin-top:12px;font-size:11.5px;color:var(--t1)}
+.legend span.sw{width:10px;height:10px;border-radius:3px;display:inline-block;margin-right:6px;vertical-align:-1px}
+
+/* ---------- line chart ---------- */
+.lc{width:100%;display:block;overflow:visible}
+.lc .gl{stroke:var(--grid);stroke-width:1}
+.lc .ax{stroke:var(--line);stroke-width:1}
+.lc text{fill:var(--t2);font-family:var(--mono);font-size:10px}
+.lc .hit{fill:transparent;cursor:crosshair}
+.lc .cross{stroke:var(--t2);stroke-dasharray:3 3;stroke-width:1;opacity:0}
+
+/* ---------- tooltip ---------- */
+#tt{position:fixed;z-index:200;pointer-events:none;opacity:0;transform:translate(-50%,-115%);transition:opacity .11s;
+  background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:8px 10px;font-size:12px;color:var(--t0);box-shadow:var(--shadow);max-width:250px}
+#tt .tk{font-weight:600;margin-bottom:3px}
+#tt .tr{display:flex;gap:8px;align-items:center;color:var(--t1)}
+#tt .tr b{color:var(--t0);font-family:var(--mono);font-weight:600;margin-left:auto}
+
+/* ---------- tables ---------- */
+.tscroll{overflow-x:auto}
+table{border-collapse:collapse;width:100%;font-size:13px}
+thead th{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--t2);text-align:left;padding:7px 11px 7px 0;border-bottom:1px solid var(--line);white-space:nowrap}
+thead th.r{text-align:right}
+thead th.s{cursor:pointer}
+thead th.s:hover{color:var(--accent)}
+tbody td{padding:8px 11px 8px 0;border-bottom:1px solid color-mix(in srgb,var(--line) 60%,transparent);vertical-align:top}
+tbody td.r{text-align:right;font-family:var(--mono);font-variant-numeric:tabular-nums}
+tbody tr.click{cursor:pointer}
+tbody tr.click:hover{background:var(--surface-2)}
+tfoot td{padding:9px 11px 9px 0;font-weight:600;border-top:1px solid var(--line)}
+tfoot td.r{text-align:right;font-family:var(--mono)}
+.search{background:var(--surface-2);color:var(--t0);border:1px solid var(--line);border-radius:9px;padding:8px 11px;font:400 13px var(--sans);width:min(230px,52vw)}
+.pager{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-top:12px;font-size:12px;color:var(--t2)}
+
+/* ---------- misc ---------- */
+.rowhead{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;margin-bottom:12px}
+.rowhead h3{font-size:14px;font-weight:600}
+.note{margin:12px 0 0;background:var(--surface-2);border:1px solid var(--line);border-radius:10px;padding:11px 13px;font-size:12px;line-height:1.55;color:var(--t1)}
+.note b{color:var(--warm)}
+.pill{display:inline-block;border:1px solid var(--line);background:var(--surface-2);border-radius:8px;padding:6px 11px;font-family:var(--mono);font-size:13px}
+.pill.on{border-color:color-mix(in srgb,var(--accent-fill) 45%,var(--line));color:var(--accent)}
+.pill.ok{border-color:color-mix(in srgb,var(--good-fill) 45%,var(--line));color:var(--good);font-family:var(--sans);font-size:11.5px;font-weight:600;border-radius:99px}
+.eqrow{display:flex;flex-wrap:wrap;gap:9px;align-items:center;margin-top:12px}
+.eqrow .op{color:var(--t2)}
+code,.code{font-family:var(--mono);font-size:.92em;background:var(--surface-2);border:1px solid var(--line);border-radius:5px;padding:1px 5px}
+.ba{display:grid;gap:11px;grid-template-columns:repeat(auto-fit,minmax(min(100%,320px),1fr))}
+.ba .box{border:1px solid var(--line);background:var(--surface-2);border-radius:12px;padding:13px}
+.ba .chips{display:flex;flex-wrap:wrap;gap:5px;align-items:center}
+.ba .chip{font-family:var(--mono);font-size:10.5px;color:var(--t2);background:var(--surface);border:1px solid var(--line);border-radius:5px;padding:2px 6px}
+.ba .to{color:var(--accent);font-weight:700}
+.ba .out{font-family:var(--mono);font-size:12px;font-weight:600;color:var(--accent);background:var(--surface);border:1px solid color-mix(in srgb,var(--accent-fill) 45%,var(--line));border-radius:6px;padding:2px 8px}
+.ba .bn{margin:9px 0 0;font-size:11.5px;color:var(--t2);line-height:1.5}
+.cols3{display:grid;gap:18px;grid-template-columns:repeat(auto-fit,minmax(min(100%,200px),1fr))}
+.deflist{list-style:none;margin:9px 0 0;padding:0;display:grid;gap:5px;font-size:13px}
+.deflist li{display:flex;justify-content:space-between;gap:12px}
+.deflist li span:first-child{color:var(--t1)}
+.deflist li span:last-child{font-family:var(--mono);font-weight:600}
+.two{display:grid;gap:16px}
+@media(min-width:1000px){.two{grid-template-columns:1fr 1fr}}
+.info{appearance:none;border:1px solid var(--line);background:var(--surface-2);color:var(--t1);width:19px;height:19px;border-radius:50%;font:700 10px/1 var(--sans);cursor:pointer;margin-left:7px;vertical-align:1px}
+.info:hover{border-color:var(--accent-fill);color:var(--accent)}
+.infobox{margin-top:11px;border:1px solid var(--line);background:var(--surface-2);border-radius:10px;padding:12px 13px;font-size:12.5px;line-height:1.6;color:var(--t1)}
+.beat{display:grid;gap:14px;border-top:1px solid var(--line);padding-top:26px}
+@media(min-width:760px){.beat{grid-template-columns:92px 1fr}}
+.beat .n{font-family:var(--mono);font-size:clamp(30px,5vw,46px);font-weight:600;line-height:1;color:color-mix(in srgb,var(--accent-fill) 34%,transparent);letter-spacing:-.04em}
+.beat h3{font-size:clamp(17px,2.5vw,24px);font-weight:700}
+.beat .body{margin-top:11px;display:grid;gap:11px;max-width:68ch;font-size:clamp(14.5px,1.7vw,16px);line-height:1.66;color:var(--t1)}
+.beat .body b{color:var(--t0);font-family:var(--mono);font-weight:600}
+.beat .body .mute{color:var(--t2)}
+.storyhead{border:1px solid var(--line);border-radius:16px;padding:26px;background:linear-gradient(180deg,var(--surface),var(--bg))}
+.storyhead h2{margin-top:12px;font-size:clamp(23px,4.6vw,42px);line-height:1.06;font-weight:700}
+.storyhead h2 em{font-style:normal;color:var(--warm)}
+.storyhead p{margin:15px 0 0;max-width:60ch;font-size:clamp(15px,2vw,18px);color:var(--t1);line-height:1.6}
+.qcard{display:grid;gap:14px}
+@media(min-width:760px){.qcard{grid-template-columns:54px 1fr}}
+.qcard .qn{font-family:var(--mono);font-size:28px;font-weight:600;color:color-mix(in srgb,var(--accent-fill) 32%,transparent);line-height:1}
+.qcard h3{font-size:17px;font-weight:600;line-height:1.35}
+.qsplit{display:grid;gap:14px;margin-top:14px}
+@media(min-width:680px){.qsplit{grid-template-columns:1fr 1fr}}
+.qsplit .lab{font-family:var(--mono);font-size:10px;font-weight:600;letter-spacing:.13em;text-transform:uppercase;color:var(--t2)}
+.qsplit .lab.acc{color:var(--accent)}
+.qsplit p{margin:6px 0 0;font-size:13.5px;line-height:1.6;color:var(--t1)}
+footer{border-top:1px solid var(--line);margin-top:8px}
+footer .in{padding-block:26px 34px}
+footer p{margin:0}
+.foot-s{margin-top:10px!important;font-size:11.5px;line-height:1.65;color:var(--t2);max-width:78ch}
+.empty{display:grid;place-items:center;height:200px;border:1px dashed var(--line);border-radius:12px;color:var(--t2);font-size:13px;text-align:center;padding:16px}
+</style>
+
+<header class="hero" id="hero">
+  <div class="wrap hero-in">
+    <p class="eyebrow">AIFC · Day 8 · Clean it · Tell it · Show it</p>
+    <h1 id="h1"></h1>
+    <p class="tag">From Messy Data to Meaningful Decisions</p>
+    <p class="lede" id="lede"></p>
+    <div id="herokpis"></div>
+  </div>
+</header>
+
+<nav class="tabs" aria-label="Sections"><div class="wrap tabs-in" id="tabs"></div></nav>
+
+<div class="filters" id="filters" hidden>
+  <div class="wrap filters-in">
+    <div class="fgrid">
+      <div class="f"><label for="f-area">Area</label><select id="f-area"></select></div>
+      <div class="f"><label for="f-status">Status</label><select id="f-status"></select></div>
+      <div class="f"><label for="f-item">Item</label><select id="f-item"></select></div>
+      <div class="f"><label for="f-from">Date from</label><input id="f-from" type="date"></div>
+      <div class="f"><label for="f-to">Date to</label><input id="f-to" type="date"></div>
+      <div class="f end"><button class="btn" id="f-reset" type="button">Reset filters</button></div>
+    </div>
+    <p class="fnote" id="fnote"></p>
+  </div>
+</div>
+
+<div class="wrap" id="stripwrap" hidden style="padding-top:20px">
+  <p class="striplab">Current filter — these four count up whenever you change a control above</p>
+  <div class="kpis" id="strip"></div>
+</div>
+
+<main class="wrap"><div id="main" class="stack"></div></main>
+
+<footer><div class="wrap in">
+  <p style="font-weight:600;font-size:14px">AIFC · Day 8</p>
+  <p style="font-size:13.5px;color:var(--t1);margin-top:3px">Clean It · Tell It · Show It</p>
+  <p class="foot-s" id="footnote"></p>
+</div></footer>
+
+<div id="tt" role="status" aria-live="off"></div>
+
+<script>
+const DATA = {"orders":[{"id":"KW-1086","area":"Salmiya","date":"2026-09-09","dated":true,"item":"Machboos box","qty":4,"kd":13.0,"unit":3.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1161","area":"Mangaf","date":"2026-09-14","dated":true,"item":"Machboos box","qty":2,"kd":6.5,"unit":3.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1173","area":"Mangaf","date":"2026-09-09","dated":true,"item":"Falafel wrap","qty":1,"kd":0.6,"unit":0.6,"pay":"Cash","status":"Delivered"},{"id":"KW-1091","area":"Al Jahra","date":"2026-09-01","dated":true,"item":"Chicken shawarma","qty":1,"kd":1.0,"unit":1.0,"pay":"Card","status":"Pending"},{"id":"KW-1042","area":"Hawally","date":"2026-09-14","dated":true,"item":"Karak tea","qty":1,"kd":0.25,"unit":0.25,"pay":"Cash","status":"Pending"},{"id":"KW-1024","area":"Fintas","date":"2026-09-01","dated":true,"item":"Chicken shawarma","qty":4,"kd":4.0,"unit":1.0,"pay":"KNET","status":"Pending"},{"id":"KW-1035","area":"Mangaf","date":"2026-09-02","dated":true,"item":"Machboos box","qty":2,"kd":6.5,"unit":3.25,"pay":"Cash","status":"Pending"},{"id":"KW-1144","area":"Al Jahra","date":"2026-09-06","dated":true,"item":"Grilled hammour","qty":2,"kd":11.0,"unit":5.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1067","area":"Salmiya","date":"2026-09-03","dated":true,"item":"Chicken shawarma","qty":3,"kd":3.0,"unit":1.0,"pay":"Cash","status":"Delivered"},{"id":"KW-1105","area":"Fintas","date":"2026-09-11","dated":true,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"KNET","status":"Pending"},{"id":"KW-1008","area":"Salwa","date":"2026-09-07","dated":true,"item":"Halloumi zaatar","qty":1,"kd":0.75,"unit":0.75,"pay":"Visa","status":"Delivered"},{"id":"KW-1031","area":"Al Jahra","date":"2026-09-14","dated":true,"item":"Falafel wrap","qty":1,"kd":0.6,"unit":0.6,"pay":"KNET","status":"Delivered"},{"id":"KW-1165","area":"Mangaf","date":"2026-09-13","dated":true,"item":"Karak tea","qty":1,"kd":0.25,"unit":0.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1190","area":"Farwaniya","date":"2026-09-04","dated":true,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"Card","status":"Delivered"},{"id":"KW-1075","area":"Sabah Al Salem","date":"2026-09-11","dated":true,"item":"Grilled hammour","qty":1,"kd":5.5,"unit":5.5,"pay":"Card","status":"Pending"},{"id":"KW-1155","area":"Al Jahra","date":"2026-09-02","dated":true,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"KNET","status":"Delivered"},{"id":"KW-1004","area":"Hawally","date":"2026-09-10","dated":true,"item":"Grilled hammour","qty":2,"kd":11.0,"unit":5.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1141","area":"Hawally","date":"2026-09-01","dated":true,"item":"Falafel wrap","qty":1,"kd":0.6,"unit":0.6,"pay":"Cash","status":"Cancelled"},{"id":"KW-1011","area":"Fintas","date":"2026-09-04","dated":true,"item":"Chicken shawarma","qty":2,"kd":2.0,"unit":1.0,"pay":"Card","status":"Delivered"},{"id":"KW-1096","area":"Farwaniya","date":"","dated":false,"item":"Gahwa and dates","qty":2,"kd":1.0,"unit":0.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1034","area":"Mangaf","date":"2026-09-07","dated":true,"item":"Grilled hammour","qty":1,"kd":5.5,"unit":5.5,"pay":"Card","status":"Delivered"},{"id":"KW-1152","area":"Farwaniya","date":"2026-09-01","dated":true,"item":"Chicken shawarma","qty":4,"kd":4.0,"unit":1.0,"pay":"Cash","status":"Delivered"},{"id":"KW-1106","area":"Al Jahra","date":"2026-09-02","dated":true,"item":"Chicken shawarma","qty":1,"kd":1.0,"unit":1.0,"pay":"KNET","status":"Pending"},{"id":"KW-1023","area":"Salmiya","date":"2026-09-05","dated":true,"item":"Halloumi zaatar","qty":1,"kd":0.75,"unit":0.75,"pay":"KNET","status":"Delivered"},{"id":"KW-1048","area":"Salwa","date":"2026-09-11","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1077","area":"Mangaf","date":"2026-09-11","dated":true,"item":"Gahwa and dates","qty":4,"kd":2.0,"unit":0.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1072","area":"Sabah Al Salem","date":"2026-09-10","dated":true,"item":"Machboos box","qty":4,"kd":13.0,"unit":3.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1148","area":"Hawally","date":"2026-09-08","dated":true,"item":"Chicken shawarma","qty":2,"kd":2.0,"unit":1.0,"pay":"Cash","status":"Delivered"},{"id":"KW-1158","area":"Hawally","date":"2026-09-02","dated":true,"item":"Chicken shawarma","qty":2,"kd":2.0,"unit":1.0,"pay":"KNET","status":"Delivered"},{"id":"KW-1160","area":"Sabah Al Salem","date":"2026-09-12","dated":true,"item":"Karak tea","qty":1,"kd":0.25,"unit":0.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1013","area":"Salmiya","date":"2026-09-14","dated":true,"item":"Harees plate","qty":3,"kd":8.25,"unit":2.75,"pay":"Cash","status":"Delivered"},{"id":"KW-1107","area":"Hawally","date":"2026-09-05","dated":true,"item":"Gahwa and dates","qty":2,"kd":1.0,"unit":0.5,"pay":"Card","status":"Cancelled"},{"id":"KW-1113","area":"Sabah Al Salem","date":"2026-09-08","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"Card","status":"Delivered"},{"id":"KW-1100","area":"Farwaniya","date":"2026-09-14","dated":true,"item":"Gahwa and dates","qty":1,"kd":0.5,"unit":0.5,"pay":"Cash","status":"Cancelled"},{"id":"KW-1038","area":"Hawally","date":"2026-09-11","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1037","area":"Al Jahra","date":"2026-09-12","dated":true,"item":"Machboos box","qty":4,"kd":13.0,"unit":3.25,"pay":"KNET","status":"Cancelled"},{"id":"KW-1012","area":"Farwaniya","date":"2026-09-13","dated":true,"item":"Harees plate","qty":2,"kd":5.5,"unit":2.75,"pay":"Cash","status":"Delivered"},{"id":"KW-1066","area":"Mangaf","date":"2026-09-01","dated":true,"item":"Gahwa and dates","qty":1,"kd":0.5,"unit":0.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1114","area":"Al Jahra","date":"2026-09-08","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"KNET","status":"Pending"},{"id":"KW-1050","area":"Mangaf","date":"2026-09-01","dated":true,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"Cash","status":"Delivered"},{"id":"KW-1010","area":"Al Jahra","date":"2026-09-10","dated":true,"item":"Halloumi zaatar","qty":1,"kd":0.75,"unit":0.75,"pay":"KNET","status":"Cancelled"},{"id":"KW-1179","area":"Al Jahra","date":"2026-09-12","dated":true,"item":"Luqaimat, 12 pieces","qty":1,"kd":1.5,"unit":1.5,"pay":"Card","status":"Delivered"},{"id":"KW-1061","area":"Salwa","date":"2026-09-01","dated":true,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"Cash","status":"Cancelled"},{"id":"KW-1176","area":"Farwaniya","date":"2026-09-09","dated":true,"item":"Machboos box","qty":1,"kd":3.25,"unit":3.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1120","area":"Salwa","date":"2026-09-04","dated":true,"item":"Luqaimat, 12 pieces","qty":3,"kd":4.5,"unit":1.5,"pay":"Cash","status":"Cancelled"},{"id":"KW-1001","area":"Hawally","date":"2026-09-06","dated":true,"item":"Chicken shawarma","qty":1,"kd":1.0,"unit":1.0,"pay":"Cash","status":"Delivered"},{"id":"KW-1187","area":"Hawally","date":"2026-09-11","dated":true,"item":"Luqaimat, 12 pieces","qty":4,"kd":6.0,"unit":1.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1007","area":"Hawally","date":"2026-09-04","dated":true,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"Cash","status":"Delivered"},{"id":"KW-1154","area":"Al Jahra","date":"2026-09-05","dated":true,"item":"Falafel wrap","qty":1,"kd":0.6,"unit":0.6,"pay":"KNET","status":"Delivered"},{"id":"KW-1020","area":"Sabah Al Salem","date":"2026-09-11","dated":true,"item":"Halloumi zaatar","qty":4,"kd":3.0,"unit":0.75,"pay":"Cash","status":"Delivered"},{"id":"KW-1054","area":"Farwaniya","date":"2026-09-13","dated":true,"item":"Falafel wrap","qty":3,"kd":1.8,"unit":0.6,"pay":"KNET","status":"Delivered"},{"id":"KW-1069","area":"Salwa","date":"2026-09-13","dated":true,"item":"Karak tea","qty":1,"kd":0.25,"unit":0.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1115","area":"Hawally","date":"2026-09-10","dated":true,"item":"Karak tea","qty":4,"kd":1.0,"unit":0.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1166","area":"Salwa","date":"2026-09-12","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"Card","status":"Delivered"},{"id":"KW-1052","area":"Mangaf","date":"2026-09-12","dated":true,"item":"Chicken shawarma","qty":4,"kd":4.0,"unit":1.0,"pay":"Cash","status":"Delivered"},{"id":"KW-1057","area":"Farwaniya","date":"2026-09-07","dated":true,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"Visa","status":"Delivered"},{"id":"KW-1143","area":"Al Jahra","date":"2026-09-11","dated":true,"item":"Grilled hammour","qty":2,"kd":11.0,"unit":5.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1055","area":"Salmiya","date":"2026-09-08","dated":true,"item":"Halloumi zaatar","qty":1,"kd":0.75,"unit":0.75,"pay":"KNET","status":"Delivered"},{"id":"KW-1138","area":"Fintas","date":"2026-09-13","dated":true,"item":"Karak tea","qty":1,"kd":0.25,"unit":0.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1142","area":"Farwaniya","date":"2026-09-05","dated":true,"item":"Chicken shawarma","qty":2,"kd":2.0,"unit":1.0,"pay":"Cash","status":"Cancelled"},{"id":"KW-1132","area":"Unknown","date":"2026-09-13","dated":true,"item":"Karak tea","qty":1,"kd":0.25,"unit":0.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1030","area":"Farwaniya","date":"2026-09-06","dated":true,"item":"Luqaimat, 12 pieces","qty":2,"kd":3.0,"unit":1.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1047","area":"Mangaf","date":"2026-09-05","dated":true,"item":"Karak tea","qty":4,"kd":1.0,"unit":0.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1172","area":"Hawally","date":"2026-09-03","dated":true,"item":"Halloumi zaatar","qty":3,"kd":2.25,"unit":0.75,"pay":"KNET","status":"Delivered"},{"id":"KW-1183","area":"Fintas","date":"2026-09-09","dated":true,"item":"Luqaimat, 12 pieces","qty":4,"kd":6.0,"unit":1.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1078","area":"Hawally","date":"2026-09-05","dated":true,"item":"Mixed grill platter","qty":2,"kd":14.5,"unit":7.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1089","area":"Sabah Al Salem","date":"2026-09-04","dated":true,"item":"Falafel wrap","qty":1,"kd":0.6,"unit":0.6,"pay":"Cash","status":"Delivered"},{"id":"KW-1045","area":"Salmiya","date":"2026-09-10","dated":true,"item":"Luqaimat, 12 pieces","qty":1,"kd":1.5,"unit":1.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1153","area":"Al Jahra","date":"2026-09-03","dated":true,"item":"Chicken shawarma","qty":1,"kd":1.0,"unit":1.0,"pay":"Card","status":"Delivered"},{"id":"KW-1137","area":"Al Jahra","date":"2026-09-13","dated":true,"item":"Chicken shawarma","qty":1,"kd":1.0,"unit":1.0,"pay":"Card","status":"Delivered"},{"id":"KW-1059","area":"Al Jahra","date":"2026-09-03","dated":true,"item":"Falafel wrap","qty":1,"kd":0.6,"unit":0.6,"pay":"Card","status":"Delivered"},{"id":"KW-1159","area":"Al Jahra","date":"2026-09-07","dated":true,"item":"Mixed grill platter","qty":2,"kd":14.5,"unit":7.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1124","area":"Salwa","date":"2026-09-14","dated":true,"item":"Gahwa and dates","qty":1,"kd":0.5,"unit":0.5,"pay":"Card","status":"Delivered"},{"id":"KW-1123","area":"Al Jahra","date":"2026-09-07","dated":true,"item":"Grilled hammour","qty":1,"kd":5.5,"unit":5.5,"pay":"Visa","status":"Delivered"},{"id":"KW-1063","area":"Al Jahra","date":"2026-09-07","dated":true,"item":"Karak tea","qty":2,"kd":0.5,"unit":0.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1112","area":"Mangaf","date":"2026-09-05","dated":true,"item":"Luqaimat, 12 pieces","qty":2,"kd":3.0,"unit":1.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1040","area":"Salmiya","date":"2026-09-02","dated":true,"item":"Luqaimat, 12 pieces","qty":1,"kd":1.5,"unit":1.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1130","area":"Al Jahra","date":"2026-09-14","dated":true,"item":"Luqaimat, 12 pieces","qty":2,"kd":3.0,"unit":1.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1136","area":"Sabah Al Salem","date":"2026-09-13","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"Visa","status":"Delivered"},{"id":"KW-1027","area":"Salwa","date":"2026-09-04","dated":true,"item":"Gahwa and dates","qty":1,"kd":0.5,"unit":0.5,"pay":"Card","status":"Delivered"},{"id":"KW-1156","area":"Salmiya","date":"2026-09-02","dated":true,"item":"Mixed grill platter","qty":2,"kd":14.5,"unit":7.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1019","area":"Salmiya","date":"2026-09-14","dated":true,"item":"Halloumi zaatar","qty":2,"kd":1.5,"unit":0.75,"pay":"Card","status":"Delivered"},{"id":"KW-1185","area":"Sabah Al Salem","date":"2026-09-12","dated":true,"item":"Harees plate","qty":2,"kd":5.5,"unit":2.75,"pay":"Cash","status":"Delivered"},{"id":"KW-1157","area":"Mangaf","date":"2026-09-11","dated":true,"item":"Machboos box","qty":1,"kd":3.25,"unit":3.25,"pay":"KNET","status":"Pending"},{"id":"KW-1039","area":"Salwa","date":"2026-09-11","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1122","area":"Sabah Al Salem","date":"2026-09-13","dated":true,"item":"Grilled hammour","qty":1,"kd":5.5,"unit":5.5,"pay":"Card","status":"Delivered"},{"id":"KW-1032","area":"Fintas","date":"2026-09-03","dated":true,"item":"Halloumi zaatar","qty":4,"kd":3.0,"unit":0.75,"pay":"Visa","status":"Delivered"},{"id":"KW-1022","area":"Al Jahra","date":"2026-09-12","dated":true,"item":"Gahwa and dates","qty":2,"kd":1.0,"unit":0.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1151","area":"Salmiya","date":"2026-09-05","dated":true,"item":"Karak tea","qty":4,"kd":1.0,"unit":0.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1093","area":"Al Jahra","date":"2026-09-09","dated":true,"item":"Halloumi zaatar","qty":1,"kd":0.75,"unit":0.75,"pay":"KNET","status":"Delivered"},{"id":"KW-1060","area":"Salwa","date":"2026-09-14","dated":true,"item":"Grilled hammour","qty":1,"kd":5.5,"unit":5.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1090","area":"Farwaniya","date":"2026-09-02","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1135","area":"Hawally","date":"2026-09-14","dated":true,"item":"Chicken shawarma","qty":1,"kd":1.0,"unit":1.0,"pay":"Visa","status":"Delivered"},{"id":"KW-1079","area":"Hawally","date":"2026-09-02","dated":true,"item":"Halloumi zaatar","qty":4,"kd":3.0,"unit":0.75,"pay":"Visa","status":"Cancelled"},{"id":"KW-1092","area":"Salmiya","date":"2026-09-12","dated":true,"item":"Grilled hammour","qty":4,"kd":22.0,"unit":5.5,"pay":"Cash","status":"Pending"},{"id":"KW-1074","area":"Farwaniya","date":"2026-09-01","dated":true,"item":"Falafel wrap","qty":3,"kd":1.8,"unit":0.6,"pay":"Cash","status":"Cancelled"},{"id":"KW-1180","area":"Fintas","date":"2026-09-02","dated":true,"item":"Luqaimat, 12 pieces","qty":4,"kd":6.0,"unit":1.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1033","area":"Farwaniya","date":"2026-09-08","dated":true,"item":"Falafel wrap","qty":1,"kd":0.6,"unit":0.6,"pay":"KNET","status":"Delivered"},{"id":"KW-1168","area":"Mangaf","date":"2026-09-10","dated":true,"item":"Machboos box","qty":2,"kd":6.5,"unit":3.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1006","area":"Salwa","date":"2026-09-07","dated":true,"item":"Grilled hammour","qty":3,"kd":16.5,"unit":5.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1102","area":"Salwa","date":"2026-09-10","dated":true,"item":"Chicken shawarma","qty":2,"kd":2.0,"unit":1.0,"pay":"KNET","status":"Delivered"},{"id":"KW-1005","area":"Salwa","date":"2026-09-01","dated":true,"item":"Luqaimat, 12 pieces","qty":3,"kd":4.5,"unit":1.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1084","area":"Mangaf","date":"2026-09-10","dated":true,"item":"Gahwa and dates","qty":1,"kd":0.5,"unit":0.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1016","area":"Fintas","date":"2026-09-09","dated":true,"item":"Chicken shawarma","qty":3,"kd":3.0,"unit":1.0,"pay":"Card","status":"Delivered"},{"id":"KW-1109","area":"Salwa","date":"2026-09-02","dated":true,"item":"Grilled hammour","qty":4,"kd":22.0,"unit":5.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1036","area":"Salmiya","date":"2026-09-10","dated":true,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"Cash","status":"Delivered"},{"id":"KW-1174","area":"Farwaniya","date":"2026-09-09","dated":true,"item":"Halloumi zaatar","qty":2,"kd":1.5,"unit":0.75,"pay":"KNET","status":"Delivered"},{"id":"KW-1111","area":"Fintas","date":"2026-09-08","dated":true,"item":"Gahwa and dates","qty":3,"kd":1.5,"unit":0.5,"pay":"Cash","status":"Cancelled"},{"id":"KW-1041","area":"Hawally","date":"2026-09-08","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"Card","status":"Delivered"},{"id":"KW-1188","area":"Al Jahra","date":"2026-09-07","dated":true,"item":"Grilled hammour","qty":1,"kd":5.5,"unit":5.5,"pay":"Card","status":"Delivered"},{"id":"KW-1029","area":"Mangaf","date":"2026-09-02","dated":true,"item":"Harees plate","qty":3,"kd":8.25,"unit":2.75,"pay":"KNET","status":"Delivered"},{"id":"KW-1025","area":"Fintas","date":"2026-09-09","dated":true,"item":"Karak tea","qty":4,"kd":1.0,"unit":0.25,"pay":"Cash","status":"Cancelled"},{"id":"KW-1076","area":"Al Jahra","date":"2026-09-13","dated":true,"item":"Grilled hammour","qty":1,"kd":5.5,"unit":5.5,"pay":"Card","status":"Delivered"},{"id":"KW-1051","area":"Salmiya","date":"2026-09-12","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1046","area":"Mangaf","date":"2026-09-03","dated":true,"item":"Grilled hammour","qty":4,"kd":22.0,"unit":5.5,"pay":"Card","status":"Pending"},{"id":"KW-1015","area":"Hawally","date":"2026-09-05","dated":true,"item":"Mixed grill platter","qty":2,"kd":14.5,"unit":7.25,"pay":"Visa","status":"Delivered"},{"id":"KW-1056","area":"Salwa","date":"2026-09-02","dated":true,"item":"Grilled hammour","qty":2,"kd":11.0,"unit":5.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1129","area":"Al Jahra","date":"2026-09-04","dated":true,"item":"Grilled hammour","qty":1,"kd":5.5,"unit":5.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1009","area":"Mangaf","date":"2026-09-06","dated":true,"item":"Machboos box","qty":1,"kd":3.25,"unit":3.25,"pay":"Card","status":"Delivered"},{"id":"KW-1064","area":"Salmiya","date":"2026-09-01","dated":true,"item":"Machboos box","qty":1,"kd":3.25,"unit":3.25,"pay":"KNET","status":"Cancelled"},{"id":"KW-1131","area":"Fintas","date":"2026-09-08","dated":true,"item":"Luqaimat, 12 pieces","qty":4,"kd":6.0,"unit":1.5,"pay":"Visa","status":"Pending"},{"id":"KW-1044","area":"Al Jahra","date":"2026-09-12","dated":true,"item":"Halloumi zaatar","qty":4,"kd":3.0,"unit":0.75,"pay":"KNET","status":"Delivered"},{"id":"KW-1049","area":"Fintas","date":"2026-09-10","dated":true,"item":"Gahwa and dates","qty":3,"kd":1.5,"unit":0.5,"pay":"Card","status":"Delivered"},{"id":"KW-1108","area":"Salmiya","date":"2026-09-04","dated":true,"item":"Chicken shawarma","qty":1,"kd":1.0,"unit":1.0,"pay":"Card","status":"Delivered"},{"id":"KW-1065","area":"Mangaf","date":"2026-09-06","dated":true,"item":"Mixed grill platter","qty":2,"kd":14.5,"unit":7.25,"pay":"Card","status":"Delivered"},{"id":"KW-1082","area":"Mangaf","date":"2026-09-01","dated":true,"item":"Luqaimat, 12 pieces","qty":2,"kd":3.0,"unit":1.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1021","area":"Salwa","date":"2026-09-01","dated":true,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"Cash","status":"Delivered"},{"id":"KW-1189","area":"Al Jahra","date":"2026-09-06","dated":true,"item":"Mixed grill platter","qty":2,"kd":14.5,"unit":7.25,"pay":"KNET","status":"Pending"},{"id":"KW-1117","area":"Sabah Al Salem","date":"2026-09-11","dated":true,"item":"Falafel wrap","qty":1,"kd":0.6,"unit":0.6,"pay":"KNET","status":"Cancelled"},{"id":"KW-1162","area":"Hawally","date":"2026-09-11","dated":true,"item":"Grilled hammour","qty":1,"kd":5.5,"unit":5.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1128","area":"Mangaf","date":"2026-09-07","dated":true,"item":"Grilled hammour","qty":2,"kd":11.0,"unit":5.5,"pay":"Cash","status":"Cancelled"},{"id":"KW-1080","area":"Salmiya","date":"2026-09-11","dated":true,"item":"Machboos box","qty":2,"kd":6.5,"unit":3.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1014","area":"Salwa","date":"2026-09-11","dated":true,"item":"Machboos box","qty":1,"kd":3.25,"unit":3.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1140","area":"Salmiya","date":"2026-09-11","dated":true,"item":"Chicken shawarma","qty":2,"kd":2.0,"unit":1.0,"pay":"Cash","status":"Pending"},{"id":"KW-1126","area":"Hawally","date":"2026-09-13","dated":true,"item":"Halloumi zaatar","qty":1,"kd":0.75,"unit":0.75,"pay":"KNET","status":"Delivered"},{"id":"KW-1134","area":"Sabah Al Salem","date":"2026-09-14","dated":true,"item":"Chicken shawarma","qty":1,"kd":1.0,"unit":1.0,"pay":"Cash","status":"Delivered"},{"id":"KW-1028","area":"Farwaniya","date":"2026-09-07","dated":true,"item":"Machboos box","qty":2,"kd":6.5,"unit":3.25,"pay":"Card","status":"Pending"},{"id":"KW-1121","area":"Salwa","date":"2026-09-08","dated":true,"item":"Gahwa and dates","qty":1,"kd":0.5,"unit":0.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1146","area":"Mangaf","date":"2026-09-02","dated":true,"item":"Luqaimat, 12 pieces","qty":3,"kd":4.5,"unit":1.5,"pay":"Visa","status":"Delivered"},{"id":"KW-1177","area":"Fintas","date":"2026-09-09","dated":true,"item":"Luqaimat, 12 pieces","qty":1,"kd":1.5,"unit":1.5,"pay":"KNET","status":"Pending"},{"id":"KW-1017","area":"Salmiya","date":"2026-09-08","dated":true,"item":"Karak tea","qty":1,"kd":0.25,"unit":0.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1139","area":"Mangaf","date":"2026-09-02","dated":true,"item":"Karak tea","qty":3,"kd":0.75,"unit":0.25,"pay":"Card","status":"Delivered"},{"id":"KW-1181","area":"Fintas","date":"2026-09-10","dated":true,"item":"Falafel wrap","qty":1,"kd":0.6,"unit":0.6,"pay":"Card","status":"Delivered"},{"id":"KW-1116","area":"Salwa","date":"2026-09-02","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1070","area":"Al Jahra","date":"2026-09-12","dated":true,"item":"Karak tea","qty":1,"kd":0.25,"unit":0.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1163","area":"Hawally","date":"2026-09-10","dated":true,"item":"Gahwa and dates","qty":1,"kd":0.5,"unit":0.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1171","area":"Al Jahra","date":"2026-09-10","dated":true,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"Cash","status":"Delivered"},{"id":"KW-1068","area":"Salmiya","date":"2026-09-13","dated":true,"item":"Machboos box","qty":4,"kd":13.0,"unit":3.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1118","area":"Salwa","date":"2026-09-03","dated":true,"item":"Gahwa and dates","qty":2,"kd":1.0,"unit":0.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1081","area":"Mangaf","date":"2026-09-06","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1178","area":"Salmiya","date":"2026-09-04","dated":true,"item":"Machboos box","qty":2,"kd":6.5,"unit":3.25,"pay":"Card","status":"Delivered"},{"id":"KW-1018","area":"Fintas","date":"2026-09-12","dated":true,"item":"Gahwa and dates","qty":2,"kd":1.0,"unit":0.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1145","area":"Hawally","date":"2026-09-04","dated":true,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"Cash","status":"Cancelled"},{"id":"KW-1149","area":"Mangaf","date":"2026-09-04","dated":true,"item":"Grilled hammour","qty":2,"kd":11.0,"unit":5.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1101","area":"Salwa","date":"2026-09-09","dated":true,"item":"Karak tea","qty":2,"kd":0.5,"unit":0.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1175","area":"Farwaniya","date":"2026-09-11","dated":true,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"Cash","status":"Delivered"},{"id":"KW-1119","area":"Sabah Al Salem","date":"","dated":false,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"Cash","status":"Delivered"},{"id":"KW-1058","area":"Hawally","date":"2026-09-03","dated":true,"item":"Falafel wrap","qty":1,"kd":0.6,"unit":0.6,"pay":"KNET","status":"Pending"},{"id":"KW-1026","area":"Salmiya","date":"2026-09-13","dated":true,"item":"Halloumi zaatar","qty":2,"kd":1.5,"unit":0.75,"pay":"Card","status":"Delivered"},{"id":"KW-1167","area":"Sabah Al Salem","date":"2026-09-08","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1083","area":"Hawally","date":"2026-09-07","dated":true,"item":"Grilled hammour","qty":3,"kd":16.5,"unit":5.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1169","area":"Farwaniya","date":"2026-09-06","dated":true,"item":"Grilled hammour","qty":1,"kd":5.5,"unit":5.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1170","area":"Salwa","date":"2026-09-10","dated":true,"item":"Chicken shawarma","qty":2,"kd":2.0,"unit":1.0,"pay":"Cash","status":"Delivered"},{"id":"KW-1088","area":"Fintas","date":"2026-09-06","dated":true,"item":"Chicken shawarma","qty":1,"kd":1.0,"unit":1.0,"pay":"Card","status":"Cancelled"},{"id":"KW-1127","area":"Sabah Al Salem","date":"2026-09-14","dated":true,"item":"Luqaimat, 12 pieces","qty":3,"kd":4.5,"unit":1.5,"pay":"Card","status":"Delivered"},{"id":"KW-1150","area":"Mangaf","date":"2026-09-08","dated":true,"item":"Falafel wrap","qty":1,"kd":0.6,"unit":0.6,"pay":"KNET","status":"Delivered"},{"id":"KW-1073","area":"Al Jahra","date":"2026-09-08","dated":true,"item":"Grilled hammour","qty":1,"kd":5.5,"unit":5.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1003","area":"Salwa","date":"2026-09-13","dated":true,"item":"Gahwa and dates","qty":4,"kd":2.0,"unit":0.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1094","area":"Sabah Al Salem","date":"2026-09-09","dated":true,"item":"Halloumi zaatar","qty":1,"kd":0.75,"unit":0.75,"pay":"Cash","status":"Delivered"},{"id":"KW-1097","area":"Mangaf","date":"2026-09-08","dated":true,"item":"Machboos box","qty":1,"kd":3.25,"unit":3.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1071","area":"Al Jahra","date":"2026-09-02","dated":true,"item":"Gahwa and dates","qty":3,"kd":1.5,"unit":0.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1186","area":"Mangaf","date":"2026-09-13","dated":true,"item":"Luqaimat, 12 pieces","qty":4,"kd":6.0,"unit":1.5,"pay":"Cash","status":"Delivered"},{"id":"KW-1085","area":"Mangaf","date":"2026-09-07","dated":true,"item":"Mixed grill platter","qty":4,"kd":29.0,"unit":7.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1099","area":"Fintas","date":"2026-09-04","dated":true,"item":"Halloumi zaatar","qty":2,"kd":1.5,"unit":0.75,"pay":"KNET","status":"Cancelled"},{"id":"KW-1110","area":"Sabah Al Salem","date":"2026-09-13","dated":true,"item":"Machboos box","qty":2,"kd":6.5,"unit":3.25,"pay":"KNET","status":"Delivered"},{"id":"KW-1002","area":"Salwa","date":"2026-09-12","dated":true,"item":"Machboos box","qty":1,"kd":3.25,"unit":3.25,"pay":"Visa","status":"Delivered"},{"id":"KW-1182","area":"Hawally","date":"2026-09-01","dated":true,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"Cash","status":"Pending"},{"id":"KW-1104","area":"Fintas","date":"2026-09-01","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"Visa","status":"Delivered"},{"id":"KW-1103","area":"Unknown","date":"2026-09-12","dated":true,"item":"Mixed grill platter","qty":3,"kd":21.75,"unit":7.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1087","area":"Fintas","date":"2026-09-14","dated":true,"item":"Harees plate","qty":1,"kd":2.75,"unit":2.75,"pay":"Cash","status":"Delivered"},{"id":"KW-1053","area":"Mangaf","date":"2026-09-09","dated":true,"item":"Chicken shawarma","qty":2,"kd":2.0,"unit":1.0,"pay":"KNET","status":"Delivered"},{"id":"KW-1133","area":"Sabah Al Salem","date":"2026-09-14","dated":true,"item":"Halloumi zaatar","qty":1,"kd":0.75,"unit":0.75,"pay":"Cash","status":"Delivered"},{"id":"KW-1147","area":"Al Jahra","date":"2026-09-14","dated":true,"item":"Machboos box","qty":1,"kd":3.25,"unit":3.25,"pay":"Cash","status":"Delivered"},{"id":"KW-1095","area":"Mangaf","date":"2026-09-12","dated":true,"item":"Machboos box","qty":3,"kd":9.75,"unit":3.25,"pay":"Card","status":"Delivered"},{"id":"KW-1184","area":"Salmiya","date":"2026-09-10","dated":true,"item":"Chicken shawarma","qty":1,"kd":1.0,"unit":1.0,"pay":"Cash","status":"Delivered"},{"id":"KW-1043","area":"Salmiya","date":"2026-09-10","dated":true,"item":"Mixed grill platter","qty":1,"kd":7.25,"unit":7.25,"pay":"Card","status":"Delivered"},{"id":"KW-1125","area":"Al Jahra","date":"2026-09-03","dated":true,"item":"Grilled hammour","qty":3,"kd":16.5,"unit":5.5,"pay":"Visa","status":"Delivered"},{"id":"KW-1164","area":"Fintas","date":"2026-09-10","dated":true,"item":"Luqaimat, 12 pieces","qty":1,"kd":1.5,"unit":1.5,"pay":"KNET","status":"Delivered"},{"id":"KW-1098","area":"Al Jahra","date":"2026-09-11","dated":true,"item":"Machboos box","qty":2,"kd":6.5,"unit":3.25,"pay":"Cash","status":"Delivered"}],"metrics":{"raw_rows":195,"clean_rows":189,"excluded_rows":6,"unique_order_ids":189,"orders_total":189,"delivered_orders":153,"cancelled_orders":18,"pending_orders":18,"delivered_revenue_kd":707.85,"cancelled_value_kd":52.5,"pending_value_kd":109.35,"all_orders_value_kd":869.7,"avg_order_value_kd":4.626,"areas_covered":8,"items_covered":10,"date_min":"2026-09-01","date_max":"2026-09-14","trading_days":14,"delivered_dated":151,"delivered_with_known_area":151,"delivered_revenue_known_area_kd":685.85,"delivered_revenue_unknown_area_kd":22.0,"by_area_delivered":{"Mangaf":{"orders":26,"revenue":136.2,"qty":56},"Al Jahra":{"orders":26,"revenue":111.05,"qty":40},"Salwa":{"orders":22,"revenue":107.75,"qty":37},"Hawally":{"orders":17,"revenue":95.75,"qty":32},"Salmiya":{"orders":20,"revenue":92.75,"qty":38},"Sabah Al Salem":{"orders":15,"revenue":65.85,"qty":25},"Farwaniya":{"orders":13,"revenue":41.65,"qty":22},"Fintas":{"orders":12,"revenue":34.85,"qty":27}},"by_item_delivered":{"Mixed grill platter":{"orders":21,"revenue":224.75,"qty":31},"Grilled hammour":{"orders":19,"revenue":181.5,"qty":33},"Machboos box":{"orders":16,"revenue":107.25,"qty":33},"Harees plate":{"orders":15,"revenue":57.75,"qty":21},"Luqaimat, 12 pieces":{"orders":15,"revenue":55.5,"qty":37},"Chicken shawarma":{"orders":17,"revenue":33.0,"qty":33},"Halloumi zaatar":{"orders":14,"revenue":21.0,"qty":28},"Gahwa and dates":{"orders":14,"revenue":14.0,"qty":28},"Falafel wrap":{"orders":9,"revenue":6.6,"qty":11},"Karak tea":{"orders":13,"revenue":6.5,"qty":26}},"by_status_all":{"Delivered":{"orders":153,"revenue":707.85,"qty":281},"Pending":{"orders":18,"revenue":109.35,"qty":34},"Cancelled":{"orders":18,"revenue":52.5,"qty":37}},"by_payment_delivered":{"Cash":{"orders":61,"revenue":312.2,"qty":126},"KNET":{"orders":53,"revenue":220.2,"qty":93},"Card":{"orders":28,"revenue":109.2,"qty":43},"Visa":{"orders":11,"revenue":66.25,"qty":19}},"price_list_kd":{"Chicken shawarma":1.0,"Falafel wrap":0.6,"Gahwa and dates":0.5,"Grilled hammour":5.5,"Halloumi zaatar":0.75,"Harees plate":2.75,"Karak tea":0.25,"Luqaimat, 12 pieces":1.5,"Machboos box":3.25,"Mixed grill platter":7.25},"cancellation_rate_pct":9.5,"by_day":{"2026-09-01":{"orders":14,"delivered":7,"cancelled":4,"pending":3,"revenue":24.75},"2026-09-02":{"orders":16,"delivered":13,"cancelled":1,"pending":2,"revenue":89.25},"2026-09-03":{"orders":9,"delivered":7,"cancelled":0,"pending":2,"revenue":27.35},"2026-09-04":{"orders":12,"delivered":9,"cancelled":3,"pending":0,"revenue":32.6},"2026-09-05":{"orders":9,"delivered":7,"cancelled":2,"pending":0,"revenue":35.35},"2026-09-06":{"orders":9,"delivered":7,"cancelled":1,"pending":1,"revenue":45.5},"2026-09-07":{"orders":12,"delivered":10,"cancelled":1,"pending":1,"revenue":97.0},"2026-09-08":{"orders":14,"delivered":11,"cancelled":1,"pending":2,"revenue":35.2},"2026-09-09":{"orders":12,"delivered":10,"cancelled":1,"pending":1,"revenue":31.35},"2026-09-10":{"orders":17,"delivered":16,"cancelled":1,"pending":0,"revenue":55.35},"2026-09-11":{"orders":17,"delivered":12,"cancelled":1,"pending":4,"revenue":68.25},"2026-09-12":{"orders":15,"delivered":13,"cancelled":1,"pending":1,"revenue":65.75},"2026-09-13":{"orders":16,"delivered":16,"cancelled":0,"pending":0,"revenue":57.3},"2026-09-14":{"orders":15,"delivered":13,"cancelled":1,"pending":1,"revenue":39.1}},"checks":{"rows":{"raw":195,"clean":189,"excluded":6,"balances":true},"status_orders":{"sum":189,"clean_rows":189,"balances":true},"area_revenue":{"sum_of_area_bars":685.85,"headline_delivered_revenue":707.85,"gap":22.0,"explained_by":"2 orders (KW-1132, KW-1103) have no area in the source file. Both are Delivered, so their 22.000 KD sits in the headline but in no area bar"},"item_revenue":{"sum_of_item_bars":707.85,"headline_delivered_revenue":707.85,"balances":true},"amount_equals_price_x_qty":{"rows_checked":189,"rows_matching":189}},"weeks":{"week1":{"label":"Sep 1-7","orders":60,"revenue_kd":351.8,"aov_kd":5.863,"premium_orders":22,"premium_revenue_kd":262.5,"cheap_orders":22,"cheap_revenue_kd":29.3},"week2":{"label":"Sep 8-14","orders":91,"revenue_kd":352.3,"aov_kd":3.871,"premium_orders":18,"premium_revenue_kd":143.75,"cheap_orders":44,"cheap_revenue_kd":50.8},"orders_change_pct":51.7,"revenue_change_pct":0.1,"revenue_change_kd":0.5,"aov_change_pct":-34.0},"mix":{"premium_items":["Grilled hammour","Mixed grill platter"],"cheap_items":["Chicken shawarma","Falafel wrap","Gahwa and dates","Halloumi zaatar","Karak tea"],"premium_orders":40,"premium_revenue_kd":406.25,"premium_order_share_pct":26.1,"premium_revenue_share_pct":57.4,"cheap_orders":67,"cheap_revenue_kd":81.1,"cheap_order_share_pct":43.8,"cheap_revenue_share_pct":11.5},"cancellation_by_item":{"Falafel wrap":{"orders":13,"cancelled":3,"rate_pct":23.1,"lost_kd":3.0},"Halloumi zaatar":{"orders":17,"cancelled":3,"rate_pct":17.6,"lost_kd":5.25},"Gahwa and dates":{"orders":17,"cancelled":3,"rate_pct":17.6,"lost_kd":3.0},"Harees plate":{"orders":19,"cancelled":2,"rate_pct":10.5,"lost_kd":5.5},"Machboos box":{"orders":21,"cancelled":2,"rate_pct":9.5,"lost_kd":16.25},"Chicken shawarma":{"orders":23,"cancelled":2,"rate_pct":8.7,"lost_kd":3.0},"Karak tea":{"orders":15,"cancelled":1,"rate_pct":6.7,"lost_kd":1.0},"Luqaimat, 12 pieces":{"orders":18,"cancelled":1,"rate_pct":5.6,"lost_kd":4.5},"Grilled hammour":{"orders":23,"cancelled":1,"rate_pct":4.3,"lost_kd":11.0},"Mixed grill platter":{"orders":23,"cancelled":0,"rate_pct":0.0,"lost_kd":0}},"cancellation_by_area":{"Fintas":{"orders":20,"cancelled":4,"rate_pct":20.0,"lost_kd":5.0},"Farwaniya":{"orders":17,"cancelled":3,"rate_pct":17.6,"lost_kd":4.3},"Hawally":{"orders":24,"cancelled":4,"rate_pct":16.7,"lost_kd":7.35},"Salwa":{"orders":24,"cancelled":2,"rate_pct":8.3,"lost_kd":7.25},"Al Jahra":{"orders":32,"cancelled":2,"rate_pct":6.2,"lost_kd":13.75},"Sabah Al Salem":{"orders":17,"cancelled":1,"rate_pct":5.9,"lost_kd":0.6},"Salmiya":{"orders":23,"cancelled":1,"rate_pct":4.3,"lost_kd":3.25},"Mangaf":{"orders":30,"cancelled":1,"rate_pct":3.3,"lost_kd":11.0}}},"log":[{"problem":"11 columns arrived as text; 16 area values, 1 customer_name and 1 email carried leading/trailing spaces (e.g. ' Salmiya ')","fix":"Trimmed whitespace from every field in every column","why":"' Salmiya ' and 'Salmiya' are the same area. Untrimmed, they group separately and split one area across two bars.","rows_affected":18},{"problem":"area held 29 distinct raw strings for 8 real areas — e.g. Mangaf/mangaf; salwa/Salwa/SALWA; ' Hawally'/Hawally/hawally/HAWALLY/Hawalli; salmiya/' Salmiya '/SALMIYA/'Salmiya '/Salmiyah; al jahra/Al Jahra/JAHRA/Jahra","fix":"Case-folded and mapped every variant to one canonical name per area, giving 8 areas. Jahra and Al Jahra were merged; Hawalli merged into Hawally; Salmiyah into Salmiya; Farwaniyah into Farwaniya; Sabah Alsalem into Sabah Al Salem","why":"They are the same places. Left split, Al Jahra would appear as two areas of 19 and 14 instead of one of 33, and would drop out of the top ranks entirely.","rows_affected":111},{"problem":"status held 9 raw spellings for 3 real states, including the misspelling 'Deliverd' on 42 rows and 'Canceled' on 2","fix":"Mapped to Delivered / Pending / Cancelled","why":"'Deliverd' is 42 rows — 27% of the file. Counting it as its own status would have understated delivered orders by more than a quarter and broken every revenue figure.","rows_affected":133},{"problem":"payment_method held 10 raw spellings for 4 real methods (CASH/cash/Cash; knet/K-Net/KNET/Knet; Card/card; Visa)","fix":"Mapped to Cash / KNET / Card / Visa. Visa was kept separate from Card","why":"Card and Visa may be genuinely different records in the source system, so merging them would assert something the file does not show.","rows_affected":125},{"problem":"order_date arrived in 3 formats: 105 ISO (2026-09-14), 53 dd/mm/yyyy (14/09/2026), 37 'd Mon yyyy' (9 Sep 2026)","fix":"Parsed all three and rewrote every date as ISO yyyy-mm-dd","why":"Three formats cannot be sorted or bucketed together; 01/09/2026 and '1 Sep 2026' must land on the same day.","rows_affected":89},{"problem":"2 dates are not real dates in the trading period: '31/09/2026' (September has 30 days) and '2027-09-03' (one year outside the Sep 1–14 2026 period every other row sits in)","fix":"Kept both orders in the dataset but set their date to empty and flagged date_valid=no. They are excluded from time charts only","why":"The orders are otherwise complete and their revenue is real, so deleting them would understate totals. But inventing a date — guessing 31/09 meant 30/09, or that 2027 was a typo for 2026 — would be fabricating data. They count everywhere except the time axis.","rows_affected":2},{"problem":"amount_kd arrived in 5 formats: 121 plain '13.000', 34 suffixed '6.500 KD', 19 prefixed 'KD 2.750', 14 comma-decimal '3,250', 7 short-decimal '0.2'","fix":"Stripped KD prefixes/suffixes, read comma as the decimal separator, stored a plain number at 3 decimal places (the fils precision of the Kuwaiti dinar)","why":"'3,250' is 3.250 KD, not 3,250 KD. Read as a thousands separator it would have inflated that one order by a factor of 1000 and swamped every total in the file.","rows_affected":74},{"problem":"3 amounts are truncated against the item's own price: Karak tea 0.2 (x2) and Machboos box 3.2, where every other row of those items prices them at 0.250 and 3.250 KD","fix":"Restored to unit price x quantity: 0.250 and 3.250","why":"All 10 items price perfectly consistently across 188 of 195 rows, so the price list is evidence, not assumption. 0.2 is a dropped trailing digit, not a discount.","rows_affected":3},{"problem":"3 quantities are impossible: -2 (Mixed grill platter), 0 (Luqaimat) and 999 (Karak tea)","fix":"Recomputed quantity from amount / unit price, giving 2, 1 and 4","why":"In all three the amount is a clean multiple of the item price, so the amount corroborates a specific quantity. Left alone, the 999 row would have claimed 249.750 KD of karak tea and dominated every item chart.","rows_affected":3},{"problem":"2 rows have no area at all (KW-1132, KW-1103)","fix":"Labelled them 'Unknown' and kept them. They are excluded from area charts only","why":"Both have a valid date, item, quantity and amount, so their revenue is real and belongs in the headline. But they cannot be placed on a map of areas. This is why the area chart totals less than the headline — it is named on the chart, not hidden.","rows_affected":2},{"problem":"1 row (KW-1062) has amount -3.250 for 2 Falafel wraps, which should be 1.200 KD","fix":"Excluded the row entirely","why":"Unlike the quantity fixes, nothing here corroborates anything: the amount is negative AND its magnitude does not match the quantity. Neither field can be trusted, and guessing which one is wrong would be inventing the order.","rows_affected":1},{"problem":"5 rows repeat an order_id. 3 are byte-identical; 2 (KW-1031, KW-1141) are the same order re-typed with a different area spelling and date format","fix":"Removed 5 duplicate rows, keeping the first occurrence of each","why":"Duplicates double-count revenue. The 2 re-typed pairs only become visible as duplicates after standardising spelling and dates — which is why de-duplication runs last, not first. 190 unique order_ids remain, matching the 190 distinct ids counted in the audit.","rows_affected":5},{"problem":"2 emails and 1 phone number are blank","fix":"Left blank. No imputation","why":"Contact details play no part in any metric on this dashboard, and inventing a customer email would be both useless and wrong.","rows_affected":3}],"excluded":[{"line_in_raw_file":15,"order_id":"KW-1062","reason":"amount_kd and quantity contradict each other and the item price (0.600 KD): neither field can be trusted","raw":{"order_id":"KW-1062","customer_name":"Haya Al-Otaibi","email":"haya.otaibi@example.kw","phone":"965-8320-6543","area":" Hawally","order_date":"12 Sep 2026","item":"Falafel wrap","quantity":"2","amount_kd":"-3.250","payment_method":"Visa","status":"Pending"}},{"line_in_raw_file":34,"order_id":"KW-1141","reason":"duplicate of line 20 — identical order once spelling, date format and currency format are normalised","raw":{"order_id":"KW-1141","customer_name":"Reem Al-Fadhli","email":"reem.fadhli@example.kw","phone":"+965 6700 5534","area":"hawally","order_date":"1 Sep 2026","item":"Falafel wrap","quantity":"1","amount_kd":"0.600 KD","payment_method":"Cash","status":"cancelled"}},{"line_in_raw_file":131,"order_id":"KW-1041","reason":"duplicate of line 112 — identical order once spelling, date format and currency format are normalised","raw":{"order_id":"KW-1041","customer_name":"Bader Al-Bahar","email":"bader.bahar@example.kw","phone":"965-5913-9413","area":"HAWALLY","order_date":"8 Sep 2026","item":"Mixed grill platter","quantity":"1","amount_kd":"7.250","payment_method":"Card","status":"Delivered"}},{"line_in_raw_file":144,"order_id":"KW-1031","reason":"duplicate of line 13 — identical order once spelling, date format and currency format are normalised","raw":{"order_id":"KW-1031","customer_name":"Khaled Al-Bahar","email":"khaled.bahar@example.kw","phone":"99964448","area":"Al Jahra","order_date":"2026-09-14","item":"Falafel wrap","quantity":"1","amount_kd":"0.600","payment_method":"knet","status":"DELIVERED"}},{"line_in_raw_file":150,"order_id":"KW-1006","reason":"duplicate of line 103 — identical order once spelling, date format and currency format are normalised","raw":{"order_id":"KW-1006","customer_name":"Bader Al-Kandari","email":"bader.kandari@example.kw","phone":"+965 8209 0560","area":"salwa","order_date":"07/09/2026","item":"Grilled hammour","quantity":"3","amount_kd":"16.500","payment_method":"K-Net","status":"DELIVERED"}},{"line_in_raw_file":188,"order_id":"KW-1100","reason":"duplicate of line 37 — identical order once spelling, date format and currency format are normalised","raw":{"order_id":"KW-1100","customer_name":"Ghada Al-Kandari","email":"ghada.kandari@example.kw","phone":"+965 5089 9018","area":"Farwaniya","order_date":"14 Sep 2026","item":"Gahwa and dates","quantity":"1","amount_kd":"0.500","payment_method":"cash","status":"cancelled"}}],"audit":{"email_missing":2,"columns_detail":{"area":{"blank_or_missing":2}},"date_formats":{"counts":{"d Mon yyyy":37,"ISO yyyy-mm-dd":105,"dd/mm/yyyy":53},"unrecognised_examples":[]},"amount_formats":{"counts":{"plain decimal e.g. 13.000":128,"suffixed ' KD' e.g. 6.500 KD":34,"UNRECOGNISED":33},"unrecognised_examples":[[16,"KD 2.750"],[30,"KD 2.000"],[32,"KD 0.250"],[41,"0,500"],[42,"KD 7.250"],[47,"3,250"],[48,"KD 4.500"],[53,"3,000"],[58,"KD 4.000"],[73,"1,000"],[78,"KD 0.500"],[80,"KD 1.500"],[85,"KD 1.500"],[86,"KD 5.500"],[91,"1,000"],[95,"7,250"],[100,"KD 6.000"],[107,"3,000"],[110,"KD 1.500"],[125,"3,000"]]},"variants":{"area":{"distinct_raw_strings":29},"status":{"distinct_raw_strings":9},"item":{"distinct_raw_strings":10},"payment_method":{"distinct_raw_strings":10}}},"before_after":[{"after":"Al Jahra","column":"area","before":[["al jahra",10],["Al Jahra",9],["JAHRA",8],["Jahra",6]],"rows":33,"note":"4 spellings in the raw file → one Al Jahra of 33 rows"},{"after":"Mangaf","column":"area","before":[["Mangaf",15],["mangaf",15]],"rows":30,"note":"2 spellings in the raw file → one Mangaf of 30 rows"},{"after":"Hawally","column":"area","before":[["' Hawally'",8],["Hawally",6],["Hawalli",5],["hawally",5],["HAWALLY",3]],"rows":27,"note":"5 spellings in the raw file → one Hawally of 27 rows"},{"after":"Salwa","column":"area","before":[["salwa",10],["Salwa",8],["SALWA",7]],"rows":25,"note":"3 spellings in the raw file → one Salwa of 25 rows"},{"after":"Salmiya","column":"area","before":[["salmiya",6],["' Salmiya '",5],["SALMIYA",5],["'Salmiya '",3],["Salmiyah",3],["Salmiya",1]],"rows":23,"note":"6 spellings in the raw file → one Salmiya of 23 rows"},{"after":"Fintas","column":"area","before":[["Fintas",11],["fintas",9]],"rows":20,"note":"2 spellings in the raw file → one Fintas of 20 rows"},{"after":"Farwaniya","column":"area","before":[["Farwaniya",10],["Farwaniyah",4],["farwaniya",4]],"rows":18,"note":"3 spellings in the raw file → one Farwaniya of 18 rows"},{"after":"Sabah Al Salem","column":"area","before":[["Sabah Al Salem",6],["sabah al salem",6],["Sabah Alsalem",5]],"rows":17,"note":"3 spellings in the raw file → one Sabah Al Salem of 17 rows"},{"after":"Delivered","column":"status","before":[["Delivered",44],["Deliverd",42],["delivered",37],["DELIVERED",33]],"rows":156,"note":"4 spellings in the raw file → one Delivered of 156 rows"},{"after":"Cancelled","column":"status","before":[["cancelled",12],["Cancelled",6],["Canceled",2]],"rows":20,"note":"3 spellings in the raw file → one Cancelled of 20 rows"},{"after":"Pending","column":"status","before":[["Pending",12],["pending",7]],"rows":19,"note":"2 spellings in the raw file → one Pending of 19 rows"},{"after":"Cash","column":"payment_method","before":[["CASH",30],["cash",26],["Cash",22]],"rows":78,"note":"3 spellings in the raw file → one Cash of 78 rows"},{"after":"KNET","column":"payment_method","before":[["knet",21],["K-Net",20],["KNET",15],["Knet",12]],"rows":68,"note":"4 spellings in the raw file → one KNET of 68 rows"},{"after":"Card","column":"payment_method","before":[["Card",19],["card",16]],"rows":35,"note":"2 spellings in the raw file → one Card of 35 rows"}],"links":{"clean":"https://github.com/mubarakalsafran/Alsafran-cases/blob/9a3ff1c/aifc-day8/data/kuwait-orders-clean.csv","raw":"https://github.com/mubarakalsafran/Alsafran-cases/blob/9a3ff1c/aifc-day8/data/raw/kuwait-orders-dirty.csv"}};
+const ORDERS = DATA.orders, M = DATA.metrics, LOG = DATA.log, EXC = DATA.excluded, AUD = DATA.audit;
+const ALL = 'All';
+const C = { acc:'var(--accent-fill)', warm:'var(--warm-fill)', good:'var(--good-fill)' };
+
+/* ---------------------------------------------------------------- helpers */
+const $ = (s, r) => (r || document).querySelector(s);
+const kdf = n => Number(n).toLocaleString('en-US', {minimumFractionDigits:3, maximumFractionDigits:3});
+const intf = n => Number(n).toLocaleString('en-US');
+const pctf = n => Number(n).toFixed(1) + '%';
+const esc = s => String(s).replace(/[&<>"]/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const r3 = n => Math.round(n * 1000) / 1000;
+const shortDay = iso => iso.slice(8) + ' Sep';
+const REDUCED = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+const AREAS = [...new Set(ORDERS.map(o => o.area))].sort();
+const ITEMS = [...new Set(ORDERS.map(o => o.item))].sort();
+const STATUSES = ['Delivered', 'Pending', 'Cancelled'];
+const DATED = ORDERS.filter(o => o.dated).map(o => o.date).sort();
+const DATE_MIN = DATED[0], DATE_MAX = DATED[DATED.length - 1];
+
+const TABS = ['Overview','Areas','Items','Time','Quality','The Story','What I Would Ask Next'];
+const FILTERED_TABS = ['Overview','Areas','Items','Time'];
+const emptyF = () => ({ area:ALL, status:ALL, item:ALL, from:'', to:'' });
+let state = { tab:'Overview', f:emptyF() };
+const dirty = () => JSON.stringify(state.f) !== JSON.stringify(emptyF());
+
+function applyFilters(rows, f) {
+  return rows.filter(r => {
+    if (f.area !== ALL && r.area !== f.area) return false;
+    if (f.status !== ALL && r.status !== f.status) return false;
+    if (f.item !== ALL && r.item !== f.item) return false;
+    if (f.from || f.to) {
+      if (!r.dated) return false;
+      if (f.from && r.date < f.from) return false;
+      if (f.to && r.date > f.to) return false;
+    }
+    return true;
+  });
+}
+const sum = (rows, pick) => r3(rows.reduce((a, r) => a + pick(r), 0));
+
+function kpis(rows) {
+  const d = rows.filter(r => r.status === 'Delivered');
+  const revenue = sum(d, r => r.kd);
+  const cancelled = rows.filter(r => r.status === 'Cancelled').length;
+  return {
+    orders: rows.length, delivered: d.length, cancelled,
+    pending: rows.filter(r => r.status === 'Pending').length,
+    revenue, aov: d.length ? r3(revenue / d.length) : 0,
+    cancelRate: rows.length ? Math.round((cancelled / rows.length) * 1000) / 10 : 0,
+    areas: new Set(rows.filter(r => r.area !== 'Unknown').map(r => r.area)).size,
+    items: new Set(rows.map(r => r.item)).size,
+    undated: rows.filter(r => !r.dated).length,
+    unknownArea: rows.filter(r => r.area === 'Unknown').length,
+    unknownAreaRevenue: sum(d.filter(r => r.area === 'Unknown'), r => r.kd)
+  };
+}
+function groupBy(rows, key) {
+  const m = new Map();
+  for (const r of rows) {
+    const k = r[key];
+    const g = m.get(k) || { key:k, orders:0, revenue:0, qty:0 };
+    g.orders++; g.revenue += r.kd; g.qty += r.qty; m.set(k, g);
+  }
+  return [...m.values()].map(g => ({ ...g, revenue:r3(g.revenue), aov:r3(g.revenue / g.orders) }))
+                        .sort((a, b) => b.revenue - a.revenue);
+}
+function byDay(rows) {
+  const m = new Map();
+  for (const r of rows) {
+    if (!r.dated) continue;
+    const g = m.get(r.date) || { date:r.date, orders:0, delivered:0, cancelled:0, pending:0, revenue:0 };
+    g.orders++;
+    if (r.status === 'Delivered') { g.delivered++; g.revenue += r.kd; }
+    else if (r.status === 'Cancelled') g.cancelled++; else g.pending++;
+    m.set(r.date, g);
+  }
+  return [...m.values()].map(g => ({ ...g, revenue:r3(g.revenue) })).sort((a, b) => a.date < b.date ? -1 : 1);
+}
+
+/* ------------------------------------------------------------- count-up */
+function countUp(node) {
+  const to = +node.dataset.to, dec = +node.dataset.dec || 0;
+  const from = node._v === undefined ? to : node._v;
+  const fmt = v => v.toLocaleString('en-US', {minimumFractionDigits:dec, maximumFractionDigits:dec});
+  if (REDUCED || from === to) { node._v = to; node.textContent = fmt(to); return; }
+  const t0 = performance.now(), dur = 550;
+  cancelAnimationFrame(node._raf);
+  const tick = t => {
+    const p = Math.min(1, (t - t0) / dur), e = 1 - Math.pow(1 - p, 3);
+    node.textContent = fmt(from + (to - from) * e);
+    if (p < 1) node._raf = requestAnimationFrame(tick); else node._v = to;
+  };
+  node._raf = requestAnimationFrame(tick);
+}
+function kpiHTML(label, value, opts) {
+  const o = opts || {};
+  return '<div class="kpi' + (o.accent ? ' acc' : '') + '">' +
+    '<div class="k-l">' + esc(label) + '</div>' +
+    '<div class="k-v"><span class="cu" data-to="' + value + '" data-dec="' + (o.dec || 0) + '">' +
+      Number(value).toLocaleString('en-US', {minimumFractionDigits:o.dec || 0, maximumFractionDigits:o.dec || 0}) +
+    '</span>' + (o.unit ? '<span class="k-u">' + esc(o.unit) + '</span>' : '') + '</div>' +
+    (o.sub ? '<div class="k-s">' + o.sub + '</div>' : '') + '</div>';
+}
+function animateKpis(root, keyed) {
+  root.querySelectorAll('.cu').forEach((n, i) => {
+    if (keyed && root._cu && root._cu[i] !== undefined) n._v = root._cu[i];
+    countUp(n);
+  });
+  if (keyed) root._cu = [...root.querySelectorAll('.cu')].map(n => +n.dataset.to);
+}
+
+/* ------------------------------------------------------------- tooltip */
+const TT = $('#tt');
+function showTT(x, y, html) { TT.innerHTML = html; TT.style.left = x + 'px'; TT.style.top = y + 'px'; TT.style.opacity = 1; }
+function hideTT() { TT.style.opacity = 0; }
+
+/* ------------------------------------------------------- chart: frame */
+function frame(o) {
+  return '<section class="card cf">' +
+    '<h3>' + o.finding + '</h3>' +
+    (o.subject ? '<p class="sub">' + o.subject + '</p>' : '') +
+    '<div class="plot">' + o.plot + '</div>' +
+    '<dl>' +
+      '<div><dt>Y axis</dt><dd>' + o.y + '</dd></div>' +
+      '<div><dt>X axis</dt><dd>' + o.x + '</dd></div>' +
+      '<div><dt>Built from</dt><dd>' + o.basis + '</dd></div>' +
+      '<div><dt>Excluded</dt><dd>' + (o.excluded || 'Nothing — every row in the current filter is shown.') + '</dd></div>' +
+    '</dl></section>';
+}
+
+/* ------------------------------------------- chart: horizontal bars */
+function barsH(rows, o) {
+  o = o || {};
+  const max = Math.max(0, ...rows.map(r => r.value)) || 1;
+  const f = o.money ? kdf : (o.pct ? (v => v.toFixed(1) + '%') : intf);
+  const bars = rows.map(r => {
+    const dim = o.active && o.active !== r.key;
+    const col = o.colorFor ? o.colorFor(r.key, r.value) : C.acc;
+    return '<div class="bar' + (o.pick ? ' click' : '') + (dim ? ' dim' : '') +
+      '" data-k="' + esc(r.key) + '" data-v="' + esc(f(r.value) + (o.money ? ' KD' : (o.pct ? '' : ''))) +
+      '" data-n="' + esc(o.measure || 'Value') + '">' +
+      '<span class="bl" title="' + esc(r.key) + '">' + esc(r.key) + '</span>' +
+      '<span class="bt"><span class="bf" style="--p:' + (r.value / max * 100).toFixed(2) + '%;--c:' + col + '"></span></span>' +
+      '<span class="bv">' + f(r.value) + '</span></div>';
+  }).join('');
+  const ticks = [0, .25, .5, .75, 1].map(p => '<span>' + f(r3(max * p)) + '</span>').join('');
+  return '<div class="barchart" data-pick="' + (o.pick || '') + '">' +
+    '<div class="bars">' + bars + '</div>' +
+    '<div class="axis"><span></span><span class="ticks">' + ticks + '</span><span class="pad"></span></div>' +
+    '<p class="axtitle">' + esc(o.axisTitle || '') + '</p></div>';
+}
+
+/* --------------------------------------- chart: vertical grouped bars */
+function vbars(panel) {
+  const max = Math.max(0, ...panel.groups.flatMap(g => g.values)) || 1;
+  const f = panel.money ? kdf : intf;
+  const ticks = [1, .75, .5, .25, 0].map(p => '<span>' + f(r3(max * p)) + '</span>').join('');
+  const groups = panel.groups.map(g =>
+    '<div class="vgroup">' + g.values.map((v, i) =>
+      '<div class="vbar" data-k="' + esc(g.label) + '" data-n="' + esc(panel.series[i].name) +
+      '" data-v="' + esc(f(v) + (panel.money ? ' KD' : '')) +
+      '" style="--h:' + (v / max * 100).toFixed(2) + '%;--c:' + panel.series[i].color + '"></div>').join('') +
+    '</div>').join('');
+  const labs = panel.groups.map(g => '<span>' + esc(g.label) + '</span>').join('');
+  const legend = panel.series.map(s =>
+    '<span><span class="sw" style="background:' + s.color + '"></span>' + esc(s.name) + '</span>').join('');
+  return '<div class="vpanel"><p class="axtitle">' + esc(panel.title) + '</p>' +
+    '<div class="vwrap"><div class="vaxis">' + ticks + '</div>' +
+    '<div><div class="vplot">' + groups + '</div><div class="vlabs">' + labs + '</div></div></div>' +
+    '<div class="legend">' + legend + '</div></div>';
+}
+
+/* ------------------------------------------------- chart: line (SVG) */
+let LINE_RO = null;
+function lineHTML(id) { return '<svg class="lc" id="' + id + '" role="img"></svg>'; }
+function drawLine(svg) {
+  const cfg = svg._cfg; if (!cfg) return;
+  const W = Math.max(300, svg.parentNode.clientWidth), H = 268;
+  const f = cfg.money ? kdf : intf;
+  const max = Math.max(0, ...cfg.rows.flatMap(r => cfg.series.map(s => r.values[s.name]))) || 1;
+  const L = cfg.money ? 62 : 40, R = 12, T = 12, B = 34;
+  const iw = W - L - R, ih = H - T - B;
+  const X = i => L + (cfg.rows.length === 1 ? iw / 2 : i * iw / (cfg.rows.length - 1));
+  const Y = v => T + ih - (v / max) * ih;
+  let s = '';
+  for (let i = 0; i <= 4; i++) {
+    const v = max * i / 4, y = Y(v);
+    s += '<line class="gl" x1="' + L + '" y1="' + y.toFixed(1) + '" x2="' + (W - R) + '" y2="' + y.toFixed(1) + '"/>';
+    s += '<text x="' + (L - 7) + '" y="' + (y + 3.5).toFixed(1) + '" text-anchor="end">' + f(r3(v)) + '</text>';
+  }
+  s += '<line class="ax" x1="' + L + '" y1="' + (T + ih) + '" x2="' + (W - R) + '" y2="' + (T + ih) + '"/>';
+  const every = cfg.rows.length > 9 ? 2 : 1;
+  cfg.rows.forEach((r, i) => {
+    if (i % every === 0 || i === cfg.rows.length - 1)
+      s += '<text x="' + X(i).toFixed(1) + '" y="' + (H - 13) + '" text-anchor="middle">' + esc(r.label) + '</text>';
+  });
+  cfg.series.forEach(se => {
+    const pts = cfg.rows.map((r, i) => X(i).toFixed(1) + ',' + Y(r.values[se.name]).toFixed(1)).join(' ');
+    s += '<polyline points="' + pts + '" fill="none" stroke="' + se.color + '" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>';
+    cfg.rows.forEach((r, i) => {
+      s += '<circle cx="' + X(i).toFixed(1) + '" cy="' + Y(r.values[se.name]).toFixed(1) + '" r="3" fill="' + se.color + '"/>';
+    });
+  });
+  s += '<line class="cross" id="' + svg.id + '-x" x1="0" y1="' + T + '" x2="0" y2="' + (T + ih) + '"/>';
+  cfg.rows.forEach((r, i) => {
+    const w = iw / Math.max(1, cfg.rows.length - 1);
+    s += '<rect class="hit" data-i="' + i + '" x="' + (X(i) - w / 2).toFixed(1) + '" y="' + T + '" width="' + w.toFixed(1) + '" height="' + ih + '"/>';
+  });
+  svg.setAttribute('viewBox', '0 0 ' + W + ' ' + H);
+  svg.setAttribute('height', H);
+  svg.setAttribute('aria-label', cfg.alt || 'line chart');
+  svg.innerHTML = s;
+  const cross = svg.querySelector('.cross');
+  svg.querySelectorAll('.hit').forEach(h => {
+    h.addEventListener('mousemove', ev => {
+      const i = +h.dataset.i, row = cfg.rows[i], bb = svg.getBoundingClientRect();
+      const sx = bb.width / W;
+      cross.setAttribute('x1', X(i)); cross.setAttribute('x2', X(i)); cross.style.opacity = .8;
+      showTT(bb.left + X(i) * sx, bb.top + Y(Math.max(...cfg.series.map(se => row.values[se.name]))) * sx,
+        '<div class="tk">' + esc(row.label) + '</div>' + cfg.series.map(se =>
+          '<div class="tr"><span class="sw" style="background:' + se.color + '"></span>' + esc(se.name) +
+          '<b>' + f(row.values[se.name]) + (cfg.money ? ' KD' : '') + '</b></div>').join(''));
+    });
+    h.addEventListener('mouseleave', () => { cross.style.opacity = 0; hideTT(); });
+  });
+}
+function wireLine(id, cfg) {
+  const svg = document.getElementById(id); if (!svg) return;
+  svg._cfg = cfg; drawLine(svg);
+  // identity is never carried by colour alone: every series is named beside its swatch
+  const leg = document.createElement('div');
+  leg.className = 'legend';
+  leg.innerHTML = cfg.series.map(se =>
+    '<span><span class="sw" style="background:' + se.color + '"></span>' + esc(se.name) + '</span>').join('');
+  svg.after(leg);
+  if (!LINE_RO) LINE_RO = new ResizeObserver(es => es.forEach(e => {
+    e.target.querySelectorAll('svg.lc').forEach(drawLine);
+  }));
+  LINE_RO.observe(svg.parentNode);
+}
+
+/* ===================================================================== TABS */
+function tabOverview(rows) {
+  const k = kpis(rows);
+  const d = rows.filter(r => r.status === 'Delivered');
+  const areas = groupBy(d.filter(r => r.area !== 'Unknown'), 'area');
+  const items = groupBy(d, 'item');
+  const days = byDay(rows);
+  const areaRev = areas.reduce((a, b) => a + b.revenue, 0) || 1;
+  const ta = areas[0], ti = items[0];
+  let h = '<div class="kpis">' +
+    kpiHTML('Top area by revenue', ta ? ta.revenue : 0, {dec:3, unit:'KD',
+      sub: ta ? esc(ta.key) + ' — ' + pctf(ta.revenue / areaRev * 100) + ' of area-attributed revenue' : 'No area-attributed orders in view'}) +
+    kpiHTML('Top item by revenue', ti ? ti.revenue : 0, {dec:3, unit:'KD',
+      sub: ti ? esc(ti.key) + ' — from ' + ti.orders + ' delivered orders' : 'No delivered orders in view'}) +
+    kpiHTML('Areas in view', k.areas, {sub:'Named areas. Rows with a blank area count as Unknown.'}) +
+    kpiHTML('Cancellation rate', k.cancelRate, {dec:1, unit:'%', sub: k.cancelled + ' cancelled ÷ ' + k.orders + ' orders in view'}) +
+  '</div><div class="two">';
+
+  h += areas.length ? frame({
+    finding: esc(ta.key) + ' is the largest area at ' + kdf(ta.revenue) + ' KD, ' + pctf(ta.revenue / areaRev * 100) + ' of area-attributed delivered revenue',
+    subject: 'Click a bar to filter the whole dashboard to that area.',
+    y: 'Area (8 named areas, after standardising 29 raw spellings)',
+    x: 'Delivered revenue in Kuwaiti dinar (KD) — axis starts at zero',
+    basis: 'Built from ' + d.filter(r => r.area !== 'Unknown').length + ' delivered orders with a named area',
+    excluded: k.unknownArea
+      ? k.unknownArea + ' order(s) in view have no area in the source file and appear in no bar, so ' + kdf(k.unknownAreaRevenue) + ' KD of delivered revenue sits in the headline but not in this chart. Cancelled and pending orders are also excluded.'
+      : 'Cancelled and pending orders are excluded — this is delivered revenue only.',
+    plot: barsH(areas.map(a => ({key:a.key, value:a.revenue})), {money:1, pick:'area', measure:'Delivered revenue', axisTitle:'Delivered revenue (KD)'})
+  }) : '<section class="card"><div class="empty">No delivered orders with a named area in this selection.</div></section>';
+
+  h += items.length ? frame({
+    finding: esc(ti.key) + ' earns the most at ' + kdf(ti.revenue) + ' KD from just ' + ti.orders + ' delivered orders',
+    y: 'Menu item (10 items — the one column that arrived already consistent)',
+    x: 'Delivered revenue in Kuwaiti dinar (KD) — axis starts at zero',
+    basis: 'Built from ' + d.length + ' delivered orders',
+    excluded: 'Cancelled and pending orders are excluded — this is delivered revenue only.',
+    plot: barsH(items.map(i => ({key:i.key, value:i.revenue})), {money:1, pick:'item', measure:'Delivered revenue', axisTitle:'Delivered revenue (KD)'})
+  }) : '<section class="card"><div class="empty">No delivered orders in this selection.</div></section>';
+  h += '</div>';
+
+  if (days.length > 1) {
+    h += frame({
+      finding: 'Orders climb through the second week while delivered revenue stays flat',
+      subject: 'The gap between order count and revenue is the whole story — see The Story tab.',
+      y: 'Orders per day (count) — one scale, no second axis',
+      x: 'Order date, ' + days[0].date + ' to ' + days[days.length - 1].date,
+      basis: 'Built from ' + rows.filter(r => r.dated).length + ' orders in view that carry a usable date',
+      excluded: k.undated ? k.undated + ' order(s) in view have an unusable date and cannot be placed on a time axis.' : 'Nothing — every order in view has a usable date.',
+      plot: lineHTML('lc-ov')
+    });
+    PENDING.push(() => wireLine('lc-ov', {
+      rows: days.map(x => ({label:shortDay(x.date), values:{Delivered:x.delivered, Pending:x.pending, Cancelled:x.cancelled}})),
+      series: [{name:'Delivered', color:C.good}, {name:'Pending', color:C.acc}, {name:'Cancelled', color:C.warm}],
+      alt: 'Orders per day by status'
+    }));
+  }
+
+  h += '<section class="card"><h3 style="font-size:14px;font-weight:600">How every number on this page is calculated' +
+    '<button class="info" type="button" data-info="calc" aria-expanded="false">i</button></h3>' +
+    '<div class="infobox" id="info-calc" hidden>' +
+      '<b>Delivered revenue</b> = sum of <code>amount_kd</code> where status = Delivered.<br>' +
+      '<b>Average order value</b> = delivered revenue ÷ delivered orders.<br>' +
+      '<b>Cancellation rate</b> = cancelled orders ÷ all orders in view.<br>' +
+      '<code>amount_kd</code> is the line total, not a unit price. Verified against the derived item price list: all 189 cleaned rows satisfy amount = unit price × quantity.' +
+    '</div>' +
+    '<p style="margin:9px 0 0;font-size:13.5px;color:var(--t1);max-width:70ch">Revenue means <strong>delivered</strong> revenue throughout this dashboard. Pending and cancelled orders are counted separately and never added to it, because neither has been paid.</p></section>';
+
+  h += tableCard(rows);
+  return h;
+}
+
+function tabAreas(rows) {
+  const named = rows.filter(r => r.area !== 'Unknown');
+  const d = named.filter(r => r.status === 'Delivered');
+  const rev = groupBy(d, 'area');
+  const total = rev.reduce((a, b) => a + b.revenue, 0) || 1;
+  const byOrders = [...groupBy(named, 'area')].sort((a, b) => b.orders - a.orders);
+  const aov = [...rev].sort((a, b) => b.aov - a.aov);
+  const k = kpis(rows);
+  const success = byOrders.map(g => {
+    const all = named.filter(r => r.area === g.key);
+    return { key:g.key, value: Math.round(all.filter(r => r.status === 'Delivered').length / all.length * 1000) / 10 };
+  }).sort((a, b) => b.value - a.value);
+  let h = '';
+  if (state.f.area !== ALL) {
+    const sel = kpis(rows);
+    h += '<section class="card"><div class="rowhead"><h3 style="font-size:19px;font-weight:700">' + esc(state.f.area) +
+      ' <span style="font-weight:400;font-size:12.5px;color:var(--t2)">selected — every figure below is this area only</span></h3>' +
+      '<button class="btn sm" type="button" data-clear="area">Clear area</button></div><div class="kpis">' +
+      kpiHTML('Orders', sel.orders, {}) + kpiHTML('Delivered', sel.delivered, {}) +
+      kpiHTML('Cancelled', sel.cancelled, {}) + kpiHTML('Revenue', sel.revenue, {dec:3, unit:'KD', accent:1}) +
+      kpiHTML('Avg order value', sel.aov, {dec:3, unit:'KD'}) + kpiHTML('Items ordered', sel.items, {}) +
+      '</div></section>';
+  }
+  h += '<div class="two">';
+  if (rev.length) h += frame({
+    finding: esc(rev[0].key) + ' leads on revenue with ' + kdf(rev[0].revenue) + ' KD — ' + pctf(rev[0].revenue / total * 100) + ' of area-attributed delivered revenue',
+    subject: 'Click any bar to filter the dashboard to that area.',
+    y: 'Area (8 named areas, standardised from 29 raw spellings)',
+    x: 'Delivered revenue in Kuwaiti dinar (KD) — axis starts at zero',
+    basis: 'Built from ' + d.length + ' delivered orders with a named area',
+    excluded: k.unknownArea + ' order(s) in view have a blank area and appear in no bar (' + kdf(k.unknownAreaRevenue) + ' KD of delivered revenue). Cancelled and pending orders excluded.',
+    plot: barsH(rev.map(r => ({key:r.key, value:r.revenue})), {money:1, pick:'area', active: state.f.area !== ALL ? state.f.area : null, measure:'Delivered revenue', axisTitle:'Delivered revenue (KD)'})
+  });
+  if (byOrders.length) h += frame({
+    finding: esc(byOrders[0].key) + ' takes the most orders (' + byOrders[0].orders + ') but ' + esc(rev[0].key) + ' takes the most money — volume and value rank differently',
+    y: 'Area',
+    x: 'Orders (count, all statuses) — axis starts at zero',
+    basis: 'Built from ' + named.length + ' orders with a named area, all statuses',
+    excluded: k.unknownArea + ' order(s) with a blank area.',
+    plot: barsH(byOrders.map(r => ({key:r.key, value:r.orders})), {pick:'area', active: state.f.area !== ALL ? state.f.area : null, measure:'Orders', axisTitle:'Orders (count)'})
+  });
+  if (aov.length) h += frame({
+    finding: esc(aov[0].key) + ' has the highest average order at ' + kdf(aov[0].aov) + ' KD — ' + (aov[0].aov / (aov[aov.length - 1].aov || 1)).toFixed(1) + '× ' + esc(aov[aov.length - 1].key),
+    y: 'Area',
+    x: 'Average delivered order value in KD — axis starts at zero',
+    basis: 'Built from ' + d.length + ' delivered orders with a named area',
+    excluded: 'Cancelled and pending orders excluded, and orders with a blank area.',
+    plot: barsH(aov.map(r => ({key:r.key, value:r.aov})), {money:1, pick:'area', active: state.f.area !== ALL ? state.f.area : null, measure:'Avg order value', axisTitle:'Average delivered order value (KD)'})
+  });
+  if (success.length) h += frame({
+    finding: 'Delivery success ranges from ' + success[success.length - 1].value.toFixed(1) + '% in ' + esc(success[success.length - 1].key) + ' to ' + success[0].value.toFixed(1) + '% in ' + esc(success[0].key),
+    y: 'Area',
+    x: "Share of that area's orders that were delivered (%) — axis starts at zero",
+    basis: 'Built from ' + named.length + ' orders with a named area, all statuses',
+    excluded: k.unknownArea + ' order(s) with a blank area. The remainder of each bar is pending or cancelled.',
+    plot: barsH(success, {pct:1, pick:'area', active: state.f.area !== ALL ? state.f.area : null, measure:'Delivered share', axisTitle:'Delivered share of orders (%)', colorFor:(key, v) => v < 80 ? C.warm : C.acc})
+  });
+  h += '</div>';
+
+  h += '<section class="card"><div class="rowhead"><h3>Area table — delivered orders only</h3></div><div class="tscroll"><table>' +
+    '<thead><tr><th>Area</th><th class="r">Delivered orders</th><th class="r">Revenue (KD)</th><th class="r">Avg order (KD)</th><th class="r">Units</th><th class="r">Share of revenue</th></tr></thead><tbody>' +
+    rev.map(r => '<tr class="click" data-pick="area" data-k="' + esc(r.key) + '"><td>' + esc(r.key) + '</td><td class="r">' + intf(r.orders) +
+      '</td><td class="r">' + kdf(r.revenue) + '</td><td class="r">' + kdf(r.aov) + '</td><td class="r">' + intf(r.qty) +
+      '</td><td class="r">' + pctf(r.revenue / total * 100) + '</td></tr>').join('') +
+    '</tbody><tfoot><tr><td>Total, named areas</td><td class="r">' + intf(d.length) + '</td><td class="r">' + kdf(total) +
+    '</td><td></td><td></td><td class="r">100.0%</td></tr></tfoot></table></div>' +
+    (k.unknownArea ? '<p class="note"><b>Why this table totals less than the headline.</b> ' + k.unknownArea +
+      ' order(s) in the current view have no area in the source file. They are real orders with real revenue, so they stay in the headline total, but they cannot be placed in any area row — a gap of <strong class="mono">' +
+      kdf(k.unknownAreaRevenue) + ' KD</strong>. Named here rather than dropped quietly.</p>' : '') + '</section>';
+  return h;
+}
+
+function tabItems(rows) {
+  const d = rows.filter(r => r.status === 'Delivered');
+  const g = groupBy(d, 'item').map(x => ({ ...x, unit: M.price_list_kd[x.key] }));
+  if (!g.length) return '<section class="card"><div class="empty">No delivered orders in this selection.</div></section>';
+  const total = g.reduce((a, b) => a + b.revenue, 0) || 1;
+  const byOrders = [...g].sort((a, b) => b.orders - a.orders);
+  const byQty = [...g].sort((a, b) => b.qty - a.qty);
+  const act = state.f.item !== ALL ? state.f.item : null;
+  let h = '<div class="two">';
+  h += frame({
+    finding: esc(g[0].key) + ' is ' + pctf(g[0].revenue / total * 100) + ' of delivered revenue — ' + kdf(g[0].revenue) + ' KD from ' + g[0].orders + ' orders',
+    subject: 'Click a bar to filter the dashboard to that item.',
+    y: 'Menu item', x: 'Delivered revenue in Kuwaiti dinar (KD) — axis starts at zero',
+    basis: 'Built from ' + d.length + ' delivered orders',
+    excluded: 'Cancelled and pending orders excluded — delivered revenue only.',
+    plot: barsH(g.map(x => ({key:x.key, value:x.revenue})), {money:1, pick:'item', active:act, measure:'Delivered revenue', axisTitle:'Delivered revenue (KD)'})
+  });
+  h += frame({
+    finding: esc(byOrders[0].key) + ' is ordered most often (' + byOrders[0].orders + ' delivered orders) — popularity and revenue are not the same ranking',
+    y: 'Menu item', x: 'Delivered orders (count) — axis starts at zero',
+    basis: 'Built from ' + d.length + ' delivered orders',
+    excluded: 'Cancelled and pending orders excluded.',
+    plot: barsH(byOrders.map(x => ({key:x.key, value:x.orders})), {pick:'item', active:act, measure:'Delivered orders', axisTitle:'Delivered orders (count)'})
+  });
+  h += frame({
+    finding: esc(byQty[0].key) + ' moves the most units (' + byQty[0].qty + ') yet earns ' + pctf(byQty[0].revenue / total * 100) + ' of revenue',
+    y: 'Menu item', x: 'Units sold (sum of quantity) — axis starts at zero',
+    basis: 'Built from ' + d.length + ' delivered orders',
+    excluded: 'Cancelled and pending orders excluded.',
+    plot: barsH(byQty.map(x => ({key:x.key, value:x.qty})), {pick:'item', active:act, measure:'Units', axisTitle:'Units sold (count)'})
+  });
+  h += frame({
+    finding: 'Unit price is fixed per item across the whole file — which is how impossible rows were caught',
+    subject: 'Every one of the 189 cleaned rows satisfies amount_kd = unit price × quantity.',
+    y: 'Menu item', x: 'Unit price in Kuwaiti dinar (KD) — axis starts at zero',
+    basis: 'Built from all 189 cleaned orders, every status',
+    excluded: 'Nothing. The price list is derived from the file itself, not supplied from outside.',
+    plot: barsH(Object.entries(M.price_list_kd).sort((a, b) => b[1] - a[1]).map(([k2, v]) => ({key:k2, value:v})),
+      {money:1, pick:'item', active:act, measure:'Unit price', axisTitle:'Unit price (KD)'})
+  });
+  h += '</div>';
+  h += '<section class="card" id="itemcard"><div class="rowhead"><h3>Item table — click any column header to sort</h3>' +
+    (act ? '<button class="btn sm" type="button" data-clear="item">Clear item filter (' + esc(act) + ')</button>' : '') +
+    '</div><div class="tscroll" id="itemtable"></div>' +
+    '<p style="margin:11px 0 0;font-size:11.5px;color:var(--t2)">Item revenue reconciles exactly to the headline: every delivered order has an item, so these rows sum to the full delivered revenue with no gap.</p></section>';
+  PENDING.push(() => paintItemTable(g, total, d.length));
+  return h;
+}
+let ITEM_SORT = { c:'revenue', dir:-1 };
+function paintItemTable(g, total, dCount) {
+  const host = document.getElementById('itemtable'); if (!host) return;
+  const cols = [['key','Item',0], ['unit','Unit price (KD)',1], ['orders','Delivered orders',1], ['qty','Units',1], ['revenue','Revenue (KD)',1], ['aov','Avg order (KD)',1]];
+  const rows = [...g].sort((a, b) => {
+    const A = a[ITEM_SORT.c], B = b[ITEM_SORT.c];
+    return (typeof A === 'string' ? A.localeCompare(B) : A - B) * ITEM_SORT.dir;
+  });
+  host.innerHTML = '<table><thead><tr>' +
+    cols.map(([c, l, r]) => '<th class="s' + (r ? ' r' : '') + '" data-sort="' + c + '">' + l +
+      (ITEM_SORT.c === c ? '<span style="color:var(--accent)"> ' + (ITEM_SORT.dir === -1 ? '▾' : '▴') + '</span>' : '') + '</th>').join('') +
+    '<th class="r">Share</th></tr></thead><tbody>' +
+    rows.map(x => '<tr class="click" data-pick="item" data-k="' + esc(x.key) + '"><td>' + esc(x.key) + '</td><td class="r">' + kdf(x.unit) +
+      '</td><td class="r">' + intf(x.orders) + '</td><td class="r">' + intf(x.qty) + '</td><td class="r">' + kdf(x.revenue) +
+      '</td><td class="r">' + kdf(x.aov) + '</td><td class="r">' + pctf(x.revenue / total * 100) + '</td></tr>').join('') +
+    '</tbody><tfoot><tr><td>Total</td><td></td><td class="r">' + intf(dCount) + '</td><td class="r">' +
+    intf(g.reduce((a, b) => a + b.qty, 0)) + '</td><td class="r">' + kdf(total) + '</td><td></td><td class="r">100.0%</td></tr></tfoot></table>';
+  host.querySelectorAll('th.s').forEach(th => th.addEventListener('click', () => {
+    const c = th.dataset.sort;
+    ITEM_SORT = { c, dir: ITEM_SORT.c === c && ITEM_SORT.dir === -1 ? 1 : -1 };
+    paintItemTable(g, total, dCount);
+  }));
+}
+
+function tabTime(rows) {
+  const days = byDay(rows);
+  if (!days.length) return '<section class="card"><div class="empty">No orders with a usable date in this selection.</div></section>';
+  const k = kpis(rows);
+  const dated = rows.filter(r => r.dated);
+  const d = dated.filter(r => r.status === 'Delivered');
+  const w1 = d.filter(r => r.date <= '2026-09-07'), w2 = d.filter(r => r.date >= '2026-09-08');
+  const r1 = sum(w1, x => x.kd), r2 = sum(w2, x => x.kd);
+  const a1 = w1.length ? r3(r1 / w1.length) : 0, a2 = w2.length ? r3(r2 / w2.length) : 0;
+  const ordersChg = w1.length ? (w2.length - w1.length) / w1.length * 100 : 0;
+  const revChg = r1 ? (r2 - r1) / r1 * 100 : 0;
+  const peak = [...days].sort((a, b) => b.revenue - a.revenue)[0];
+  const quiet = [...days].sort((a, b) => a.revenue - b.revenue)[0];
+  const pre = (from, to, label) => '<button class="btn sm" type="button" data-range="' + from + '|' + to + '"' +
+    (state.f.from === from && state.f.to === to ? ' style="border-color:color-mix(in srgb,var(--accent-fill) 50%,var(--line));color:var(--accent)"' : '') + '>' + label + '</button>';
+  let h = '<section class="card" style="padding:14px 16px"><div style="display:flex;flex-wrap:wrap;gap:9px;align-items:center">' +
+    '<span class="eyebrow" style="margin-right:4px">Quick range</span>' +
+    pre('', '', 'All 14 days') + pre('2026-09-01', '2026-09-07', 'Week 1 · Sep 1–7') + pre('2026-09-08', '2026-09-14', 'Week 2 · Sep 8–14') +
+    '<span style="margin-left:auto;font-size:11.5px;color:var(--t2)">Data covers ' + DATE_MIN + ' to ' + DATE_MAX + ' — 14 trading days</span></div></section>';
+  h += '<div class="kpis">' +
+    kpiHTML('Days in view', days.length, {sub:'Days with at least one dated order'}) +
+    kpiHTML('Delivered revenue', sum(d, x => x.kd), {dec:3, unit:'KD', accent:1, sub:'From ' + d.length + ' dated delivered orders'}) +
+    kpiHTML('Busiest day by revenue', peak.revenue, {dec:3, unit:'KD', sub: peak.date + ' — ' + peak.delivered + ' delivered'}) +
+    kpiHTML('Quietest day by revenue', quiet.revenue, {dec:3, unit:'KD', sub: quiet.date + ' — ' + quiet.delivered + ' delivered'}) + '</div>';
+  h += frame({
+    finding: 'Delivered revenue swings between ' + kdf(quiet.revenue) + ' and ' + kdf(peak.revenue) + ' KD a day with no upward trend',
+    y: 'Delivered revenue per day in Kuwaiti dinar (KD) — axis starts at zero',
+    x: 'Order date, ' + days[0].date + ' to ' + days[days.length - 1].date,
+    basis: 'Built from ' + d.length + ' dated delivered orders across ' + days.length + ' days',
+    excluded: 'Cancelled and pending orders excluded.' + (k.undated ? ' ' + k.undated + ' order(s) in view carry an unusable date and appear on no day.' : ''),
+    plot: lineHTML('lc-rev')
+  });
+  PENDING.push(() => wireLine('lc-rev', {
+    rows: days.map(x => ({label:shortDay(x.date), values:{'Delivered revenue (KD)':x.revenue}})),
+    series: [{name:'Delivered revenue (KD)', color:C.acc}], money:1, alt:'Delivered revenue per day'
+  }));
+  h += frame({
+    finding: 'Order volume rises across the fortnight — delivered, pending and cancelled counts per day',
+    y: 'Orders per day (count) — axis starts at zero',
+    x: 'Order date, ' + days[0].date + ' to ' + days[days.length - 1].date,
+    basis: 'Built from ' + dated.length + ' dated orders in view, all statuses',
+    excluded: k.undated ? k.undated + ' order(s) with an unusable date.' : 'Nothing — every order in view has a usable date.',
+    plot: lineHTML('lc-cnt')
+  });
+  PENDING.push(() => wireLine('lc-cnt', {
+    rows: days.map(x => ({label:shortDay(x.date), values:{Delivered:x.delivered, Pending:x.pending, Cancelled:x.cancelled}})),
+    series: [{name:'Delivered', color:C.good}, {name:'Pending', color:C.acc}, {name:'Cancelled', color:C.warm}],
+    alt:'Orders per day by status'
+  }));
+  if (w1.length && w2.length) h += frame({
+    finding: 'Orders rose ' + ordersChg.toFixed(1) + '% between the two weeks while revenue moved ' + revChg.toFixed(1) + '%',
+    subject: 'Two measures, two panels, two scales — never two axes on one plot.',
+    y: 'Left panel: delivered orders (count), zero-based. Right panel: average delivered order value in KD, zero-based.',
+    x: 'Week (Sep 1–7 against Sep 8–14)',
+    basis: 'Built from ' + (w1.length + w2.length) + ' dated delivered orders',
+    excluded: 'Cancelled and pending orders excluded. Orders without a usable date excluded.',
+    plot: '<div style="display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(min(100%,230px),1fr))">' +
+      vbars({title:'Delivered orders (count)', groups:[{label:'Sep 1–7', values:[w1.length]}, {label:'Sep 8–14', values:[w2.length]}], series:[{name:'Delivered orders', color:C.acc}]}) +
+      vbars({title:'Average order value (KD)', money:1, groups:[{label:'Sep 1–7', values:[a1]}, {label:'Sep 8–14', values:[a2]}], series:[{name:'Avg order value', color:C.warm}]}) +
+      '</div>'
+  });
+  h += '<section class="card"><div class="rowhead"><h3>Day table</h3></div><div class="tscroll"><table>' +
+    '<thead><tr><th>Date</th><th class="r">Orders</th><th class="r">Delivered</th><th class="r">Pending</th><th class="r">Cancelled</th><th class="r">Delivered revenue (KD)</th></tr></thead><tbody>' +
+    days.map(x => '<tr><td>' + x.date + '</td><td class="r">' + x.orders + '</td><td class="r">' + x.delivered +
+      '</td><td class="r">' + x.pending + '</td><td class="r">' + x.cancelled + '</td><td class="r">' + kdf(x.revenue) + '</td></tr>').join('') +
+    '</tbody></table></div></section>';
+  return h;
+}
+
+const BEFORE_AFTER = DATA.before_after;
+
+function tabQuality() {
+  const changed = LOG.reduce((a, e) => a + e.rows_affected, 0);
+  let h = '<div><h2 style="font-size:clamp(21px,4vw,32px);font-weight:700">What we fixed — and why</h2>' +
+    '<p style="margin:9px 0 0;max-width:76ch;font-size:13.5px;line-height:1.65;color:var(--t1)">The raw file was audited before a single value was changed. Every issue below carries an exact count, every fix carries a reason, and every removed row is listed by line number. Nothing was deleted quietly.</p></div>';
+  h += '<div class="kpis">' +
+    kpiHTML('Original rows', M.raw_rows, {sub:'kuwait-orders-dirty.csv, 11 columns'}) +
+    kpiHTML('Rows retained', M.clean_rows, {accent:1, sub: M.unique_order_ids + ' unique order IDs — one row per order'}) +
+    kpiHTML('Rows excluded', M.excluded_rows, {sub:'5 duplicates + 1 contradictory row, all listed below'}) +
+    kpiHTML('Field-level fixes', changed, {sub:'Individual values corrected across ' + LOG.length + ' documented decisions'}) + '</div>';
+  h += '<div class="kpis">' +
+    kpiHTML('Duplicate rows found', 5, {sub:'3 byte-identical, 2 visible only after standardising'}) +
+    kpiHTML('Missing values', AUD.email_missing + 1 + AUD.columns_detail.area.blank_or_missing,
+      {sub: AUD.email_missing + ' emails, 1 phone, ' + AUD.columns_detail.area.blank_or_missing + ' areas'}) +
+    kpiHTML('Impossible values', 7, {sub:'1 negative amount, 1 negative qty, 1 zero qty, 1 qty of 999, 3 truncated amounts'}) +
+    kpiHTML('Spellings standardised', 48, {sub:'29 area, 9 status, 10 payment spellings → 8, 3 and 4 real categories'}) + '</div>';
+  h += '<section class="card"><h3 style="font-size:15px;font-weight:600">The row count balances</h3><div class="eqrow">' +
+    '<span class="pill">' + M.raw_rows + ' original</span><span class="op">=</span>' +
+    '<span class="pill on">' + M.clean_rows + ' retained</span><span class="op">+</span>' +
+    '<span class="pill">' + M.excluded_rows + ' excluded</span><span class="pill ok">checked ✓</span></div>' +
+    '<p style="margin:11px 0 0;font-size:12px;line-height:1.6;color:var(--t1)">A second check: every one of the ' + M.clean_rows +
+    ' retained rows satisfies <code>amount_kd = unit price × quantity</code>, and item revenue sums to ' + kdf(M.delivered_revenue_kd) +
+    ' KD — exactly the headline delivered revenue.</p></section>';
+  h += '<section class="card"><h3 style="font-size:15px;font-weight:600">What was excluded — all ' + EXC.length + ' rows, by line number</h3>' +
+    '<p style="margin:6px 0 0;font-size:13px;color:var(--t1)">' + EXC.length + ' rows were excluded from the cleaned dataset. Five were duplicates. One had fields that contradicted each other and could not be repaired without guessing.</p>' +
+    '<div class="tscroll" style="margin-top:11px"><table><thead><tr><th>Line in raw file</th><th>Order ID</th><th>Why it was excluded</th></tr></thead><tbody>' +
+    EXC.map(e => '<tr><td class="mono">' + e.line_in_raw_file + '</td><td style="color:var(--accent);font-weight:600">' + esc(e.order_id) +
+      '</td><td style="color:var(--t1)">' + esc(e.reason) + '</td></tr>').join('') +
+    '</tbody></table></div>' +
+    '<p class="note"><b>Two more rows are kept but partly excluded from charts.</b> 2 orders have a blank area, so they appear in every headline total but in no area bar (a ' +
+    kdf(M.delivered_revenue_unknown_area_kd) + ' KD gap). 2 orders have an unusable date — <code>31/09/2026</code>, a day that does not exist, and <code>2027-09-03</code>, a year outside the trading period — so they count everywhere except the time axis. Guessing those dates would have been inventing data.</p></section>';
+  h += '<section class="card"><h3 style="font-size:15px;font-weight:600">The cleaning log — ' + LOG.length + ' decisions</h3>' +
+    '<p style="margin:6px 0 0;font-size:13px;color:var(--t1)">One row per decision. No change was made without a reason.</p>' +
+    '<div class="tscroll" style="margin-top:11px"><table style="min-width:760px"><thead><tr><th style="width:26%">What was wrong</th><th style="width:23%">What I did</th><th style="width:37%">Why</th><th class="r">Rows affected</th></tr></thead><tbody>' +
+    LOG.map(e => '<tr><td>' + esc(e.problem) + '</td><td style="color:var(--t1)">' + esc(e.fix) + '</td><td style="color:var(--t2)">' +
+      esc(e.why) + '</td><td class="r" style="color:var(--accent);font-weight:600">' + intf(e.rows_affected) + '</td></tr>').join('') +
+    '</tbody></table></div></section>';
+  h += '<section class="card"><h3 style="font-size:15px;font-weight:600">Before → after</h3>' +
+    '<p style="margin:6px 0 0;font-size:13px;color:var(--t1)">Real values from the file, with the row count each spelling carried.</p><div class="ba" style="margin-top:14px">' +
+    BEFORE_AFTER.map(b => '<div class="box"><div class="chips">' +
+      b.before.map(v => '<span class="chip">' + esc(v[0]) + ' ×' + v[1] + '</span>').join('') +
+      '<span class="to">→</span><span class="out">' + esc(b.after) + '</span></div><p class="bn">' + esc(b.note) + '</p></div>').join('') +
+    '</div></section>';
+  h += '<section class="card"><h3 style="font-size:15px;font-weight:600">The audit, before anything was changed</h3><div class="cols3" style="margin-top:12px">' +
+    '<div><h4 class="eyebrow">Date formats</h4><ul class="deflist">' +
+      Object.entries(AUD.date_formats).map(([k2, v]) => '<li><span>' + esc(k2) + '</span><span>' + v + '</span></li>').join('') + '</ul></div>' +
+    '<div><h4 class="eyebrow">Amount formats</h4><ul class="deflist">' +
+      Object.entries(AUD.amount_formats).map(([k2, v]) => '<li><span>' + esc(k2) + '</span><span>' + v + '</span></li>').join('') + '</ul></div>' +
+    '<div><h4 class="eyebrow">Distinct raw spellings</h4><ul class="deflist">' +
+      Object.entries(AUD.variants).map(([k2, v]) => '<li><span>' + esc(k2) + '</span><span>' + v.distinct_raw_strings + '</span></li>').join('') + '</ul></div>' +
+    '</div><p style="margin:14px 0 0;font-size:11.5px;color:var(--t2);line-height:1.6">Source files on GitHub (opens in a new tab): ' +
+    '<a href="' + DATA.links.clean + '" target="_blank" rel="noopener">cleaned CSV, 189 rows</a> · ' +
+    '<a href="' + DATA.links.raw + '" target="_blank" rel="noopener">original raw CSV, 195 rows, untouched</a>. ' +
+    'Every cleaned row is also browsable in the table on the Overview tab.</p></section>';
+  return h;
+}
+
+function tabStory() {
+  const W = M.weeks, X = M.mix;
+  const N = s => '<b>' + s + '</b>';
+  const beat = (n, title, body) => '<section class="beat"><div class="n">' + n + '</div><div><h3>' + title + '</h3><div class="body">' + body + '</div></div></section>';
+  let h = '<div class="storyhead"><p class="eyebrow">The five beats · under one minute</p>' +
+    '<h2>The kitchen got <em>' + W.orders_change_pct + '% busier</em> and earned <em>nothing extra</em> for it.</h2>' +
+    '<p>Two weeks of orders, ' + M.clean_rows + ' of them once cleaned. The second week took half as many orders again as the first and brought in ' +
+    N(kdf(W.revenue_change_kd)) + ' KD more. Half a dinar.</p></div><div style="display:grid;gap:26px;margin-top:26px">';
+  h += beat('01', 'The question worth asking',
+    '<p>Orders are rising. Is the business actually growing — or just getting busier?</p>' +
+    '<p class="mute">It matters because the two need opposite responses. Growth means hire and buy more stock. Busier-at-the-same-money means the mix has shifted underneath you and margin is leaking.</p>');
+  h += beat('02', 'What I found',
+    '<p>Busier, not bigger. Delivered orders went from ' + N(W.week1.orders) + ' in Sep 1–7 to ' + N(W.week2.orders) +
+    ' in Sep 8–14 — up ' + N(W.orders_change_pct + '%') + ' — while delivered revenue moved from ' + N(kdf(W.week1.revenue_kd)) +
+    ' KD to ' + N(kdf(W.week2.revenue_kd)) + ' KD, a change of ' + N(W.revenue_change_pct + '%') + '.</p>' +
+    '<p>The average order fell from ' + N(kdf(W.week1.aov_kd)) + ' KD to ' + N(kdf(W.week2.aov_kd)) + ' KD — down ' +
+    N(Math.abs(W.aov_change_pct) + '%') + '. Every extra order in week two was a cheaper one.</p>');
+  h += beat('03', 'The evidence',
+    '<p>Across the full cleaned fortnight, ' + N(M.delivered_orders) + ' delivered orders produced ' + N(kdf(M.delivered_revenue_kd)) +
+    ' KD, an average of ' + N(kdf(M.avg_order_value_kd)) + ' KD per order over ' + N(M.trading_days) + ' trading days in ' + N(M.areas_covered) + ' areas.</p>' +
+    '<p>The mix explains the flatness. Two premium dishes — ' + esc(X.premium_items.join(' and ')) + ' — are ' + N(X.premium_order_share_pct + '%') +
+    ' of delivered orders but ' + N(X.premium_revenue_share_pct + '%') + ' of delivered revenue (' + N(kdf(X.premium_revenue_kd)) +
+    ' KD). The five cheapest items are ' + N(X.cheap_order_share_pct + '%') + ' of orders and only ' + N(X.cheap_revenue_share_pct + '%') +
+    ' of revenue (' + N(kdf(X.cheap_revenue_kd)) + ' KD).</p>' +
+    '<p>Between the weeks, premium orders <em>fell</em> from ' + N(W.week1.premium_orders) + ' to ' + N(W.week2.premium_orders) +
+    ' — worth ' + N(kdf(W.week1.premium_revenue_kd)) + ' KD down to ' + N(kdf(W.week2.premium_revenue_kd)) +
+    ' KD — while cheap orders doubled from ' + N(W.week1.cheap_orders) + ' to ' + N(W.week2.cheap_orders) + ' and added only ' +
+    N(kdf(r3(W.week2.cheap_revenue_kd - W.week1.cheap_revenue_kd))) + ' KD. More work, same money.</p>' +
+    '<div class="card" style="margin-top:6px"><p style="margin:0 0 10px;font-size:11.5px;color:var(--t2);line-height:1.55">Delivered orders and average order value, week against week. Two panels, two zero-based scales, never two axes on one plot. Built from ' +
+    (W.week1.orders + W.week2.orders) + ' dated delivered orders. Cancelled, pending and undated orders excluded.</p>' +
+    '<div style="display:grid;gap:20px;grid-template-columns:repeat(auto-fit,minmax(min(100%,220px),1fr))">' +
+    vbars({title:'Delivered orders (count)', groups:[{label:'Sep 1–7', values:[W.week1.orders]}, {label:'Sep 8–14', values:[W.week2.orders]}], series:[{name:'Delivered orders', color:C.acc}]}) +
+    vbars({title:'Average order value (KD)', money:1, groups:[{label:'Sep 1–7', values:[W.week1.aov_kd]}, {label:'Sep 8–14', values:[W.week2.aov_kd]}], series:[{name:'Avg order value', color:C.warm}]}) +
+    '</div></div>');
+  const mg = M.by_item_delivered['Mixed grill platter'], fw = M.cancellation_by_item['Falafel wrap'], mgc = M.cancellation_by_item['Mixed grill platter'];
+  h += beat('04', 'What surprised me',
+    '<p>The most expensive thing on the menu is also the most reliable. Mixed grill platter, at ' + N(kdf(M.price_list_kd['Mixed grill platter'])) +
+    ' KD a unit, was ordered ' + N(mgc.orders) + ' times and cancelled ' + N(mgc.cancelled) + ' times — the only item in the file with a clean sheet. It carries ' +
+    N(kdf(mg.revenue)) + ' KD, nearly a third of all delivered revenue.</p>' +
+    '<p>Meanwhile the cheapest things cancel most: falafel wrap cancels ' + N(fw.rate_pct + '%') + ' of the time (' + fw.cancelled + ' of ' + fw.orders +
+    '). I expected expensive orders to be the fragile ones. The file says the opposite.</p>');
+  const cheapAvg = r3(X.cheap_revenue_kd / X.cheap_orders), premAvg = r3(X.premium_revenue_kd / X.premium_orders);
+  h += beat('05', 'What I would do next week',
+    '<p>Put the two premium dishes back in front of customers — top of the menu, bundled, or as the default suggestion at checkout — and hold week-two order volume while doing it.</p>' +
+    '<p class="mute">The arithmetic: week two took ' + N(W.week2.orders) + ' delivered orders. Moving just ' + N(10) + ' of them from the cheap group (avg ' +
+    N(kdf(cheapAvg)) + ' KD) to the premium group (avg ' + N(kdf(premAvg)) + ' KD) is about ' + N(kdf(r3(10 * (premAvg - cheapAvg)))) +
+    ' KD — more than the entire week-on-week revenue change of ' + kdf(W.revenue_change_kd) + ' KD, from ten orders.</p>');
+  h += '</div><p style="margin:32px 0 0;border-top:1px solid var(--line);padding-top:16px;font-size:11.5px;line-height:1.65;color:var(--t2)">Every number on this page comes from the cleaned dataset of ' +
+    M.clean_rows + ' orders, traceable to a row in kuwait-orders-dirty.csv. Revenue means delivered revenue. ' + M.excluded_rows +
+    ' rows were excluded before any of this was calculated — listed line by line on the Quality tab.</p>';
+  return h;
+}
+
+const QUESTIONS = [
+  {q:'Why did the premium dishes drop in week two?',
+   why:'This is the whole finding, and the file cannot explain it. Orders for the two premium dishes fell from 22 to 18 while everything else rose. If it was a stock-out, the fix is supply. If it was price sensitivity, the fix is pricing. If it was a promotion on cheap items, the fix is to stop running it. Three different answers, three different budgets.',
+   need:'Daily stock-out and sold-out flags per item, a record of promotions and their dates, and menu-position history. None of these exist in the file.'},
+  {q:'Are these 153 delivered orders from 153 different people, or 40 regulars ordering repeatedly?',
+   why:'It changes what the revenue is worth. A flat fortnight from a growing customer base is a pricing problem. The same flat fortnight from a shrinking base of loyal customers is a retention emergency. The dashboard cannot tell these apart.',
+   need:'A stable customer ID. The file has names and emails, but names repeat across different emails and two emails are blank, so neither can be trusted to identify a person.'},
+  {q:'Why does Fintas cancel 20% of its orders while Mangaf cancels 3.3%?',
+   why:'Fintas cancels six times as often as Mangaf. If it is distance or driver coverage, it is an operations fix worth real money. If it is one bad week or one unreliable customer, it is noise and should be ignored. Acting on the wrong reading wastes the effort.',
+   need:'A cancellation reason code, the time between order and cancellation, and which party cancelled. The file records only the final status, with no reason and no timestamp.'}
+];
+function tabAsk() {
+  return '<div><h2 style="font-size:clamp(21px,4vw,32px);font-weight:700">What I would ask next</h2>' +
+    '<p style="margin:9px 0 0;max-width:70ch;font-size:13.5px;line-height:1.65;color:var(--t1)">Three questions this dataset raises and cannot answer. Each one would change a decision, and each one needs data that simply is not in the file. Listing them is not a failure of the analysis — knowing the edge of what you can prove is part of the analysis.</p></div>' +
+    QUESTIONS.map((x, i) => '<section class="card"><div class="qcard"><div class="qn">' + String(i + 1).padStart(2, '0') + '</div><div>' +
+      '<h3>' + esc(x.q) + '</h3><div class="qsplit"><div><div class="lab">Why it matters</div><p>' + esc(x.why) + '</p></div>' +
+      '<div><div class="lab acc">What we would need to collect</div><p>' + esc(x.need) + '</p></div></div></div></div></section>').join('');
+}
+
+/* ------------------------------------------------------------ data table */
+const TCOLS = [['id','Order ID',0],['area','Area',0],['date','Date',0],['item','Item',0],['qty','Qty',1],['kd','Amount (KD)',1],['pay','Payment',0],['status','Status',0]];
+const PAGE = 15;
+let TSTATE = { q:'', c:'date', dir:1, page:0 };
+function tableCard() {
+  return '<section class="card" id="tcard"><div class="rowhead"><h3>Cleaned orders — search, sort and page through every row</h3>' +
+    '<input class="search" id="tq" type="search" placeholder="Search any field…" aria-label="Search orders" value="' + esc(TSTATE.q) + '"></div>' +
+    '<div class="tscroll" id="tbody"></div><div class="pager" id="tpager"></div></section>';
+}
+function paintTable(rows) {
+  const host = document.getElementById('tbody'), pag = document.getElementById('tpager');
+  if (!host) return;
+  const needle = TSTATE.q.trim().toLowerCase();
+  const f = needle ? rows.filter(r => [r.id, r.area, r.date, r.item, r.pay, r.status].join(' ').toLowerCase().includes(needle)) : rows;
+  const view = [...f].sort((a, b) => {
+    const A = a[TSTATE.c], B = b[TSTATE.c];
+    return (typeof A === 'number' && typeof B === 'number' ? A - B : String(A).localeCompare(String(B))) * TSTATE.dir;
+  });
+  const pages = Math.max(1, Math.ceil(view.length / PAGE));
+  const p = Math.min(TSTATE.page, pages - 1);
+  const slice = view.slice(p * PAGE, p * PAGE + PAGE);
+  host.innerHTML = '<table style="min-width:700px"><thead><tr>' +
+    TCOLS.map(([c, l, r]) => '<th class="s' + (r ? ' r' : '') + '" data-tsort="' + c + '">' + l +
+      (TSTATE.c === c ? '<span style="color:var(--accent)"> ' + (TSTATE.dir === 1 ? '▴' : '▾') + '</span>' : '') + '</th>').join('') +
+    '</tr></thead><tbody>' +
+    (slice.length ? slice.map(r => '<tr><td style="font-weight:500">' + esc(r.id) + '</td>' +
+      '<td>' + (r.area === 'Unknown' ? '<span style="color:var(--warm)">Unknown</span>' : esc(r.area)) + '</td>' +
+      '<td>' + (r.dated ? r.date : '<span style="color:var(--warm)" title="Date was 31/09/2026 or 2027-09-03 — not usable">no usable date</span>') + '</td>' +
+      '<td>' + esc(r.item) + '</td><td class="r">' + intf(r.qty) + '</td><td class="r">' + kdf(r.kd) + '</td>' +
+      '<td style="color:var(--t1)">' + esc(r.pay) + '</td><td>' + esc(r.status) + '</td></tr>').join('')
+      : '<tr><td colspan="8" style="text-align:center;padding:26px;color:var(--t2)">No rows match.</td></tr>') +
+    '</tbody></table>';
+  pag.innerHTML = '<span>Showing <strong class="mono" style="color:var(--t0)">' + slice.length + '</strong> of <strong class="mono" style="color:var(--t0)">' +
+    view.length + '</strong> rows in the current filter</span><span style="display:flex;gap:8px;align-items:center">' +
+    '<button class="btn sm" type="button" data-page="' + (p - 1) + '"' + (p === 0 ? ' disabled' : '') + '>Previous</button>' +
+    '<span class="mono">Page ' + (p + 1) + ' / ' + pages + '</span>' +
+    '<button class="btn sm" type="button" data-page="' + (p + 1) + '"' + (p >= pages - 1 ? ' disabled' : '') + '>Next</button></span>';
+  host.querySelectorAll('th.s').forEach(th => th.addEventListener('click', () => {
+    const c = th.dataset.tsort;
+    TSTATE = { ...TSTATE, c, dir: TSTATE.c === c && TSTATE.dir === 1 ? -1 : 1, page:0 };
+    paintTable(rows);
+  }));
+  pag.querySelectorAll('[data-page]').forEach(b => b.addEventListener('click', () => {
+    TSTATE.page = Math.max(0, Math.min(pages - 1, +b.dataset.page)); paintTable(rows);
+  }));
+  const q = document.getElementById('tq');
+  if (q && !q._wired) { q._wired = 1; q.addEventListener('input', () => { TSTATE.q = q.value; TSTATE.page = 0; paintTable(rows); }); }
+}
+
+/* ------------------------------------------------------------- rendering */
+let PENDING = [];
+function setF(patch) { state.f = { ...state.f, ...patch }; render(); }
+
+function render() {
+  PENDING = [];
+  const heroFull = state.tab === 'Overview';
+  const hero = $('#hero');
+  hero.classList.toggle('slim', !heroFull);
+  $('#h1').innerHTML = heroFull ? 'KUWAIT ORDERS<br><span class="b">DATA LAB</span>' : 'KUWAIT ORDERS <span class="b">DATA LAB</span>';
+  $('#lede').hidden = !heroFull;
+  $('#lede').textContent = M.raw_rows + ' raw rows audited before a single value was changed, cleaned to ' + M.clean_rows +
+    ', with all ' + M.excluded_rows + ' exclusions named. Every figure here traces to a row in the source file.';
+  const hk = $('#herokpis');
+  if (heroFull) {
+    hk.hidden = false;
+    if (!hk._done) {
+      hk.innerHTML = '<p class="striplab mute" style="margin-top:24px">The whole cleaned dataset — these six do not move when you filter</p><div class="kpis">' +
+        kpiHTML('Total orders', M.clean_rows, {sub: M.raw_rows + ' raw − ' + M.excluded_rows + ' excluded'}) +
+        kpiHTML('Delivered orders', M.delivered_orders, {sub: M.pending_orders + ' pending · ' + M.cancelled_orders + ' cancelled'}) +
+        kpiHTML('Delivered revenue', M.delivered_revenue_kd, {dec:3, unit:'KD', accent:1, sub:'Across ' + M.trading_days + ' trading days'}) +
+        kpiHTML('Average order value', M.avg_order_value_kd, {dec:3, unit:'KD', sub: kdf(M.delivered_revenue_kd) + ' ÷ ' + M.delivered_orders + ' orders'}) +
+        kpiHTML('Areas covered', M.areas_covered, {sub:'Standardised from 29 raw spellings'}) +
+        kpiHTML('Data quality issues', LOG.length, {sub:'Documented decisions, every one with a reason'}) + '</div>';
+      hk._done = 1;
+      animateKpis(hk, false);
+    }
+  } else hk.hidden = true;
+
+  document.querySelectorAll('.tab').forEach(b => {
+    if (b.dataset.t === state.tab) b.setAttribute('aria-current', 'page'); else b.removeAttribute('aria-current');
+  });
+
+  const showF = FILTERED_TABS.includes(state.tab);
+  $('#filters').hidden = !showF;
+  $('#stripwrap').hidden = !showF;
+
+  const rows = applyFilters(ORDERS, state.f);
+  $('#f-reset').disabled = !dirty();
+  $('#fnote').innerHTML = dirty()
+    ? 'Filters active — showing <strong style="color:var(--accent)" class="mono">' + rows.length + '</strong> of ' + M.clean_rows + ' cleaned orders. Every KPI and chart below reflects this selection.'
+    : 'Showing all <strong class="mono" style="color:var(--t0)">' + M.clean_rows + '</strong> cleaned orders.';
+
+  if (showF) {
+    const k = kpis(rows), strip = $('#strip');
+    strip.innerHTML =
+      kpiHTML('Orders in view', k.orders, {sub:'Updates live with the filters above'}) +
+      kpiHTML('Delivered in view', k.delivered, {sub: k.cancelled + ' cancelled · ' + k.pending + ' pending'}) +
+      kpiHTML('Revenue in view', k.revenue, {dec:3, unit:'KD', accent:1, sub:'Delivered orders only'}) +
+      kpiHTML('Avg order in view', k.aov, {dec:3, unit:'KD', sub:'Delivered revenue ÷ delivered orders'});
+    animateKpis(strip, true);
+  }
+
+  const main = $('#main');
+  if (showF && rows.length === 0) {
+    main.innerHTML = '<section class="card" style="text-align:center;padding:40px 18px"><p style="font-weight:600;font-size:17px;margin:0">No orders match these filters.</p>' +
+      '<button class="btn sm" type="button" id="empty-reset" style="margin-top:14px">Reset filters</button></section>';
+    $('#empty-reset').addEventListener('click', () => setF(emptyF()));
+    return;
+  }
+  main.innerHTML =
+    state.tab === 'Overview' ? tabOverview(rows) :
+    state.tab === 'Areas' ? tabAreas(rows) :
+    state.tab === 'Items' ? tabItems(rows) :
+    state.tab === 'Time' ? tabTime(rows) :
+    state.tab === 'Quality' ? tabQuality() :
+    state.tab === 'The Story' ? tabStory() : tabAsk();
+  PENDING.forEach(fn => fn());
+  if (state.tab === 'Overview') paintTable(rows);
+  animateKpis(main, false);
+  $('#footnote').innerHTML = 'Data analyzed from the provided Kuwait Orders practice dataset (kuwait-orders-dirty.csv, ' + M.raw_rows +
+    ' rows). The dataset is invented for the exercise — every name, email and phone number in it is fictional. The original file was preserved unchanged and is linked from the Quality tab alongside the cleaned version. ' +
+    M.excluded_rows + ' rows were excluded: 5 duplicates and 1 row whose amount and quantity contradicted each other.';
+}
+
+/* ------------------------------------------------------------- wiring */
+$('#tabs').innerHTML = TABS.map(t => '<button class="tab" type="button" data-t="' + esc(t) + '">' + esc(t) + '</button>').join('');
+$('#tabs').addEventListener('click', e => {
+  const b = e.target.closest('.tab'); if (!b) return;
+  state.tab = b.dataset.t; window.scrollTo({top:0, behavior: REDUCED ? 'auto' : 'smooth'}); render();
+});
+function fillSelect(id, opts, allLabel) {
+  $(id).innerHTML = '<option value="' + ALL + '">' + allLabel + '</option>' + opts.map(o => '<option value="' + esc(o) + '">' + esc(o) + '</option>').join('');
+}
+fillSelect('#f-area', AREAS, 'All areas');
+fillSelect('#f-status', STATUSES, 'All statuses');
+fillSelect('#f-item', ITEMS, 'All items');
+$('#f-from').min = DATE_MIN; $('#f-from').max = DATE_MAX;
+$('#f-to').min = DATE_MIN; $('#f-to').max = DATE_MAX;
+const syncControls = () => {
+  $('#f-area').value = state.f.area; $('#f-status').value = state.f.status; $('#f-item').value = state.f.item;
+  $('#f-from').value = state.f.from; $('#f-to').value = state.f.to;
+};
+$('#f-area').addEventListener('change', e => setF({area:e.target.value}));
+$('#f-status').addEventListener('change', e => setF({status:e.target.value}));
+$('#f-item').addEventListener('change', e => setF({item:e.target.value}));
+$('#f-from').addEventListener('change', e => setF({from:e.target.value}));
+$('#f-to').addEventListener('change', e => setF({to:e.target.value}));
+$('#f-reset').addEventListener('click', () => { state.f = emptyF(); syncControls(); render(); });
+
+const main = $('#main');
+main.addEventListener('click', e => {
+  const bar = e.target.closest('.bar');
+  if (bar) {
+    const kind = bar.closest('.barchart') && bar.closest('.barchart').dataset.pick;
+    if (kind) { state.f[kind] = state.f[kind] === bar.dataset.k ? ALL : bar.dataset.k; syncControls(); render(); return; }
+  }
+  const tr = e.target.closest('tr.click');
+  if (tr) { state.f[tr.dataset.pick] = tr.dataset.k; syncControls(); render(); return; }
+  const clr = e.target.closest('[data-clear]');
+  if (clr) { state.f[clr.dataset.clear] = ALL; syncControls(); render(); return; }
+  const rng = e.target.closest('[data-range]');
+  if (rng) { const [a, b] = rng.dataset.range.split('|'); state.f.from = a; state.f.to = b; syncControls(); render(); return; }
+  const inf = e.target.closest('[data-info]');
+  if (inf) {
+    const box = document.getElementById('info-' + inf.dataset.info);
+    box.hidden = !box.hidden; inf.setAttribute('aria-expanded', String(!box.hidden));
+  }
+});
+main.addEventListener('mousemove', e => {
+  const t = e.target.closest('.bar, .vbar');
+  if (!t) { hideTT(); return; }
+  const b = t.getBoundingClientRect();
+  showTT(t.classList.contains('vbar') ? b.left + b.width / 2 : e.clientX, t.classList.contains('vbar') ? b.top : b.top,
+    '<div class="tk">' + esc(t.dataset.k) + '</div><div class="tr">' + esc(t.dataset.n) + '<b>' + esc(t.dataset.v) + '</b></div>');
+});
+main.addEventListener('mouseleave', hideTT);
+window.addEventListener('scroll', hideTT, {passive:true});
+
+syncControls();
+render();
+</script>
