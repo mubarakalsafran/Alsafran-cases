@@ -1,0 +1,661 @@
+{
+ "file": "kuwait-orders-dirty.csv",
+ "total_rows": 195,
+ "total_columns": 11,
+ "columns": [
+  "order_id",
+  "customer_name",
+  "email",
+  "phone",
+  "area",
+  "order_date",
+  "item",
+  "quantity",
+  "amount_kd",
+  "payment_method",
+  "status"
+ ],
+ "columns_detail": {
+  "order_id": {
+   "blank_or_missing": 0,
+   "leading_trailing_whitespace": 0,
+   "distinct_raw_values": 190,
+   "value_kinds": {
+    "text": 195
+   },
+   "inferred_type": "text"
+  },
+  "customer_name": {
+   "blank_or_missing": 0,
+   "leading_trailing_whitespace": 1,
+   "distinct_raw_values": 153,
+   "value_kinds": {
+    "text": 195
+   },
+   "inferred_type": "text"
+  },
+  "email": {
+   "blank_or_missing": 2,
+   "leading_trailing_whitespace": 1,
+   "distinct_raw_values": 152,
+   "value_kinds": {
+    "text": 193,
+    "empty": 2
+   },
+   "inferred_type": "text"
+  },
+  "phone": {
+   "blank_or_missing": 1,
+   "leading_trailing_whitespace": 0,
+   "distinct_raw_values": 190,
+   "value_kinds": {
+    "text": 123,
+    "integer": 71,
+    "empty": 1
+   },
+   "inferred_type": "text"
+  },
+  "area": {
+   "blank_or_missing": 2,
+   "leading_trailing_whitespace": 16,
+   "distinct_raw_values": 29,
+   "value_kinds": {
+    "text": 193,
+    "empty": 2
+   },
+   "inferred_type": "text"
+  },
+  "order_date": {
+   "blank_or_missing": 0,
+   "leading_trailing_whitespace": 0,
+   "distinct_raw_values": 42,
+   "value_kinds": {
+    "text": 195
+   },
+   "inferred_type": "text"
+  },
+  "item": {
+   "blank_or_missing": 0,
+   "leading_trailing_whitespace": 0,
+   "distinct_raw_values": 10,
+   "value_kinds": {
+    "text": 195
+   },
+   "inferred_type": "text"
+  },
+  "quantity": {
+   "blank_or_missing": 0,
+   "leading_trailing_whitespace": 0,
+   "distinct_raw_values": 7,
+   "value_kinds": {
+    "integer": 195
+   },
+   "inferred_type": "integer"
+  },
+  "amount_kd": {
+   "blank_or_missing": 0,
+   "leading_trailing_whitespace": 0,
+   "distinct_raw_values": 76,
+   "value_kinds": {
+    "decimal": 128,
+    "text": 67
+   },
+   "inferred_type": "decimal"
+  },
+  "payment_method": {
+   "blank_or_missing": 0,
+   "leading_trailing_whitespace": 0,
+   "distinct_raw_values": 10,
+   "value_kinds": {
+    "text": 195
+   },
+   "inferred_type": "text"
+  },
+  "status": {
+   "blank_or_missing": 0,
+   "leading_trailing_whitespace": 0,
+   "distinct_raw_values": 9,
+   "value_kinds": {
+    "text": 195
+   },
+   "inferred_type": "text"
+  }
+ },
+ "duplicate_rows_identical": {
+  "extra_copies": 3,
+  "groups": 3
+ },
+ "order_id": {
+  "distinct": 190,
+  "ids_appearing_more_than_once": 5,
+  "rows_involved": 10,
+  "extra_rows_beyond_first": 5,
+  "examples": {
+   "KW-1006": 2,
+   "KW-1031": 2,
+   "KW-1041": 2,
+   "KW-1100": 2,
+   "KW-1141": 2
+  },
+  "blank_ids": 0
+ },
+ "area_variants": {
+  "distinct_raw_strings": 29,
+  "canonical_groups": 13,
+  "groups_with_multiple_spellings": 9,
+  "rows_in_nonprimary_spellings": 97,
+  "detail": {
+   "mangaf": {
+    "variants": [
+     [
+      "Mangaf",
+      15
+     ],
+     [
+      "mangaf",
+      15
+     ]
+    ],
+    "n_variants": 2,
+    "rows": 30
+   },
+   "salwa": {
+    "variants": [
+     [
+      "salwa",
+      10
+     ],
+     [
+      "Salwa",
+      8
+     ],
+     [
+      "SALWA",
+      7
+     ]
+    ],
+    "n_variants": 3,
+    "rows": 25
+   },
+   "hawally": {
+    "variants": [
+     [
+      " Hawally",
+      8
+     ],
+     [
+      "Hawally",
+      6
+     ],
+     [
+      "hawally",
+      5
+     ],
+     [
+      "HAWALLY",
+      3
+     ]
+    ],
+    "n_variants": 4,
+    "rows": 22
+   },
+   "salmiya": {
+    "variants": [
+     [
+      "salmiya",
+      6
+     ],
+     [
+      " Salmiya ",
+      5
+     ],
+     [
+      "SALMIYA",
+      5
+     ],
+     [
+      "Salmiya ",
+      3
+     ],
+     [
+      "Salmiya",
+      1
+     ]
+    ],
+    "n_variants": 5,
+    "rows": 20
+   },
+   "fintas": {
+    "variants": [
+     [
+      "Fintas",
+      11
+     ],
+     [
+      "fintas",
+      9
+     ]
+    ],
+    "n_variants": 2,
+    "rows": 20
+   },
+   "aljahra": {
+    "variants": [
+     [
+      "al jahra",
+      10
+     ],
+     [
+      "Al Jahra",
+      9
+     ]
+    ],
+    "n_variants": 2,
+    "rows": 19
+   },
+   "sabahalsalem": {
+    "variants": [
+     [
+      "Sabah Al Salem",
+      6
+     ],
+     [
+      "sabah al salem",
+      6
+     ],
+     [
+      "Sabah Alsalem",
+      5
+     ]
+    ],
+    "n_variants": 3,
+    "rows": 17
+   },
+   "jahra": {
+    "variants": [
+     [
+      "JAHRA",
+      8
+     ],
+     [
+      "Jahra",
+      6
+     ]
+    ],
+    "n_variants": 2,
+    "rows": 14
+   },
+   "farwaniya": {
+    "variants": [
+     [
+      "Farwaniya",
+      10
+     ],
+     [
+      "farwaniya",
+      4
+     ]
+    ],
+    "n_variants": 2,
+    "rows": 14
+   }
+  },
+  "all_raw_counts": {
+   "Mangaf": 15,
+   "mangaf": 15,
+   "Fintas": 11,
+   "al jahra": 10,
+   "Farwaniya": 10,
+   "salwa": 10,
+   "fintas": 9,
+   "Al Jahra": 9,
+   "JAHRA": 8,
+   "Salwa": 8,
+   " Hawally": 8,
+   "SALWA": 7,
+   "salmiya": 6,
+   "Jahra": 6,
+   "Sabah Al Salem": 6,
+   "Hawally": 6,
+   "sabah al salem": 6,
+   " Salmiya ": 5,
+   "hawally": 5,
+   "Sabah Alsalem": 5,
+   "Hawalli": 5,
+   "SALMIYA": 5,
+   "farwaniya": 4,
+   "Farwaniyah": 4,
+   "HAWALLY": 3,
+   "Salmiyah": 3,
+   "Salmiya ": 3,
+   "": 2,
+   "Salmiya": 1
+  }
+ },
+ "status_variants": {
+  "distinct_raw_strings": 9,
+  "canonical_groups": 5,
+  "groups_with_multiple_spellings": 3,
+  "rows_in_nonprimary_spellings": 83,
+  "detail": {
+   "delivered": {
+    "variants": [
+     [
+      "Delivered",
+      44
+     ],
+     [
+      "delivered",
+      37
+     ],
+     [
+      "DELIVERED",
+      33
+     ]
+    ],
+    "n_variants": 3,
+    "rows": 114
+   },
+   "pending": {
+    "variants": [
+     [
+      "Pending",
+      12
+     ],
+     [
+      "pending",
+      7
+     ]
+    ],
+    "n_variants": 2,
+    "rows": 19
+   },
+   "cancelled": {
+    "variants": [
+     [
+      "cancelled",
+      12
+     ],
+     [
+      "Cancelled",
+      6
+     ]
+    ],
+    "n_variants": 2,
+    "rows": 18
+   }
+  },
+  "all_raw_counts": {
+   "Delivered": 44,
+   "Deliverd": 42,
+   "delivered": 37,
+   "DELIVERED": 33,
+   "Pending": 12,
+   "cancelled": 12,
+   "pending": 7,
+   "Cancelled": 6,
+   "Canceled": 2
+  }
+ },
+ "item_variants": {
+  "distinct_raw_strings": 10,
+  "canonical_groups": 10,
+  "groups_with_multiple_spellings": 0,
+  "rows_in_nonprimary_spellings": 0,
+  "detail": {},
+  "all_raw_counts": {
+   "Grilled hammour": 24,
+   "Mixed grill platter": 24,
+   "Chicken shawarma": 23,
+   "Machboos box": 21,
+   "Harees plate": 19,
+   "Gahwa and dates": 18,
+   "Luqaimat, 12 pieces": 18,
+   "Halloumi zaatar": 17,
+   "Falafel wrap": 16,
+   "Karak tea": 15
+  }
+ },
+ "payment_method_variants": {
+  "distinct_raw_strings": 10,
+  "canonical_groups": 4,
+  "groups_with_multiple_spellings": 3,
+  "rows_in_nonprimary_spellings": 111,
+  "detail": {
+   "cash": {
+    "variants": [
+     [
+      "CASH",
+      30
+     ],
+     [
+      "cash",
+      26
+     ],
+     [
+      "Cash",
+      22
+     ]
+    ],
+    "n_variants": 3,
+    "rows": 78
+   },
+   "knet": {
+    "variants": [
+     [
+      "knet",
+      21
+     ],
+     [
+      "K-Net",
+      20
+     ],
+     [
+      "KNET",
+      15
+     ],
+     [
+      "Knet",
+      12
+     ]
+    ],
+    "n_variants": 4,
+    "rows": 68
+   },
+   "card": {
+    "variants": [
+     [
+      "Card",
+      19
+     ],
+     [
+      "card",
+      16
+     ]
+    ],
+    "n_variants": 2,
+    "rows": 35
+   }
+  },
+  "all_raw_counts": {
+   "CASH": 30,
+   "cash": 26,
+   "Cash": 22,
+   "knet": 21,
+   "K-Net": 20,
+   "Card": 19,
+   "card": 16,
+   "KNET": 15,
+   "Visa": 14,
+   "Knet": 12
+  }
+ },
+ "date_formats": {
+  "counts": {
+   "d Mon yyyy": 37,
+   "ISO yyyy-mm-dd": 105,
+   "dd/mm/yyyy": 53
+  },
+  "unrecognised_examples": []
+ },
+ "amount_formats": {
+  "counts": {
+   "plain decimal e.g. 13.000": 128,
+   "suffixed ' KD' e.g. 6.500 KD": 34,
+   "UNRECOGNISED": 33
+  },
+  "unrecognised_examples": [
+   [
+    16,
+    "KD 2.750"
+   ],
+   [
+    30,
+    "KD 2.000"
+   ],
+   [
+    32,
+    "KD 0.250"
+   ],
+   [
+    41,
+    "0,500"
+   ],
+   [
+    42,
+    "KD 7.250"
+   ],
+   [
+    47,
+    "3,250"
+   ],
+   [
+    48,
+    "KD 4.500"
+   ],
+   [
+    53,
+    "3,000"
+   ],
+   [
+    58,
+    "KD 4.000"
+   ],
+   [
+    73,
+    "1,000"
+   ],
+   [
+    78,
+    "KD 0.500"
+   ],
+   [
+    80,
+    "KD 1.500"
+   ],
+   [
+    85,
+    "KD 1.500"
+   ],
+   [
+    86,
+    "KD 5.500"
+   ],
+   [
+    91,
+    "1,000"
+   ],
+   [
+    95,
+    "7,250"
+   ],
+   [
+    100,
+    "KD 6.000"
+   ],
+   [
+    107,
+    "3,000"
+   ],
+   [
+    110,
+    "KD 1.500"
+   ],
+   [
+    125,
+    "3,000"
+   ]
+  ]
+ },
+ "amount_decimal_places": {
+  "0": 14,
+  "1": 7,
+  "3": 174
+ },
+ "impossible_values": {
+  "negative_amount_kd": {
+   "count": 1,
+   "rows": [
+    [
+     15,
+     "KW-1062",
+     "-3.250"
+    ]
+   ]
+  },
+  "zero_amount_kd": {
+   "count": 0,
+   "rows": []
+  },
+  "blank_amount_kd": {
+   "count": 0,
+   "rows": []
+  },
+  "negative_quantity": {
+   "count": 1,
+   "rows": [
+    [
+     69,
+     "KW-1078",
+     "-2"
+    ]
+   ]
+  },
+  "zero_quantity": {
+   "count": 1,
+   "rows": [
+    [
+     71,
+     "KW-1045",
+     "0"
+    ]
+   ]
+  },
+  "blank_quantity": {
+   "count": 0,
+   "rows": []
+  },
+  "non_integer_quantity": {
+   "count": 0,
+   "rows": []
+  },
+  "quantity_over_20": {
+   "count": 1,
+   "rows": [
+    [
+     92,
+     "KW-1151",
+     "999"
+    ]
+   ]
+  }
+ },
+ "phone_formats": {
+  "965-####-####": 33,
+  "+965 #### ####": 90,
+  "8 digits, no code": 56,
+  "other": 15,
+  "(blank)": 1
+ },
+ "email_missing": 2
+}

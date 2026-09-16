@@ -1,0 +1,110 @@
+[
+ {
+  "line_in_raw_file": 15,
+  "order_id": "KW-1062",
+  "reason": "amount_kd and quantity contradict each other and the item price (0.600 KD): neither field can be trusted",
+  "raw": {
+   "order_id": "KW-1062",
+   "customer_name": "Haya Al-Otaibi",
+   "email": "haya.otaibi@example.kw",
+   "phone": "965-8320-6543",
+   "area": " Hawally",
+   "order_date": "12 Sep 2026",
+   "item": "Falafel wrap",
+   "quantity": "2",
+   "amount_kd": "-3.250",
+   "payment_method": "Visa",
+   "status": "Pending"
+  }
+ },
+ {
+  "line_in_raw_file": 34,
+  "order_id": "KW-1141",
+  "reason": "duplicate of line 20 — identical order once spelling, date format and currency format are normalised",
+  "raw": {
+   "order_id": "KW-1141",
+   "customer_name": "Reem Al-Fadhli",
+   "email": "reem.fadhli@example.kw",
+   "phone": "+965 6700 5534",
+   "area": "hawally",
+   "order_date": "1 Sep 2026",
+   "item": "Falafel wrap",
+   "quantity": "1",
+   "amount_kd": "0.600 KD",
+   "payment_method": "Cash",
+   "status": "cancelled"
+  }
+ },
+ {
+  "line_in_raw_file": 131,
+  "order_id": "KW-1041",
+  "reason": "duplicate of line 112 — identical order once spelling, date format and currency format are normalised",
+  "raw": {
+   "order_id": "KW-1041",
+   "customer_name": "Bader Al-Bahar",
+   "email": "bader.bahar@example.kw",
+   "phone": "965-5913-9413",
+   "area": "HAWALLY",
+   "order_date": "8 Sep 2026",
+   "item": "Mixed grill platter",
+   "quantity": "1",
+   "amount_kd": "7.250",
+   "payment_method": "Card",
+   "status": "Delivered"
+  }
+ },
+ {
+  "line_in_raw_file": 144,
+  "order_id": "KW-1031",
+  "reason": "duplicate of line 13 — identical order once spelling, date format and currency format are normalised",
+  "raw": {
+   "order_id": "KW-1031",
+   "customer_name": "Khaled Al-Bahar",
+   "email": "khaled.bahar@example.kw",
+   "phone": "99964448",
+   "area": "Al Jahra",
+   "order_date": "2026-09-14",
+   "item": "Falafel wrap",
+   "quantity": "1",
+   "amount_kd": "0.600",
+   "payment_method": "knet",
+   "status": "DELIVERED"
+  }
+ },
+ {
+  "line_in_raw_file": 150,
+  "order_id": "KW-1006",
+  "reason": "duplicate of line 103 — identical order once spelling, date format and currency format are normalised",
+  "raw": {
+   "order_id": "KW-1006",
+   "customer_name": "Bader Al-Kandari",
+   "email": "bader.kandari@example.kw",
+   "phone": "+965 8209 0560",
+   "area": "salwa",
+   "order_date": "07/09/2026",
+   "item": "Grilled hammour",
+   "quantity": "3",
+   "amount_kd": "16.500",
+   "payment_method": "K-Net",
+   "status": "DELIVERED"
+  }
+ },
+ {
+  "line_in_raw_file": 188,
+  "order_id": "KW-1100",
+  "reason": "duplicate of line 37 — identical order once spelling, date format and currency format are normalised",
+  "raw": {
+   "order_id": "KW-1100",
+   "customer_name": "Ghada Al-Kandari",
+   "email": "ghada.kandari@example.kw",
+   "phone": "+965 5089 9018",
+   "area": "Farwaniya",
+   "order_date": "14 Sep 2026",
+   "item": "Gahwa and dates",
+   "quantity": "1",
+   "amount_kd": "0.500",
+   "payment_method": "cash",
+   "status": "cancelled"
+  }
+ }
+]

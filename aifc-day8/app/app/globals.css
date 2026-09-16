@@ -1,0 +1,51 @@
+@import "tailwindcss";
+
+/* ==========================================================================
+   KUWAIT ORDERS DATA LAB — dark analytics theme.
+   One accent (#3987e5). Series colours validated for contrast and colour-vision
+   deficiency against the #151A21 card surface before any chart was drawn.
+   ========================================================================== */
+@theme {
+  --color-ink-0:   #0B0E13;   /* page */
+  --color-ink-1:   #151A21;   /* card / chart surface */
+  --color-ink-2:   #1C232C;   /* inset, hover */
+  --color-line:    #232B36;
+  --color-text-0:  #F2F5F9;
+  --color-text-1:  #A7B2C0;
+  --color-text-2:  #6C7886;
+  --color-accent:  #3987e5;
+  --color-accent-2:#d95926;
+  --color-accent-3:#199e70;
+  --font-sans: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+:root { color-scheme: dark; }
+html, body { background: var(--color-ink-0); }
+body {
+  color: var(--color-text-0);
+  font-family: var(--font-sans);
+  -webkit-font-smoothing: antialiased;
+}
+::selection { background: color-mix(in srgb, var(--color-accent) 40%, transparent); }
+
+/* focus is always visible — keyboard users navigate this dashboard too */
+:focus-visible { outline: 2px solid var(--color-accent); outline-offset: 2px; border-radius: 6px; }
+
+@keyframes riseIn { from { opacity: 0; transform: translateY(10px) } to { opacity: 1; transform: none } }
+.rise { animation: riseIn .45s cubic-bezier(.22,.61,.36,1) both; }
+
+/* the page must be correct at rest, so animation is decoration only */
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after { animation: none !important; transition: none !important; }
+}
+
+.numeric { font-variant-numeric: tabular-nums; }
+.scrollx { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.scrollx::-webkit-scrollbar { height: 8px }
+.scrollx::-webkit-scrollbar-thumb { background: var(--color-line); border-radius: 99px }
+
+/* A Recharts ResponsiveContainer measures its parent. Grid and flex children
+   default to min-width:auto, so a chart can force its cell — and the whole page —
+   wider than the viewport. Let those children shrink instead. */
+.grid > *, .flex > * { min-width: 0; }
+table { min-width: 0; }

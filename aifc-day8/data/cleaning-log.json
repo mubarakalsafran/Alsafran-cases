@@ -1,0 +1,80 @@
+[
+ {
+  "problem": "11 columns arrived as text; 16 area values, 1 customer_name and 1 email carried leading/trailing spaces (e.g. ' Salmiya ')",
+  "fix": "Trimmed whitespace from every field in every column",
+  "why": "' Salmiya ' and 'Salmiya' are the same area. Untrimmed, they group separately and split one area across two bars.",
+  "rows_affected": 18
+ },
+ {
+  "problem": "area held 29 distinct raw strings for 8 real areas — e.g. Mangaf/mangaf; salwa/Salwa/SALWA; ' Hawally'/Hawally/hawally/HAWALLY/Hawalli; salmiya/' Salmiya '/SALMIYA/'Salmiya '/Salmiyah; al jahra/Al Jahra/JAHRA/Jahra",
+  "fix": "Case-folded and mapped every variant to one canonical name per area, giving 8 areas. Jahra and Al Jahra were merged; Hawalli merged into Hawally; Salmiyah into Salmiya; Farwaniyah into Farwaniya; Sabah Alsalem into Sabah Al Salem",
+  "why": "They are the same places. Left split, Al Jahra would appear as two areas of 19 and 14 instead of one of 33, and would drop out of the top ranks entirely.",
+  "rows_affected": 111
+ },
+ {
+  "problem": "status held 9 raw spellings for 3 real states, including the misspelling 'Deliverd' on 42 rows and 'Canceled' on 2",
+  "fix": "Mapped to Delivered / Pending / Cancelled",
+  "why": "'Deliverd' is 42 rows — 27% of the file. Counting it as its own status would have understated delivered orders by more than a quarter and broken every revenue figure.",
+  "rows_affected": 133
+ },
+ {
+  "problem": "payment_method held 10 raw spellings for 4 real methods (CASH/cash/Cash; knet/K-Net/KNET/Knet; Card/card; Visa)",
+  "fix": "Mapped to Cash / KNET / Card / Visa. Visa was kept separate from Card",
+  "why": "Card and Visa may be genuinely different records in the source system, so merging them would assert something the file does not show.",
+  "rows_affected": 125
+ },
+ {
+  "problem": "order_date arrived in 3 formats: 105 ISO (2026-09-14), 53 dd/mm/yyyy (14/09/2026), 37 'd Mon yyyy' (9 Sep 2026)",
+  "fix": "Parsed all three and rewrote every date as ISO yyyy-mm-dd",
+  "why": "Three formats cannot be sorted or bucketed together; 01/09/2026 and '1 Sep 2026' must land on the same day.",
+  "rows_affected": 89
+ },
+ {
+  "problem": "2 dates are not real dates in the trading period: '31/09/2026' (September has 30 days) and '2027-09-03' (one year outside the Sep 1–14 2026 period every other row sits in)",
+  "fix": "Kept both orders in the dataset but set their date to empty and flagged date_valid=no. They are excluded from time charts only",
+  "why": "The orders are otherwise complete and their revenue is real, so deleting them would understate totals. But inventing a date — guessing 31/09 meant 30/09, or that 2027 was a typo for 2026 — would be fabricating data. They count everywhere except the time axis.",
+  "rows_affected": 2
+ },
+ {
+  "problem": "amount_kd arrived in 5 formats: 121 plain '13.000', 34 suffixed '6.500 KD', 19 prefixed 'KD 2.750', 14 comma-decimal '3,250', 7 short-decimal '0.2'",
+  "fix": "Stripped KD prefixes/suffixes, read comma as the decimal separator, stored a plain number at 3 decimal places (the fils precision of the Kuwaiti dinar)",
+  "why": "'3,250' is 3.250 KD, not 3,250 KD. Read as a thousands separator it would have inflated that one order by a factor of 1000 and swamped every total in the file.",
+  "rows_affected": 74
+ },
+ {
+  "problem": "3 amounts are truncated against the item's own price: Karak tea 0.2 (x2) and Machboos box 3.2, where every other row of those items prices them at 0.250 and 3.250 KD",
+  "fix": "Restored to unit price x quantity: 0.250 and 3.250",
+  "why": "All 10 items price perfectly consistently across 188 of 195 rows, so the price list is evidence, not assumption. 0.2 is a dropped trailing digit, not a discount.",
+  "rows_affected": 3
+ },
+ {
+  "problem": "3 quantities are impossible: -2 (Mixed grill platter), 0 (Luqaimat) and 999 (Karak tea)",
+  "fix": "Recomputed quantity from amount / unit price, giving 2, 1 and 4",
+  "why": "In all three the amount is a clean multiple of the item price, so the amount corroborates a specific quantity. Left alone, the 999 row would have claimed 249.750 KD of karak tea and dominated every item chart.",
+  "rows_affected": 3
+ },
+ {
+  "problem": "2 rows have no area at all (KW-1132, KW-1103)",
+  "fix": "Labelled them 'Unknown' and kept them. They are excluded from area charts only",
+  "why": "Both have a valid date, item, quantity and amount, so their revenue is real and belongs in the headline. But they cannot be placed on a map of areas. This is why the area chart totals less than the headline — it is named on the chart, not hidden.",
+  "rows_affected": 2
+ },
+ {
+  "problem": "1 row (KW-1062) has amount -3.250 for 2 Falafel wraps, which should be 1.200 KD",
+  "fix": "Excluded the row entirely",
+  "why": "Unlike the quantity fixes, nothing here corroborates anything: the amount is negative AND its magnitude does not match the quantity. Neither field can be trusted, and guessing which one is wrong would be inventing the order.",
+  "rows_affected": 1
+ },
+ {
+  "problem": "5 rows repeat an order_id. 3 are byte-identical; 2 (KW-1031, KW-1141) are the same order re-typed with a different area spelling and date format",
+  "fix": "Removed 5 duplicate rows, keeping the first occurrence of each",
+  "why": "Duplicates double-count revenue. The 2 re-typed pairs only become visible as duplicates after standardising spelling and dates — which is why de-duplication runs last, not first. 190 unique order_ids remain, matching the 190 distinct ids counted in the audit.",
+  "rows_affected": 5
+ },
+ {
+  "problem": "2 emails and 1 phone number are blank",
+  "fix": "Left blank. No imputation",
+  "why": "Contact details play no part in any metric on this dashboard, and inventing a customer email would be both useless and wrong.",
+  "rows_affected": 3
+ }
+]

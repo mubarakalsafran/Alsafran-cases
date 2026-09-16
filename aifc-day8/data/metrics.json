@@ -1,0 +1,457 @@
+{
+ "raw_rows": 195,
+ "clean_rows": 189,
+ "excluded_rows": 6,
+ "unique_order_ids": 189,
+ "orders_total": 189,
+ "delivered_orders": 153,
+ "cancelled_orders": 18,
+ "pending_orders": 18,
+ "delivered_revenue_kd": 707.85,
+ "cancelled_value_kd": 52.5,
+ "pending_value_kd": 109.35,
+ "all_orders_value_kd": 869.7,
+ "avg_order_value_kd": 4.626,
+ "areas_covered": 8,
+ "items_covered": 10,
+ "date_min": "2026-09-01",
+ "date_max": "2026-09-14",
+ "trading_days": 14,
+ "delivered_dated": 151,
+ "delivered_with_known_area": 151,
+ "delivered_revenue_known_area_kd": 685.85,
+ "delivered_revenue_unknown_area_kd": 22.0,
+ "by_area_delivered": {
+  "Mangaf": {
+   "orders": 26,
+   "revenue": 136.2,
+   "qty": 56
+  },
+  "Al Jahra": {
+   "orders": 26,
+   "revenue": 111.05,
+   "qty": 40
+  },
+  "Salwa": {
+   "orders": 22,
+   "revenue": 107.75,
+   "qty": 37
+  },
+  "Hawally": {
+   "orders": 17,
+   "revenue": 95.75,
+   "qty": 32
+  },
+  "Salmiya": {
+   "orders": 20,
+   "revenue": 92.75,
+   "qty": 38
+  },
+  "Sabah Al Salem": {
+   "orders": 15,
+   "revenue": 65.85,
+   "qty": 25
+  },
+  "Farwaniya": {
+   "orders": 13,
+   "revenue": 41.65,
+   "qty": 22
+  },
+  "Fintas": {
+   "orders": 12,
+   "revenue": 34.85,
+   "qty": 27
+  }
+ },
+ "by_item_delivered": {
+  "Mixed grill platter": {
+   "orders": 21,
+   "revenue": 224.75,
+   "qty": 31
+  },
+  "Grilled hammour": {
+   "orders": 19,
+   "revenue": 181.5,
+   "qty": 33
+  },
+  "Machboos box": {
+   "orders": 16,
+   "revenue": 107.25,
+   "qty": 33
+  },
+  "Harees plate": {
+   "orders": 15,
+   "revenue": 57.75,
+   "qty": 21
+  },
+  "Luqaimat, 12 pieces": {
+   "orders": 15,
+   "revenue": 55.5,
+   "qty": 37
+  },
+  "Chicken shawarma": {
+   "orders": 17,
+   "revenue": 33.0,
+   "qty": 33
+  },
+  "Halloumi zaatar": {
+   "orders": 14,
+   "revenue": 21.0,
+   "qty": 28
+  },
+  "Gahwa and dates": {
+   "orders": 14,
+   "revenue": 14.0,
+   "qty": 28
+  },
+  "Falafel wrap": {
+   "orders": 9,
+   "revenue": 6.6,
+   "qty": 11
+  },
+  "Karak tea": {
+   "orders": 13,
+   "revenue": 6.5,
+   "qty": 26
+  }
+ },
+ "by_status_all": {
+  "Delivered": {
+   "orders": 153,
+   "revenue": 707.85,
+   "qty": 281
+  },
+  "Pending": {
+   "orders": 18,
+   "revenue": 109.35,
+   "qty": 34
+  },
+  "Cancelled": {
+   "orders": 18,
+   "revenue": 52.5,
+   "qty": 37
+  }
+ },
+ "by_payment_delivered": {
+  "Cash": {
+   "orders": 61,
+   "revenue": 312.2,
+   "qty": 126
+  },
+  "KNET": {
+   "orders": 53,
+   "revenue": 220.2,
+   "qty": 93
+  },
+  "Card": {
+   "orders": 28,
+   "revenue": 109.2,
+   "qty": 43
+  },
+  "Visa": {
+   "orders": 11,
+   "revenue": 66.25,
+   "qty": 19
+  }
+ },
+ "price_list_kd": {
+  "Chicken shawarma": 1.0,
+  "Falafel wrap": 0.6,
+  "Gahwa and dates": 0.5,
+  "Grilled hammour": 5.5,
+  "Halloumi zaatar": 0.75,
+  "Harees plate": 2.75,
+  "Karak tea": 0.25,
+  "Luqaimat, 12 pieces": 1.5,
+  "Machboos box": 3.25,
+  "Mixed grill platter": 7.25
+ },
+ "cancellation_rate_pct": 9.5,
+ "by_day": {
+  "2026-09-01": {
+   "orders": 14,
+   "delivered": 7,
+   "cancelled": 4,
+   "pending": 3,
+   "revenue": 24.75
+  },
+  "2026-09-02": {
+   "orders": 16,
+   "delivered": 13,
+   "cancelled": 1,
+   "pending": 2,
+   "revenue": 89.25
+  },
+  "2026-09-03": {
+   "orders": 9,
+   "delivered": 7,
+   "cancelled": 0,
+   "pending": 2,
+   "revenue": 27.35
+  },
+  "2026-09-04": {
+   "orders": 12,
+   "delivered": 9,
+   "cancelled": 3,
+   "pending": 0,
+   "revenue": 32.6
+  },
+  "2026-09-05": {
+   "orders": 9,
+   "delivered": 7,
+   "cancelled": 2,
+   "pending": 0,
+   "revenue": 35.35
+  },
+  "2026-09-06": {
+   "orders": 9,
+   "delivered": 7,
+   "cancelled": 1,
+   "pending": 1,
+   "revenue": 45.5
+  },
+  "2026-09-07": {
+   "orders": 12,
+   "delivered": 10,
+   "cancelled": 1,
+   "pending": 1,
+   "revenue": 97.0
+  },
+  "2026-09-08": {
+   "orders": 14,
+   "delivered": 11,
+   "cancelled": 1,
+   "pending": 2,
+   "revenue": 35.2
+  },
+  "2026-09-09": {
+   "orders": 12,
+   "delivered": 10,
+   "cancelled": 1,
+   "pending": 1,
+   "revenue": 31.35
+  },
+  "2026-09-10": {
+   "orders": 17,
+   "delivered": 16,
+   "cancelled": 1,
+   "pending": 0,
+   "revenue": 55.35
+  },
+  "2026-09-11": {
+   "orders": 17,
+   "delivered": 12,
+   "cancelled": 1,
+   "pending": 4,
+   "revenue": 68.25
+  },
+  "2026-09-12": {
+   "orders": 15,
+   "delivered": 13,
+   "cancelled": 1,
+   "pending": 1,
+   "revenue": 65.75
+  },
+  "2026-09-13": {
+   "orders": 16,
+   "delivered": 16,
+   "cancelled": 0,
+   "pending": 0,
+   "revenue": 57.3
+  },
+  "2026-09-14": {
+   "orders": 15,
+   "delivered": 13,
+   "cancelled": 1,
+   "pending": 1,
+   "revenue": 39.1
+  }
+ },
+ "checks": {
+  "rows": {
+   "raw": 195,
+   "clean": 189,
+   "excluded": 6,
+   "balances": true
+  },
+  "status_orders": {
+   "sum": 189,
+   "clean_rows": 189,
+   "balances": true
+  },
+  "area_revenue": {
+   "sum_of_area_bars": 685.85,
+   "headline_delivered_revenue": 707.85,
+   "gap": 22.0,
+   "explained_by": "2 orders (KW-1132, KW-1103) have no area in the source file. Both are Delivered, so their 22.000 KD sits in the headline but in no area bar"
+  },
+  "item_revenue": {
+   "sum_of_item_bars": 707.85,
+   "headline_delivered_revenue": 707.85,
+   "balances": true
+  },
+  "amount_equals_price_x_qty": {
+   "rows_checked": 189,
+   "rows_matching": 189
+  }
+ },
+ "weeks": {
+  "week1": {
+   "label": "Sep 1-7",
+   "orders": 60,
+   "revenue_kd": 351.8,
+   "aov_kd": 5.863,
+   "premium_orders": 22,
+   "premium_revenue_kd": 262.5,
+   "cheap_orders": 22,
+   "cheap_revenue_kd": 29.3
+  },
+  "week2": {
+   "label": "Sep 8-14",
+   "orders": 91,
+   "revenue_kd": 352.3,
+   "aov_kd": 3.871,
+   "premium_orders": 18,
+   "premium_revenue_kd": 143.75,
+   "cheap_orders": 44,
+   "cheap_revenue_kd": 50.8
+  },
+  "orders_change_pct": 51.7,
+  "revenue_change_pct": 0.1,
+  "revenue_change_kd": 0.5,
+  "aov_change_pct": -34.0
+ },
+ "mix": {
+  "premium_items": [
+   "Grilled hammour",
+   "Mixed grill platter"
+  ],
+  "cheap_items": [
+   "Chicken shawarma",
+   "Falafel wrap",
+   "Gahwa and dates",
+   "Halloumi zaatar",
+   "Karak tea"
+  ],
+  "premium_orders": 40,
+  "premium_revenue_kd": 406.25,
+  "premium_order_share_pct": 26.1,
+  "premium_revenue_share_pct": 57.4,
+  "cheap_orders": 67,
+  "cheap_revenue_kd": 81.1,
+  "cheap_order_share_pct": 43.8,
+  "cheap_revenue_share_pct": 11.5
+ },
+ "cancellation_by_item": {
+  "Falafel wrap": {
+   "orders": 13,
+   "cancelled": 3,
+   "rate_pct": 23.1,
+   "lost_kd": 3.0
+  },
+  "Halloumi zaatar": {
+   "orders": 17,
+   "cancelled": 3,
+   "rate_pct": 17.6,
+   "lost_kd": 5.25
+  },
+  "Gahwa and dates": {
+   "orders": 17,
+   "cancelled": 3,
+   "rate_pct": 17.6,
+   "lost_kd": 3.0
+  },
+  "Harees plate": {
+   "orders": 19,
+   "cancelled": 2,
+   "rate_pct": 10.5,
+   "lost_kd": 5.5
+  },
+  "Machboos box": {
+   "orders": 21,
+   "cancelled": 2,
+   "rate_pct": 9.5,
+   "lost_kd": 16.25
+  },
+  "Chicken shawarma": {
+   "orders": 23,
+   "cancelled": 2,
+   "rate_pct": 8.7,
+   "lost_kd": 3.0
+  },
+  "Karak tea": {
+   "orders": 15,
+   "cancelled": 1,
+   "rate_pct": 6.7,
+   "lost_kd": 1.0
+  },
+  "Luqaimat, 12 pieces": {
+   "orders": 18,
+   "cancelled": 1,
+   "rate_pct": 5.6,
+   "lost_kd": 4.5
+  },
+  "Grilled hammour": {
+   "orders": 23,
+   "cancelled": 1,
+   "rate_pct": 4.3,
+   "lost_kd": 11.0
+  },
+  "Mixed grill platter": {
+   "orders": 23,
+   "cancelled": 0,
+   "rate_pct": 0.0,
+   "lost_kd": 0
+  }
+ },
+ "cancellation_by_area": {
+  "Fintas": {
+   "orders": 20,
+   "cancelled": 4,
+   "rate_pct": 20.0,
+   "lost_kd": 5.0
+  },
+  "Farwaniya": {
+   "orders": 17,
+   "cancelled": 3,
+   "rate_pct": 17.6,
+   "lost_kd": 4.3
+  },
+  "Hawally": {
+   "orders": 24,
+   "cancelled": 4,
+   "rate_pct": 16.7,
+   "lost_kd": 7.35
+  },
+  "Salwa": {
+   "orders": 24,
+   "cancelled": 2,
+   "rate_pct": 8.3,
+   "lost_kd": 7.25
+  },
+  "Al Jahra": {
+   "orders": 32,
+   "cancelled": 2,
+   "rate_pct": 6.2,
+   "lost_kd": 13.75
+  },
+  "Sabah Al Salem": {
+   "orders": 17,
+   "cancelled": 1,
+   "rate_pct": 5.9,
+   "lost_kd": 0.6
+  },
+  "Salmiya": {
+   "orders": 23,
+   "cancelled": 1,
+   "rate_pct": 4.3,
+   "lost_kd": 3.25
+  },
+  "Mangaf": {
+   "orders": 30,
+   "cancelled": 1,
+   "rate_pct": 3.3,
+   "lost_kd": 11.0
+  }
+ }
+}
