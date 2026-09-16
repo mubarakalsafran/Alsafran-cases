@@ -1,3 +1,7 @@
 # python
 __pycache__/
 *.pyc
+
+# generated: the encrypted brand book. Build it locally with your own
+# ALSAFRAN_CODE before sharing; never commit the ciphertext.
+brandbook/content.enc

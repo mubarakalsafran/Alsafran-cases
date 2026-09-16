@@ -5,11 +5,14 @@ a login page, then a reader with contents, search, per-section progress, a confi
 watermark, and a print-to-PDF escape hatch.
 
 ```bash
+ALSAFRAN_CODE="your-own-code" python3 brandbook/build.py   # build content.enc first
 python3 -m http.server 8080          # from the REPO ROOT, not this folder
 # open http://localhost:8080/brandbook/
 ```
 
-**Default access code: `goldroute`** — change it before you share anything (below).
+**There is no default access code.** You set one at build time and it is never written
+to this repository; `content.enc` is generated and git-ignored. Send the code to a reader
+over a different channel from the link itself.
 
 > Web Crypto only runs in a secure context, so open the site over `https://` or on
 > `localhost`. Opening `index.html` as a `file://` path will not decrypt.
@@ -50,7 +53,9 @@ ALSAFRAN_CODE="your-new-code" python3 brandbook/build.py
 ```
 
 That re-encrypts `content.enc` with a fresh random salt and IV. Anyone holding the old code
-is locked out immediately. Rebuild after every edit to `docs/*.md` too — the site reads only
+is locked out of the *new* build immediately — but a copy of an older `content.enc` still
+decrypts with the code it was built with, so rotating the code does not un-publish anything
+already handed out. Rebuild after every edit to `docs/*.md` too — the site reads only
 `content.enc`, never the markdown.
 
 Requirements: `pip install markdown pycryptodome`.

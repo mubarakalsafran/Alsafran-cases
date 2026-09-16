@@ -7,8 +7,10 @@ anyone could read the content in "view source". Instead this script ENCRYPTS the
 whole book with AES-256-GCM using a key derived from the access code, and the
 login page decrypts it in the browser. Without the code, content.enc is noise.
 
-    python3 brandbook/build.py                      # uses the default code
     ALSAFRAN_CODE="your-code" python3 brandbook/build.py
+
+There is deliberately no default code. A default that ships in the repo is a
+published password: anyone who can read the repo can decrypt content.enc.
 
 Outputs brandbook/content.enc (base64 of salt | iv | ciphertext).
 """
@@ -22,7 +24,6 @@ ROOT = Path(__file__).resolve().parent.parent
 DOCS = ROOT / "docs"
 OUT = ROOT / "brandbook" / "content.enc"
 
-DEFAULT_CODE = "goldroute"
 PBKDF2_ITERS = 310_000
 
 # section id, source file, short nav label, one-line summary for the contents page
@@ -88,7 +89,11 @@ def h2s(html, sec_id):
 
 
 def main():
-    code = os.environ.get("ALSAFRAN_CODE", DEFAULT_CODE)
+    code = os.environ.get("ALSAFRAN_CODE", "")
+    if len(code) < 12:
+        sys.exit('Set ALSAFRAN_CODE to an access code of at least 12 characters, e.g.\n'
+                 '  ALSAFRAN_CODE="..." python3 brandbook/build.py\n'
+                 'The code is the only thing protecting the book -- it is never stored in this repo.')
     sections, total_words = [], 0
     for sec_id, fname, label, summary in SECTIONS:
         path = DOCS / fname
@@ -125,7 +130,6 @@ def main():
 
     print(f"built {len(sections)} sections · {total_words:,} words · {payload.__len__()/1024:.0f} KB plain "
           f"-> {OUT.stat().st_size/1024:.0f} KB encrypted")
-    print(f"access code: {code!r}" + ("  (default — set ALSAFRAN_CODE to change it)" if code == DEFAULT_CODE else ""))
 
 
 if __name__ == "__main__":

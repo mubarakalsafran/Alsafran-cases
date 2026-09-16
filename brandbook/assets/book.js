@@ -80,7 +80,10 @@ function initGate(){
     btn.innerHTML = '<span class="spin"></span>Unlocking';
     try{
       const book = await open(code);
-      store.set(KEY_VIEWER, email, true);
+      // Only persist to localStorage when the reader opts in. Unchecked, both the
+      // code and the email live in sessionStorage and die with the tab, so a shared
+      // or lost device does not hand over the book or the code behind it.
+      store.set(KEY_VIEWER, email, keepEl.checked);
       store.set(KEY_SESSION, code, keepEl.checked);
       enter(book, email);
     }catch(ex){
