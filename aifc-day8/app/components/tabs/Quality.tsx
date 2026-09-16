@@ -170,13 +170,13 @@ export default function Quality() {
           </div>
         </div>
         <div className="mt-4 flex flex-wrap gap-3">
-          <a href="/kuwait-orders-clean.csv" download
+          <a href="https://cdn.jsdelivr.net/gh/mubarakalsafran/Alsafran-cases@9f1667d/aifc-day8/data/kuwait-orders-clean.csv" target="_blank" rel="noopener"
              className="rounded-lg border border-accent/50 bg-accent/10 px-4 py-2 text-sm font-semibold text-accent hover:bg-accent/20">
-            Download cleaned CSV (189 rows)
+            Cleaned CSV — 189 rows
           </a>
-          <a href="/kuwait-orders-dirty.csv" download
+          <a href="https://cdn.jsdelivr.net/gh/mubarakalsafran/Alsafran-cases@9f1667d/aifc-day8/data/raw/kuwait-orders-dirty.csv" target="_blank" rel="noopener"
              className="rounded-lg border border-line px-4 py-2 text-sm font-semibold text-text-1 hover:border-accent hover:text-accent">
-            Download original raw CSV (195 rows, untouched)
+            Original raw CSV — 195 rows, untouched
           </a>
         </div>
       </Card>

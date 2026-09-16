@@ -45,20 +45,16 @@ export interface ExcludedRow {
 }
 export interface Audit {
   total_rows: number; total_columns: number; columns: string[];
-  columns_detail: Record<string, {
-    blank_or_missing: number; leading_trailing_whitespace: number;
-    distinct_raw_values: number; value_kinds: Record<string, number>; inferred_type: string }>;
+  columns_detail: Record<string, { blank_or_missing: number }>;
   duplicate_rows_identical: { extra_copies: number; groups: number };
-  order_id: { distinct: number; ids_appearing_more_than_once: number; rows_involved: number;
-              extra_rows_beyond_first: number; examples: Record<string, number>; blank_ids: number };
+  order_id: { distinct: number; ids_appearing_more_than_once: number; extra_rows_beyond_first: number };
   date_formats: Record<string, number>;
   amount_formats: Record<string, number>;
   amount_decimal_places: Record<string, number>;
   impossible_values: Record<string, number>;
-  impossible_rows: Record<string, Array<Array<string | number>>>;
   phone_formats: Record<string, number>;
   email_missing: number;
-  variants: Record<string, { distinct_raw_strings: number; all_raw_counts: Record<string, number> }>;
+  variants: Record<string, { distinct_raw_strings: number }>;
 }
 export interface Filters {
   area: string; status: string; item: string; from: string; to: string;

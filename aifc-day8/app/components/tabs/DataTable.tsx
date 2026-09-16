@@ -40,7 +40,7 @@ export default function DataTable({ rows }: { rows: Order[] }) {
           <input value={q} onChange={(e) => { setQ(e.target.value); setPage(0); }}
                  placeholder="Search any field…" aria-label="Search orders"
                  className="w-56 rounded-lg border border-line bg-ink-2 px-3 py-2 text-sm placeholder:text-text-2 focus:border-accent focus:outline-none" />
-          <a href="/kuwait-orders-clean.csv" download
+          <a href="https://cdn.jsdelivr.net/gh/mubarakalsafran/Alsafran-cases@9f1667d/aifc-day8/data/kuwait-orders-clean.csv" target="_blank" rel="noopener"
              className="rounded-lg border border-accent/50 bg-accent/10 px-3 py-2 text-xs font-semibold text-accent hover:bg-accent/20">
             Download CSV
           </a>
