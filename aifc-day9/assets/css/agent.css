@@ -254,7 +254,7 @@ a:hover{text-decoration:underline}
 /* ------------------------------------------------------------- cards --- */
 .grid{display:grid; gap:16px}
 .grid--2{grid-template-columns:repeat(auto-fit,minmax(min(310px,100%),1fr))}
-.grid--3{grid-template-columns:repeat(auto-fit,minmax(min(272px,100%),1fr))}
+.grid--3{grid-template-columns:repeat(auto-fit,minmax(min(340px,100%),1fr))}
 .grid--4{grid-template-columns:repeat(auto-fit,minmax(min(228px,100%),1fr))}
 .grid--guard{grid-template-columns:repeat(auto-fit,minmax(min(400px,100%),1fr))}
 
