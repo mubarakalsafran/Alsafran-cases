@@ -34,8 +34,9 @@ page is real protection rather than a hidden `<div>` — see
 ```bash
 python3 -m http.server 8080   # from the repo root, then open /brandbook/
 ```
-Default access code **`goldroute`** — change it with
-`ALSAFRAN_CODE="…" python3 brandbook/build.py` before sharing.
+There is no default access code. Set your own and build the book with
+`ALSAFRAN_CODE="…" python3 brandbook/build.py`, then share the code privately —
+never in this repository.
 
 ### `site/` — a working storefront prototype
 A mobile-first, dependency-free static prototype of the full store: 11 pages, live cart,

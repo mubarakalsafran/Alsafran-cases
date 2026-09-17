@@ -9,7 +9,8 @@ python3 -m http.server 8080          # from the REPO ROOT, not this folder
 # open http://localhost:8080/brandbook/
 ```
 
-**Default access code: `goldroute`** — change it before you share anything (below).
+**There is no default access code.** You choose one, and `build.py` refuses to run without it.
+Keep it out of this repository — send it to people privately (below).
 
 > Web Crypto only runs in a secure context, so open the site over `https://` or on
 > `localhost`. Opening `index.html` as a `file://` path will not decrypt.
@@ -52,6 +53,11 @@ ALSAFRAN_CODE="your-new-code" python3 brandbook/build.py
 That re-encrypts `content.enc` with a fresh random salt and IV. Anyone holding the old code
 is locked out immediately. Rebuild after every edit to `docs/*.md` too — the site reads only
 `content.enc`, never the markdown.
+
+**Never commit the code itself.** Git keeps every version of every file forever, so a code
+written down here even once stays readable in the history long after it is deleted — and the
+encryption is worth nothing while the key sits next to the lock. If a code is ever committed,
+treat it as burned: pick a new one and rebuild.
 
 Requirements: `pip install markdown pycryptodome`.
 
