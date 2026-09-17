@@ -9,7 +9,7 @@ const vm = require('vm');
 const dir = __dirname;
 const read = (f) => fs.readFileSync(path.join(dir, f), 'utf8');
 
-function runNode(code, inputItems, fakeToday) {
+function runNode(code, inputItems, fakeToday, mode = 'production') {
   const RealDate = Date;
   class FakeDate extends RealDate {
     constructor(...args) { return args.length ? new RealDate(...args) : new RealDate(fakeToday); }
@@ -17,6 +17,7 @@ function runNode(code, inputItems, fakeToday) {
   }
   const sandbox = {
     $input: { all: () => inputItems },
+    $execution: { mode },
     Intl, console,
     Date: fakeToday ? FakeDate : RealDate,
   };
@@ -40,7 +41,7 @@ const days = [
 
 let best = null;
 for (const [when, label] of days) {
-  const out = runNode(checkCode, tasks, when);
+  const out = runNode(checkCode, tasks, when, 'production');
   if (out.length === 0) {
     console.log(`\n${when.slice(0, 10)}  (${label})\n   -> no email sent`);
   } else {
@@ -51,6 +52,18 @@ for (const [when, label] of days) {
       best = { score: j.dueTomorrowCount + j.comingUpCount, html: j.html };
     }
   }
+}
+
+// A manual run must always produce an email, even with nothing due tomorrow.
+console.log('\n--- pressing "Execute Workflow" by hand on 2026-09-17 (nothing due 18/9) ---');
+const manual = runNode(checkCode, tasks, '2026-09-17T15:00:00Z', 'test');
+if (manual.length === 0) {
+  console.log('   -> FAIL: manual run sent nothing');
+  process.exitCode = 1;
+} else {
+  console.log(`   -> subject: ${manual[0].json.subject}`);
+  console.log(`   -> test email: ${manual[0].json.isTestEmail}, items listed: ${manual[0].json.comingUpCount}`);
+  fs.writeFileSync(path.join(dir, 'preview-test.html'), manual[0].json.html);
 }
 
 if (best) {

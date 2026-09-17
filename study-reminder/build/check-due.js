@@ -4,7 +4,9 @@
    Works out today's date in Kuwait, finds everything due TOMORROW,
    and builds the reminder email.
 
-   If nothing is due tomorrow this returns nothing, so no email is sent.
+   On the daily schedule: if nothing is due tomorrow, no email is sent.
+   When YOU press "Execute Workflow" by hand: an email is ALWAYS built,
+   so you can check that the workflow really works on any day.
    ===================================================================== */
 
 const TO = '__STUDENT_EMAIL__';   // <-- your email address
@@ -13,6 +15,14 @@ const REMIND_DAYS_BEFORE = 1;     // send the reminder this many days before the
 const LOOKAHEAD_DAYS = 7;         // also list anything else due within this many days
 
 const DAY = 24 * 60 * 60 * 1000;
+
+/* Did I press "Execute Workflow" myself, or did the schedule start this? */
+let manualRun = false;
+try {
+  manualRun = $execution.mode === 'test';
+} catch (error) {
+  manualRun = false;
+}
 
 /* Today as seen in Kuwait, not on the n8n server. */
 const todayIso = new Intl.DateTimeFormat('en-CA', {
@@ -46,8 +56,15 @@ const comingUp = tasks
   .filter((task) => task.daysLeft > REMIND_DAYS_BEFORE && task.daysLeft <= LOOKAHEAD_DAYS)
   .sort((a, b) => a.daysLeft - b.daysLeft);
 
-/* Nothing due tomorrow -> no items -> no email. */
-if (dueTomorrow.length === 0) return [];
+/* Nothing due tomorrow on a scheduled run -> no items -> no email sent. */
+if (dueTomorrow.length === 0 && !manualRun) return [];
+
+/* A manual run with nothing due tomorrow still sends, so I can see it works. */
+const isTestEmail = dueTomorrow.length === 0;
+const nextUp = tasks
+  .filter((task) => task.daysLeft >= 0)
+  .sort((a, b) => a.daysLeft - b.daysLeft)
+  .slice(0, 5);
 
 const card = (task) => `
   <tr>
@@ -74,21 +91,40 @@ const card = (task) => `
     </td>
   </tr>`;
 
-const comingUpRow = (task) => `
+const listRow = (task) => {
+  const when = task.daysLeft === 0 ? 'today'
+    : task.daysLeft === 1 ? 'tomorrow'
+    : `in ${task.daysLeft} days`;
+  return `
   <tr>
     <td style="padding:7px 0;border-bottom:1px solid #E3E8EF">
       <span dir="auto" style="font:600 14px/1.5 Arial,Helvetica,sans-serif;color:#0F172A">${icon(task)} ${esc(task.title)}</span>
       <span style="font:400 13px/1.5 Arial,Helvetica,sans-serif;color:#64748B">
-        &nbsp;— ${esc(longDate(task.due))} (in ${task.daysLeft} days)
+        &nbsp;— ${esc(longDate(task.due))} (${when})
       </span>
     </td>
   </tr>`;
+};
 
 const titles = dueTomorrow.map((task) => task.title);
-const subject = dueTomorrow.length === 1
-  ? `Reminder: ${titles[0]} is tomorrow (${longDate(dueTomorrow[0].due)})`
-  : `Reminder: ${dueTomorrow.length} things due tomorrow — ${titles.slice(0, 2).join(', ')}` +
-    (titles.length > 2 ? ` +${titles.length - 2} more` : '');
+
+const subject = isTestEmail
+  ? '[TEST] Study reminder is working — nothing is due tomorrow'
+  : dueTomorrow.length === 1
+    ? `Reminder: ${titles[0]} is tomorrow (${longDate(dueTomorrow[0].due)})`
+    : `Reminder: ${dueTomorrow.length} things due tomorrow — ${titles.slice(0, 2).join(', ')}` +
+      (titles.length > 2 ? ` +${titles.length - 2} more` : '');
+
+const headline = isTestEmail
+  ? '✅ Test email — the reminder works'
+  : `⏰ Due tomorrow — ${dueTomorrow.length} ${dueTomorrow.length === 1 ? 'thing' : 'things'}`;
+
+const intro = isTestEmail
+  ? `Today is ${esc(longDate(todayIso))}. Nothing is due tomorrow, so on a normal day no email would be sent. You are seeing this because you pressed Execute Workflow.`
+  : `Today is ${esc(longDate(todayIso))}. Here is what to get ready tonight.`;
+
+const listTitle = isTestEmail ? 'What is coming next' : 'Also coming up';
+const listItems = isTestEmail ? nextUp : comingUp;
 
 const html = `<!doctype html>
 <html><body style="margin:0;padding:24px 12px;background:#F1F5F9">
@@ -98,26 +134,22 @@ const html = `<!doctype html>
              style="max-width:600px;width:100%;background:#F1F5F9">
 
         <tr><td style="padding:0 0 18px 0">
-          <div style="font:700 22px/1.3 Arial,Helvetica,sans-serif;color:#0F172A">
-            ⏰ Due tomorrow — ${dueTomorrow.length} ${dueTomorrow.length === 1 ? 'thing' : 'things'}
-          </div>
-          <div style="font:400 14px/1.6 Arial,Helvetica,sans-serif;color:#64748B;margin-top:4px">
-            Today is ${esc(longDate(todayIso))}. Here is what to get ready tonight.
-          </div>
+          <div style="font:700 22px/1.3 Arial,Helvetica,sans-serif;color:#0F172A">${headline}</div>
+          <div style="font:400 14px/1.6 Arial,Helvetica,sans-serif;color:#64748B;margin-top:4px">${intro}</div>
         </td></tr>
 
         ${dueTomorrow.map(card).join('')}
 
-        ${comingUp.length ? `
+        ${listItems.length ? `
         <tr><td style="padding:14px 0 6px 0">
           <div style="font:700 12px/1.4 Arial,Helvetica,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#64748B">
-            Also coming up
+            ${listTitle}
           </div>
         </td></tr>
         <tr><td>
           <table role="presentation" width="100%" cellpadding="0" cellspacing="0"
                  style="background:#FFFFFF;border:1px solid #E3E8EF;border-radius:10px;padding:6px 16px">
-            ${comingUp.map(comingUpRow).join('')}
+            ${listItems.map(listRow).join('')}
           </table>
         </td></tr>` : ''}
 
@@ -137,8 +169,9 @@ return [{
     to: TO,
     subject,
     html,
+    isTestEmail,
     dueTomorrowCount: dueTomorrow.length,
-    comingUpCount: comingUp.length,
+    comingUpCount: listItems.length,
     checkedOn: todayIso,
   },
 }];

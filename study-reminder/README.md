@@ -24,8 +24,8 @@ Every Day at 6 PM  →  My Tasks  →  Find What Is Due Tomorrow  →  Send Remi
 3. Open the **Send Reminder Email** node and connect your account:
    * Gmail version → *Credential to connect with* → **Create new** → sign in with Google.
    * SMTP version → fill in host, port, user and password, and set **From Email**.
-4. Press **Execute Workflow** once to test it. It only sends an email if something is
-   due tomorrow — to force a test, temporarily change a date in **My Tasks** to tomorrow.
+4. Press **Execute Workflow** once to test it. A manual run always sends an email, even on a
+   day when nothing is due — you will get a `[TEST]` email listing what is coming next.
 5. Switch the workflow to **Active** (toggle at the top right). From then on it runs by itself
    every day at 18:00.
 
@@ -58,12 +58,41 @@ All at the top of the **Find What Is Due Tomorrow** node:
 
 The reminder time (18:00) is set in the **Every Day at 6 PM** node.
 
+## The email block is not working
+
+Work through these in order.
+
+**1. The Gmail node is grey / says "no data" and no email arrives.**
+This is normal, not a fault. On a scheduled run the workflow only sends an email when something
+is due *tomorrow*. If tomorrow is empty, the **Find What Is Due Tomorrow** node returns nothing
+and the email node never runs. Press **Execute Workflow** by hand — a manual run always sends a
+`[TEST]` email, so you can prove the connection works on any day.
+
+**2. The email arrives but shows raw HTML code.**
+Open the **Send Reminder Email** node and set **Email Type** to **HTML** (not Text). In the
+workflow file this is `"emailType": "html"`.
+
+**3. Red error on the node.** Match the message:
+
+| Error message | What it means | Fix |
+|---|---|---|
+| `Insufficient Permission` / `403` | The Google sign-in did not include permission to send mail | Delete the Gmail credential, create it again, and tick the send/compose permission when Google asks |
+| `invalid_grant` / `Unauthorized` | The sign-in expired, or the school account blocked it | Reconnect the credential. If the school blocks it, use the SMTP version instead |
+| `Bad request — Recipient address required` | `sendTo` is empty because no data reached the node | Same as point 1 — run it by hand, or check the Code node above returned an item |
+| `Invalid login` / `EAUTH` (SMTP only) | Wrong SMTP username or password | With Gmail SMTP you must use an App Password, not your normal password |
+
+**4. Still nothing.** Open the **Find What Is Due Tomorrow** node and look at its output panel.
+If it shows `0 items`, the problem is the dates in **My Tasks**, not the email node.
+
 ## What the email looks like
 
 * A heading saying how many things are due tomorrow.
 * One card per task: subject, type, title, the details, and the full due date.
 * An "Also coming up" list for anything due in the next 7 days.
 * Arabic titles display right-to-left correctly.
+
+On a manual run with nothing due tomorrow it instead sends a short `[TEST]` email listing the
+next five things, so the workflow can always be demonstrated.
 
 ## Testing the date logic without n8n
 
