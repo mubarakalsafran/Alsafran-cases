@@ -1,0 +1,123 @@
+{
+  "name": "Study Reminder — email me 1 day before",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "field": "days",
+              "daysInterval": 1,
+              "triggerAtHour": 18,
+              "triggerAtMinute": 0
+            }
+          ]
+        }
+      },
+      "id": "every-day-at-6-pm",
+      "name": "Every Day at 6 PM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.2,
+      "position": [
+        -220,
+        0
+      ],
+      "notes": "Runs once a day at 18:00 Kuwait time. Change the hour here if you want the reminder earlier or later.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "jsCode": "/* =====================================================================\n   MY TASKS AND TESTS\n   ---------------------------------------------------------------------\n   This is the only list you need to edit.\n   Add a line for every new quiz, test or homework.\n\n   due  -> must be written as YYYY-MM-DD  (year-month-day)\n   type -> Quiz / Test / Homework / Project  (used for the email icon)\n   ===================================================================== */\n\nconst TASKS = [\n  {\n    title: 'Physics Quiz 1',\n    subject: 'Physics',\n    type: 'Quiz',\n    details: 'Week 1 & 2. PowerPoints: Methods of Science, Mathematics and Physics, Measurement, Graphing Data. Bring all the worksheets done (WhatsApp).',\n    due: '2026-09-17',\n  },\n  {\n    title: 'Write Chemistry class notes',\n    subject: 'Chemistry',\n    type: 'Homework',\n    details: 'Copy the Chemistry class notes from a friend (yesterday and today).',\n    due: '2026-09-13',\n  },\n  {\n    title: 'امتحان إسلامية',\n    subject: 'Islamic Studies',\n    type: 'Test',\n    details: 'ورقة العمل نصف الامتحان موجودة في نيو',\n    due: '2026-09-23',\n  },\n  {\n    title: 'Chemistry project — gym plan',\n    subject: 'Chemistry',\n    type: 'Project',\n    details: 'Create a gym plan for a beginner.',\n    due: '2026-09-20',\n  },\n  {\n    title: 'IB Biology Quiz',\n    subject: 'Biology',\n    type: 'Quiz',\n    details: 'Mutation and gene editing (slides are in the PowerPoint).',\n    due: '2026-09-17',\n  },\n  {\n    title: 'IB Chemistry Quiz',\n    subject: 'Chemistry',\n    type: 'Quiz',\n    details: 'Details not given yet — ask the teacher.',\n    due: '2026-09-20',\n  },\n  {\n    title: 'Arabic homework',\n    subject: 'Arabic',\n    type: 'Homework',\n    details: 'Print it, then send it on Education.',\n    due: '2026-09-17',\n  },\n];\n\nreturn TASKS.map((task) => ({ json: task }));\n"
+      },
+      "id": "my-tasks",
+      "name": "My Tasks",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "notes": "EDIT THIS ONE. Add a line for every quiz, test or homework. Dates are YYYY-MM-DD.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "jsCode": "/* =====================================================================\n   WHAT IS DUE SOON?\n   ---------------------------------------------------------------------\n   Works out today's date in Kuwait, finds everything due TOMORROW,\n   and builds the reminder email.\n\n   If nothing is due tomorrow this returns nothing, so no email is sent.\n   ===================================================================== */\n\nconst TO = 'YOUR_EMAIL_HERE@example.com';   // <-- your email address\nconst TZ = 'Asia/Kuwait';         // timezone used to decide what \"today\" means\nconst REMIND_DAYS_BEFORE = 1;     // send the reminder this many days before the due date\nconst LOOKAHEAD_DAYS = 7;         // also list anything else due within this many days\n\nconst DAY = 24 * 60 * 60 * 1000;\n\n/* Today as seen in Kuwait, not on the n8n server. */\nconst todayIso = new Intl.DateTimeFormat('en-CA', {\n  timeZone: TZ, year: 'numeric', month: '2-digit', day: '2-digit',\n}).format(new Date());\n\nconst midnight = (iso) => {\n  const [y, m, d] = iso.split('-').map(Number);\n  return Date.UTC(y, m - 1, d);\n};\nconst today = midnight(todayIso);\n\nconst longDate = (iso) => new Date(midnight(iso)).toLocaleDateString('en-GB', {\n  timeZone: 'UTC', weekday: 'long', day: 'numeric', month: 'long', year: 'numeric',\n});\n\nconst esc = (value) => String(value == null ? '' : value)\n  .replace(/[&<>\"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '\"': '&quot;' }[c]));\n\nconst ICONS = { quiz: '📝', test: '📋', exam: '📋', homework: '✏️', project: '🛠️' };\nconst icon = (task) => ICONS[String(task.type || '').toLowerCase()] || '📌';\n\n/* Keep only rows with a real date, and work out how many days are left. */\nconst tasks = $input.all()\n  .map((item) => item.json)\n  .filter((task) => typeof task.due === 'string' && /^\\d{4}-\\d{2}-\\d{2}$/.test(task.due))\n  .map((task) => ({ ...task, daysLeft: Math.round((midnight(task.due) - today) / DAY) }));\n\nconst dueTomorrow = tasks.filter((task) => task.daysLeft === REMIND_DAYS_BEFORE);\nconst comingUp = tasks\n  .filter((task) => task.daysLeft > REMIND_DAYS_BEFORE && task.daysLeft <= LOOKAHEAD_DAYS)\n  .sort((a, b) => a.daysLeft - b.daysLeft);\n\n/* Nothing due tomorrow -> no items -> no email. */\nif (dueTomorrow.length === 0) return [];\n\nconst card = (task) => `\n  <tr>\n    <td style=\"padding:0 0 12px 0\">\n      <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"\n             style=\"border:1px solid #E3E8EF;border-left:4px solid #2563EB;border-radius:10px;background:#FFFFFF\">\n        <tr>\n          <td style=\"padding:16px 18px\" dir=\"auto\">\n            <div style=\"font:600 11px/1.4 Arial,Helvetica,sans-serif;letter-spacing:.09em;text-transform:uppercase;color:#64748B\">\n              ${icon(task)} ${esc(task.subject || 'School')} &middot; ${esc(task.type || 'Task')}\n            </div>\n            <div style=\"font:700 18px/1.35 Arial,Helvetica,sans-serif;color:#0F172A;margin:6px 0 4px\">\n              ${esc(task.title)}\n            </div>\n            <div style=\"font:400 14px/1.6 Arial,Helvetica,sans-serif;color:#475569\">\n              ${esc(task.details)}\n            </div>\n            <div style=\"font:600 13px/1.5 Arial,Helvetica,sans-serif;color:#B45309;margin-top:10px\">\n              Due: ${esc(longDate(task.due))}\n            </div>\n          </td>\n        </tr>\n      </table>\n    </td>\n  </tr>`;\n\nconst comingUpRow = (task) => `\n  <tr>\n    <td style=\"padding:7px 0;border-bottom:1px solid #E3E8EF\">\n      <span dir=\"auto\" style=\"font:600 14px/1.5 Arial,Helvetica,sans-serif;color:#0F172A\">${icon(task)} ${esc(task.title)}</span>\n      <span style=\"font:400 13px/1.5 Arial,Helvetica,sans-serif;color:#64748B\">\n        &nbsp;— ${esc(longDate(task.due))} (in ${task.daysLeft} days)\n      </span>\n    </td>\n  </tr>`;\n\nconst titles = dueTomorrow.map((task) => task.title);\nconst subject = dueTomorrow.length === 1\n  ? `Reminder: ${titles[0]} is tomorrow (${longDate(dueTomorrow[0].due)})`\n  : `Reminder: ${dueTomorrow.length} things due tomorrow — ${titles.slice(0, 2).join(', ')}` +\n    (titles.length > 2 ? ` +${titles.length - 2} more` : '');\n\nconst html = `<!doctype html>\n<html><body style=\"margin:0;padding:24px 12px;background:#F1F5F9\">\n  <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\">\n    <tr><td align=\"center\">\n      <table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\"\n             style=\"max-width:600px;width:100%;background:#F1F5F9\">\n\n        <tr><td style=\"padding:0 0 18px 0\">\n          <div style=\"font:700 22px/1.3 Arial,Helvetica,sans-serif;color:#0F172A\">\n            ⏰ Due tomorrow — ${dueTomorrow.length} ${dueTomorrow.length === 1 ? 'thing' : 'things'}\n          </div>\n          <div style=\"font:400 14px/1.6 Arial,Helvetica,sans-serif;color:#64748B;margin-top:4px\">\n            Today is ${esc(longDate(todayIso))}. Here is what to get ready tonight.\n          </div>\n        </td></tr>\n\n        ${dueTomorrow.map(card).join('')}\n\n        ${comingUp.length ? `\n        <tr><td style=\"padding:14px 0 6px 0\">\n          <div style=\"font:700 12px/1.4 Arial,Helvetica,sans-serif;letter-spacing:.1em;text-transform:uppercase;color:#64748B\">\n            Also coming up\n          </div>\n        </td></tr>\n        <tr><td>\n          <table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\"\n                 style=\"background:#FFFFFF;border:1px solid #E3E8EF;border-radius:10px;padding:6px 16px\">\n            ${comingUp.map(comingUpRow).join('')}\n          </table>\n        </td></tr>` : ''}\n\n        <tr><td style=\"padding:20px 0 0 0\">\n          <div style=\"font:400 12px/1.6 Arial,Helvetica,sans-serif;color:#94A3B8\">\n            Sent automatically by my n8n study reminder, one day before each due date.\n          </div>\n        </td></tr>\n\n      </table>\n    </td></tr>\n  </table>\n</body></html>`;\n\nreturn [{\n  json: {\n    to: TO,\n    subject,\n    html,\n    dueTomorrowCount: dueTomorrow.length,\n    comingUpCount: comingUp.length,\n    checkedOn: todayIso,\n  },\n}];\n"
+      },
+      "id": "find-what-is-due-tomorrow",
+      "name": "Find What Is Due Tomorrow",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [
+        220,
+        0
+      ],
+      "notes": "Works out today's date in Kuwait and keeps only what is due tomorrow. If nothing is due, no email is sent.",
+      "notesInFlow": true
+    },
+    {
+      "parameters": {
+        "fromEmail": "YOUR_EMAIL_HERE@example.com",
+        "toEmail": "={{ $json.to }}",
+        "subject": "={{ $json.subject }}",
+        "emailFormat": "html",
+        "html": "={{ $json.html }}",
+        "options": {}
+      },
+      "id": "send-reminder-email",
+      "name": "Send Reminder Email",
+      "type": "n8n-nodes-base.emailSend",
+      "typeVersion": 2.1,
+      "position": [
+        440,
+        0
+      ],
+      "notes": "Add your SMTP credentials in the Credentials box above (host, port, user, password).",
+      "notesInFlow": true
+    }
+  ],
+  "connections": {
+    "Every Day at 6 PM": {
+      "main": [
+        [
+          {
+            "node": "My Tasks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "My Tasks": {
+      "main": [
+        [
+          {
+            "node": "Find What Is Due Tomorrow",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Find What Is Due Tomorrow": {
+      "main": [
+        [
+          {
+            "node": "Send Reminder Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "timezone": "Asia/Kuwait"
+  },
+  "pinData": {},
+  "meta": {
+    "instanceId": "study-reminder"
+  },
+  "tags": []
+}

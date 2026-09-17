@@ -63,6 +63,12 @@ says so rather than estimating one — see [`kuwait-goals/RESEARCH.md`](kuwait-g
 cd kuwait-goals && python3 -m http.server 8080   # then open http://localhost:8080
 ```
 
+### `study-reminder/` — an n8n workflow that emails me before each due date
+A small n8n workflow: a daily schedule trigger, two Code nodes and a mail node. It checks a list
+of quizzes, tests and homework once a day and emails a reminder the evening before anything is
+due, with an "also coming up" list for the next week. Import `study-reminder-gmail.json` (or the
+SMTP version) into n8n — see [`study-reminder/README.md`](study-reminder/README.md).
+
 ### `aifc-day9/` — Jahra Shop Stock Agent (AIFC Day 9)
 A single-page, dependency-free website documenting an AI agent that checks a Jahra shop's **test**
 inventory and flags products at or below their minimum stock level. It covers the five-part agent
